@@ -1,0 +1,231 @@
+2025-06-16 12:40:58,741 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.2.119:5050
+2025-06-16 12:40:58,744 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-16 12:40:58,750 INFO werkzeug  * Restarting with stat
+2025-06-16 12:41:08,192 WARNING werkzeug  * Debugger is active!
+2025-06-16 12:41:08,211 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 12:41:33,723 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 12:41:33] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 12:41:34,009 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 12:41:34] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-06-16 12:41:34,037 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 12:41:34] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-06-16 12:41:34,177 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 12:41:34] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-06-16 12:41:34,203 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 12:41:34] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 12:41:53,709 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 12:41:53] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 12:46:41,313 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.2.119:5050
+2025-06-16 12:46:41,314 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-16 12:46:41,318 INFO werkzeug  * Restarting with stat
+2025-06-16 12:46:48,666 WARNING werkzeug  * Debugger is active!
+2025-06-16 12:46:48,683 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 12:47:21,399 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:47:21] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 12:47:21,626 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:47:21] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-06-16 12:47:21,648 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:47:21] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-06-16 12:47:21,736 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:47:21] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-06-16 12:47:21,762 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:47:21] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 12:50:10,248 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 12:50:11,037 INFO werkzeug  * Restarting with stat
+2025-06-16 12:50:22,778 WARNING werkzeug  * Debugger is active!
+2025-06-16 12:50:22,793 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 12:54:48,279 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 12:54:49,115 INFO werkzeug  * Restarting with stat
+2025-06-16 12:54:59,309 WARNING werkzeug  * Debugger is active!
+2025-06-16 12:54:59,327 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 12:55:05,575 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:55:05] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 12:55:05,837 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:55:05] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 12:55:05,838 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:55:05] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 12:55:05,870 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:55:05] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 12:55:05,894 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:55:05] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 12:56:23,054 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 12:56:23,736 INFO werkzeug  * Restarting with stat
+2025-06-16 12:56:50,179 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.2.119:5050
+2025-06-16 12:56:50,181 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-16 12:56:50,184 INFO werkzeug  * Restarting with stat
+2025-06-16 12:56:58,146 WARNING werkzeug  * Debugger is active!
+2025-06-16 12:56:58,163 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 12:57:01,940 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:57:01] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 12:57:02,129 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:57:02] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 12:57:02,171 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:57:02] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 12:57:02,199 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:57:02] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 12:57:02,244 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:57:02] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 12:57:50,137 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:57:50] "GET / HTTP/1.1" 200 -
+2025-06-16 12:57:50,250 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:57:50] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-06-16 12:57:53,985 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:57:53] "GET /donate HTTP/1.1" 200 -
+2025-06-16 12:58:53,590 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 12:58:53] "GET / HTTP/1.1" 200 -
+2025-06-16 13:23:15,027 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 13:23:15] "GET / HTTP/1.1" 200 -
+2025-06-16 13:23:19,348 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 13:23:19] "[31m[1mGET /api/auth/register HTTP/1.1[0m" 405 -
+2025-06-16 13:23:30,124 INFO werkzeug 127.0.0.1 - - [16/Jun/2025 13:23:30] "GET /donate HTTP/1.1" 200 -
+2025-06-16 14:32:22,057 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 14:32:24,760 INFO werkzeug  * Restarting with stat
+2025-06-16 14:38:14,637 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.2.119:5050
+2025-06-16 14:38:14,639 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-16 14:38:14,643 INFO werkzeug  * Restarting with stat
+2025-06-16 14:38:24,134 WARNING werkzeug  * Debugger is active!
+2025-06-16 14:38:24,151 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 14:41:56,358 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 14:41:57,785 INFO werkzeug  * Restarting with stat
+2025-06-16 14:42:07,867 WARNING werkzeug  * Debugger is active!
+2025-06-16 14:42:07,888 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 14:44:17,530 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 14:44:18,783 INFO werkzeug  * Restarting with stat
+2025-06-16 14:44:32,157 WARNING werkzeug  * Debugger is active!
+2025-06-16 14:44:32,182 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:00:54,952 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:00:55,844 INFO werkzeug  * Restarting with stat
+2025-06-16 15:14:33,984 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.2.119:5050
+2025-06-16 15:14:33,985 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-16 15:14:33,989 INFO werkzeug  * Restarting with stat
+2025-06-16 15:14:41,791 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:14:41,804 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:14:51,753 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:14:51] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:14:52,025 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:14:52] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:14:52,041 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:14:52] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:14:52,173 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:14:52] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:27:16,705 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:27:17,536 INFO werkzeug  * Restarting with stat
+2025-06-16 15:27:54,336 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.2.119:5050
+2025-06-16 15:27:54,339 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-16 15:27:54,345 INFO werkzeug  * Restarting with stat
+2025-06-16 15:28:03,111 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:28:03,127 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:28:12,089 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:28:12] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:28:12,346 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:28:12] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:28:12,348 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:28:12] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:28:12,386 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:28:12] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:28:12,407 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:28:12] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:30:40,774 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:30:41,556 INFO werkzeug  * Restarting with stat
+2025-06-16 15:30:50,871 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:30:50,887 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:31:10,292 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:31:10,999 INFO werkzeug  * Restarting with stat
+2025-06-16 15:31:19,199 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:31:19,220 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:31:29,803 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:31:29] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:31:29,971 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:31:29] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:31:29,992 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:31:29] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:31:30,028 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:31:30] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:31:30,051 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:31:30] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:32:53,384 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:32:54,095 INFO werkzeug  * Restarting with stat
+2025-06-16 15:33:02,797 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:33:02,815 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:33:45,535 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:33:46,272 INFO werkzeug  * Restarting with stat
+2025-06-16 15:33:54,313 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:33:54,325 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:33:57,589 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:33:57] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:33:57,813 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:33:57] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:33:57,838 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:33:57] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:33:57,873 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:33:57] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:33:57,897 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:33:57] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:35:32,351 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:35:33,119 INFO werkzeug  * Restarting with stat
+2025-06-16 15:35:41,635 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:35:41,657 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:35:51,117 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:35:51] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:35:51,375 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:35:51] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:35:51,387 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:35:51] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:35:51,407 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:35:51] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:35:51,436 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:35:51] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:38:40,779 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:38:41,567 INFO werkzeug  * Restarting with stat
+2025-06-16 15:38:49,949 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:38:49,966 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:38:53,449 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:38:53] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:38:53,628 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:38:53] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:38:53,635 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:38:53] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:38:53,663 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:38:53] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:38:53,688 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:38:53] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:39:20,567 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:39:21,351 INFO werkzeug  * Restarting with stat
+2025-06-16 15:39:29,033 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:39:29,046 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:39:36,079 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:39:36] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:39:36,275 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:39:36] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:39:36,310 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:39:36] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:39:36,346 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:39:36] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:39:36,368 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:39:36] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:40:08,831 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:40:09,690 INFO werkzeug  * Restarting with stat
+2025-06-16 15:40:18,836 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:40:18,855 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:40:32,422 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:40:32] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:40:32,662 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:40:32] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:40:32,685 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:40:32] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:40:32,707 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:40:32] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:40:32,725 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:40:32] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:43:44,094 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:43:45,031 INFO werkzeug  * Restarting with stat
+2025-06-16 15:43:55,489 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:43:55,508 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:44:08,135 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:44:08] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:44:08,370 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:44:08] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:44:08,390 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:44:08] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:44:08,418 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:44:08] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:44:08,440 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:44:08] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:44:52,240 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:44:53,008 INFO werkzeug  * Restarting with stat
+2025-06-16 15:45:00,956 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:45:00,973 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:45:17,286 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:45:17] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:45:17,472 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:45:17] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:45:17,484 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:45:17] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:45:17,520 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:45:17] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:45:17,530 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:45:17] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:46:00,479 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:46:01,213 INFO werkzeug  * Restarting with stat
+2025-06-16 15:46:08,807 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:46:08,822 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:46:14,533 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:46:14] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:46:14,677 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:46:14] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:46:14,719 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:46:14] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:46:14,744 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:46:14] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:46:14,757 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:46:14] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:46:31,251 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:46:32,004 INFO werkzeug  * Restarting with stat
+2025-06-16 15:46:39,913 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:46:39,926 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:46:47,249 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:46:47] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:46:47,389 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:46:47] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:46:47,460 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:46:47] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:46:47,497 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:46:47] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:46:47,515 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:46:47] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:48:35,257 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-16 15:48:36,043 INFO werkzeug  * Restarting with stat
+2025-06-16 15:48:44,170 WARNING werkzeug  * Debugger is active!
+2025-06-16 15:48:44,182 INFO werkzeug  * Debugger PIN: 112-654-403
+2025-06-16 15:48:48,012 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:48:48] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-16 15:48:48,173 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:48:48] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-16 15:48:48,192 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:48:48] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-16 15:48:48,210 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:48:48] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-16 15:48:48,229 INFO werkzeug 192.168.2.119 - - [16/Jun/2025 15:48:48] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:01:55,928 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.2.120:5050
+2025-06-17 14:01:55,930 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-17 14:01:55,935 INFO werkzeug  * Restarting with stat
+2025-06-17 14:02:11,567 WARNING werkzeug  * Debugger is active!
+2025-06-17 14:02:11,612 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 14:02:20,416 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:02:20] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-17 14:02:20,746 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:02:20] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-06-17 14:02:20,782 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:02:20] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-06-17 14:02:20,950 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:02:20] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-06-17 14:02:20,977 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:02:20] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:08:46,177 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 14:08:46,969 INFO werkzeug  * Restarting with stat

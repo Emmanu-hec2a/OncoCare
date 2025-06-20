@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support AI Cancer Care - Donation Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .donation-card {
+            transition: all 0.3s ease;
+        }
+        .donation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .progress-bar {
+            transition: width 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <!-- Header -->
+    <header class="glass-effect">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">AI Cancer Care</h1>
+                        <p class="text-purple-200">Donation Portal</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="transparencyBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                        View Transparency
+                    </button>
+                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Impact Section -->
+        <section class="mb-12">
+            <div class="glass-effect rounded-2xl p-8 text-center">
+                <h2 class="text-4xl font-bold text-white mb-4">Empowering Cancer Care Through AI</h2>
+                <p class="text-xl text-purple-200 mb-8">Your donation helps us provide cutting-edge AI-powered cancer care solutions to patients worldwide</p>
+                
+                <!-- Progress Bar -->
+                <div class="bg-white bg-opacity-20 rounded-full h-4 mb-6">
+                    <div class="bg-gradient-to-r from-green-400 to-blue-500 h-4 rounded-full progress-bar" style="width: 68%"></div>
+                </div>
+                <div class="flex justify-between text-white font-semibold">
+                    <span>$68,420 raised</span>
+                    <span>Goal: $100,000</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Donation Form -->
+        <section class="grid lg:grid-cols-2 gap-8">
+            <!-- Donation Card -->
+            <div class="donation-card glass-effect rounded-2xl p-8">
+                <h3 class="text-2xl font-bold text-white mb-6">Make a Donation</h3>
+                
+                <form id="donationForm" class="space-y-6">
+                    <!-- Amount Selection -->
+                    <div>
+                        <label class="block text-purple-200 mb-3">Select Amount</label>
+                        <div class="grid grid-cols-3 gap-3 mb-4">
+                            <button type="button" class="amount-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-3 rounded-lg transition-all duration-300" data-amount="25">$25</button>
+                            <button type="button" class="amount-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-3 rounded-lg transition-all duration-300" data-amount="50">$50</button>
+                            <button type="button" class="amount-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-3 rounded-lg transition-all duration-300" data-amount="100">$100</button>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-white text-xl">$</span>
+                            <input type="number" id="customAmount" class="flex-1 bg-white bg-opacity-20 border border-purple-300 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter custom amount" min="1">
+                        </div>
+                    </div>
+
+                    <!-- Donation Type -->
+                    <div>
+                        <label class="block text-purple-200 mb-3">Donation Type</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="donationType" value="one-time" checked class="text-purple-500 focus:ring-purple-500">
+                                <span class="text-white">One-time</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="donationType" value="monthly" class="text-purple-500 focus:ring-purple-500">
+                                <span class="text-white">Monthly</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Donor Information -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <input type="text" id="firstName" required class="bg-white bg-opacity-20 border border-purple-300 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="First Name">
+                        <input type="text" id="lastName" required class="bg-white bg-opacity-20 border border-purple-300 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Last Name">
+                    </div>
+                    
+                    <input type="email" id="email" required class="w-full bg-white bg-opacity-20 border border-purple-300 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Email Address">
+
+                    <!-- Payment Method -->
+                    <div>
+                        <label class="block text-purple-200 mb-3">Payment Method</label>
+                        <div class="space-y-3">
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="paymentMethod" value="card" checked class="text-purple-500 focus:ring-purple-500">
+                                <span class="text-white">Credit/Debit Card</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="paymentMethod" value="paypal" class="text-purple-500 focus:ring-purple-500">
+                                <span class="text-white">PayPal</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="paymentMethod" value="crypto" class="text-purple-500 focus:ring-purple-500">
+                                <span class="text-white">Cryptocurrency</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Card Details (shown when card is selected) -->
+                    <div id="cardDetails" class="space-y-4">
+                        <input type="text" id="cardNumber" class="w-full bg-white bg-opacity-20 border border-purple-300 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Card Number">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="expiryDate" class="bg-white bg-opacity-20 border border-purple-300 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="MM/YY">
+                            <input type="text" id="cvv" class="bg-white bg-opacity-20 border border-purple-300 rounded-lg px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="CVV">
+                        </div>
+                    </div>
+
+                    <!-- Privacy Options -->
+                    <div class="space-y-3">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="anonymous" class="rounded text-purple-500 focus:ring-purple-500">
+                            <span class="text-purple-200">Make this donation anonymous</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="newsletter" class="rounded text-purple-500 focus:ring-purple-500">
+                            <span class="text-purple-200">Subscribe to our newsletter for updates</span>
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                        <span id="submitText">Donate Now</span>
+                        <div id="loadingSpinner" class="hidden inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white ml-2"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Impact Information -->
+            <div class="space-y-6">
+                <!-- Security Assurance -->
+                <div class="donation-card glass-effect rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Secure & Trusted
+                    </h3>
+                    <ul class="text-purple-200 space-y-2">
+                        <li>• 256-bit SSL encryption</li>
+                        <li>• PCI DSS compliant</li>
+                        <li>• Real-time fraud detection</li>
+                        <li>• 100% secure payment processing</li>
+                    </ul>
+                </div>
+
+                <!-- Impact Stats -->
+                <div class="donation-card glass-effect rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">Your Impact</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-purple-200">$25 provides</span>
+                            <span class="text-white font-semibold">1 AI diagnosis</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-purple-200">$50 provides</span>
+                            <span class="text-white font-semibold">Treatment planning</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-purple-200">$100 provides</span>
+                            <span class="text-white font-semibold">Full care package</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Donations -->
+                <div class="donation-card glass-effect rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">Recent Donations</h3>
+                    <div id="recentDonations" class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-purple-200">Anonymous</span>
+                            <span class="text-white font-semibold">$100</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-purple-200">John D.</span>
+                            <span class="text-white font-semibold">$50</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-purple-200">Sarah M.</span>
+                            <span class="text-white font-semibold">$25</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Transparency Modal -->
+    <div id="transparencyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-effect rounded-2xl p-8 max-w-2xl mx-4 max-h-96 overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-white">Transparency Report</h2>
+                <button id="closeModal" class="text-white hover:text-purple-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="text-purple-200 space-y-4">
+                <div>
+                    <h3 class="text-white font-semibold mb-2">Fund Allocation</h3>
+                    <ul class="space-y-1">
+                        <li>• 75% - AI Research & Development</li>
+                        <li>• 15% - Patient Care Programs</li>
+                        <li>• 7% - Technology Infrastructure</li>
+                        <li>• 3% - Administrative Costs</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white font-semibold mb-2">Security Measures</h3>
+                    <ul class="space-y-1">
+                        <li>• All transactions encrypted with AES-256</li>
+                        <li>• Multi-factor authentication required</li>
+                        <li>• Regular security audits by third parties</li>
+                        <li>• Compliance with HIPAA and GDPR</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white font-semibold mb-2">Impact Metrics</h3>
+                    <ul class="space-y-1">
+                        <li>• 2,450 patients helped this year</li>
+                        <li>• 89% diagnostic accuracy improvement</li>
+                        <li>• 45% reduction in treatment time</li>
+                        <li>• 12 partner hospitals worldwide</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-effect rounded-2xl p-8 max-w-md mx-4 text-center">
+            <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-4">Thank You!</h2>
+            <p class="text-purple-200 mb-6">Your donation has been processed successfully. You'll receive a confirmation email shortly.</p>
+            <button id="closeSuccessModal" class="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300">
+                Continue
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let donationState = {
+            amount: 0,
+            donationType: 'one-time',
+            paymentMethod: 'card',
+            donorInfo: {},
+            transactionId: null
+        };
+
+        // Encryption utility
+        function encryptData(data, key) {
+            return CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();
+        }
+
+        // Generate transaction ID
+        function generateTransactionId() {
+            return 'TXN_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // API simulation
+        async function processPayment(paymentData) {
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Simulate payment processing
+            const success = Math.random() > 0.1; // 90% success rate
+            
+            if (success) {
+                return {
+                    success: true,
+                    transactionId: generateTransactionId(),
+                    message: 'Payment processed successfully'
+                };
+            } else {
+                throw new Error('Payment processing failed. Please try again.');
+            }
+        }
+
+        // DOM elements
+        const donationForm = document.getElementById('donationForm');
+        const customAmountInput = document.getElementById('customAmount');
+        const amountButtons = document.querySelectorAll('.amount-btn');
+        const cardDetails = document.getElementById('cardDetails');
+        const paymentMethodInputs = document.querySelectorAll('input[name="paymentMethod"]');
+        const transparencyBtn = document.getElementById('transparencyBtn');
+        const transparencyModal = document.getElementById('transparencyModal');
+        const closeModal = document.getElementById('closeModal');
+        const successModal = document.getElementById('successModal');
+        const closeSuccessModal = document.getElementById('closeSuccessModal');
+        const submitText = document.getElementById('submitText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        // Event listeners
+        amountButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const amount = parseInt(btn.dataset.amount);
+                customAmountInput.value = amount;
+                donationState.amount = amount;
+                
+                // Visual feedback
+                amountButtons.forEach(b => b.classList.remove('bg-purple-500', 'bg-opacity-50'));
+                btn.classList.add('bg-purple-500', 'bg-opacity-50');
+            });
+        });
+
+        customAmountInput.addEventListener('input', (e) => {
+            donationState.amount = parseInt(e.target.value) || 0;
+            amountButtons.forEach(b => b.classList.remove('bg-purple-500', 'bg-opacity-50'));
+        });
+
+        paymentMethodInputs.forEach(input => {
+            input.addEventListener('change', (e) => {
+                donationState.paymentMethod = e.target.value;
+                cardDetails.style.display = e.target.value === 'card' ? 'block' : 'none';
+            });
+        });
+
+        transparencyBtn.addEventListener('click', () => {
+            transparencyModal.classList.remove('hidden');
+            transparencyModal.classList.add('flex');
+        });
+
+        closeModal.addEventListener('click', () => {
+            transparencyModal.classList.add('hidden');
+            transparencyModal.classList.remove('flex');
+        });
+
+        closeSuccessModal.addEventListener('click', () => {
+            successModal.classList.add('hidden');
+            successModal.classList.remove('flex');
+        });
+
+        // Form submission
+        donationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Validate form
+            if (!donationState.amount || donationState.amount < 1) {
+                alert('Please enter a valid donation amount');
+                return;
+            }
+
+            // Collect form data
+            const formData = new FormData(donationForm);
+            const donorInfo = {
+                firstName: formData.get('firstName') || document.getElementById('firstName').value,
+                lastName: formData.get('lastName') || document.getElementById('lastName').value,
+                email: formData.get('email') || document.getElementById('email').value,
+                anonymous: document.getElementById('anonymous').checked,
+                newsletter: document.getElementById('newsletter').checked
+            };
+
+            // Validate required fields
+            if (!donorInfo.firstName || !donorInfo.lastName || !donorInfo.email) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Show loading state
+            submitText.textContent = 'Processing...';
+            loadingSpinner.classList.remove('hidden');
+
+            try {
+                // Prepare payment data
+                const paymentData = {
+                    amount: donationState.amount,
+                    donationType: donationState.donationType,
+                    paymentMethod: donationState.paymentMethod,
+                    donorInfo: donorInfo,
+                    timestamp: new Date().toISOString()
+                };
+
+                // Encrypt sensitive data
+                const encryptedData = encryptData(paymentData, 'donation-encrypt-key-2024');
+
+                // Process payment
+                const result = await processPayment(encryptedData);
+
+                if (result.success) {
+                    // Update UI with success
+                    donationState.transactionId = result.transactionId;
+                    
+                    // Add to recent donations (if not anonymous)
+                    if (!donorInfo.anonymous) {
+                        addRecentDonation(donorInfo.firstName + ' ' + donorInfo.lastName.charAt(0) + '.', donationState.amount);
+                    } else {
+                        addRecentDonation('Anonymous', donationState.amount);
+                    }
+                    
+                    // Show success modal
+                    successModal.classList.remove('hidden');
+                    successModal.classList.add('flex');
+                    
+                    // Reset form
+                    donationForm.reset();
+                    donationState.amount = 0;
+                    customAmountInput.value = '';
+                    amountButtons.forEach(b => b.classList.remove('bg-purple-500', 'bg-opacity-50'));
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                // Reset loading state
+                submitText.textContent = 'Donate Now';
+                loadingSpinner.classList.add('hidden');
+            }
+        });
+
+        // Add recent donation to the list
+        function addRecentDonation(name, amount) {
+            const recentDonations = document.getElementById('recentDonations');
+            const newDonation = document.createElement('div');
+            newDonation.className = 'flex justify-between items-center';
+            newDonation.innerHTML = `
+                <span class="text-purple-200">${name}</span>
+                <span class="text-white font-semibold">$${amount}</span>
+            `;
+            recentDonations.insertBefore(newDonation, recentDonations.firstChild);
+            
+            // Keep only the last 5 donations
+            if (recentDonations.children.length > 5) {
+                recentDonations.removeChild(recentDonations.lastChild);
+            }
+        }
+
+        // Input validation and formatting
+        document.getElementById('cardNumber').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+
+        document.getElementById('expiryDate').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('cvv').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        });
+
+        // Initialize default payment method display
+        cardDetails.style.display = 'block';
+
+        // Auto-update progress bar on page load
+        setTimeout(() => {
+            const progressBar = document.querySelector('.progress-bar');
+            progressBar.style.width = '68%';
+        }, 500);
+    </script>
+</body>
+</html>

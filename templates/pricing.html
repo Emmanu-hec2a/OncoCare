@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Cancer Care - Pricing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .pricing-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(-30px);
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .pricing-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pricing-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.5s ease;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .pricing-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .pricing-card.animate {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(238, 90, 36, 0.3);
+        }
+
+        .plan-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-description {
+            color: #718096;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .price {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 2rem;
+        }
+
+        .currency {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .amount {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #2d3748;
+            margin: 0 0.2rem;
+        }
+
+        .period {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 2.5rem;
+        }
+
+        .features-list li {
+            padding: 0.75rem 0;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .features-list li:hover {
+            padding-left: 10px;
+            color: #667eea;
+        }
+
+        .check-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .check-icon::after {
+            content: '✓';
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-secondary {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            color: #2d3748;
+            border: 2px solid #e2e8f0;
+        }
+
+        .cta-secondary:hover {
+            background: linear-gradient(135deg, #edf2f7, #e2e8f0);
+            transform: translateY(-2px);
+        }
+
+        .enterprise-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            color: white;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease-out 1.5s forwards;
+        }
+
+        .enterprise-section h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .enterprise-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-button {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .contact-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Contact Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9) translateY(30px);
+            transition: all 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .close {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            color: #718096;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close:hover {
+            color: #2d3748;
+            background: rgba(113, 128, 150, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal-content h2 {
+            color: #2d3748;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1.2rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Loading state for submit button */
+        .submit-btn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Subscription Status Styles */
+        .subscription-status {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 999;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transform: translateX(300px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .subscription-status.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        #statusText {
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Status dot states */
+        .status-dot.checking {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.active {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            box-shadow: 0 0 10px rgba(72, 187, 120, 0.4);
+        }
+
+        .status-dot.inactive {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            box-shadow: 0 0 10px rgba(245, 101, 101, 0.4);
+        }
+
+        .status-dot.warning {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            box-shadow: 0 0 10px rgba(237, 137, 54, 0.4);
+        }
+
+        /* Animations */
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+        }
+
+        /* Responsive styles for modal */
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 1rem;
+                padding: 2rem;
+                border-radius: 16px;
+            }
+            
+            .modal-content h2 {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .close {
+                top: 1rem;
+                right: 1rem;
+                font-size: 1.5rem;
+                width: 35px;
+                height: 35px;
+            }
+            
+            .subscription-status {
+                top: 1rem;
+                right: 1rem;
+                padding: 0.75rem 1rem;
+                border-radius: 30px;
+            }
+            
+            #statusText {
+                font-size: 0.8rem;
+            }
+            
+            .status-dot {
+                width: 10px;
+                height: 10px;
+            }
+        }
+
+        /* Success message styles */
+        .success-message {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideDown 0.5s ease;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        .success-message::before {
+            content: '✓';
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideDown 0.5s ease;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        .error-message::before {
+            content: '⚠';
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .card-1 { animation: slideInLeft 0.8s ease-out 0.5s forwards; }
+        .card-2 { animation: fadeInUp 0.8s ease-out 0.7s forwards; }
+        .card-3 { animation: slideInRight 0.8s ease-out 0.9s forwards; }
+
+        @media (max-width: 768px) {
+            .pricing-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .pricing-card {
+                padding: 2rem;
+            }
+            
+            .amount {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pricing-container">
+        <div class="pricing-header">
+            <h1>Choose Your Care Plan</h1>
+            <p>Connect patients, nurses, and oncologists with AI-driven cancer care solutions. Select the plan that best fits your collaborative healthcare needs and start transforming patient outcomes together.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Essential Plan -->
+            <div class="pricing-card card-1">
+                <div class="plan-name">Essential</div>
+                <div class="plan-description">Perfect for small clinics connecting patients with their care teams</div>
+                <div class="price">
+                    <span class="currency">$</span>
+                    <span class="amount">299</span>
+                    <span class="period">/month</span>
+                </div>
+                <ul class="features-list">
+                    <li><span class="check-icon"></span>Patient-provider communication portal</li>
+                    <li><span class="check-icon"></span>Nurse care coordination tools</li>
+                    <li><span class="check-icon"></span>Oncologist diagnostic assistance</li>
+                    <li><span class="check-icon"></span>Basic treatment recommendations</li>
+                    <li><span class="check-icon"></span>Secure messaging between care team</li>
+                    <li><span class="check-icon"></span>Up to 3 providers per patient</li>
+                    <li><span class="check-icon"></span>Up to 100 patient records</li>
+                    <li><span class="check-icon"></span>Email support</li>
+                    <li><span class="check-icon"></span>HIPAA compliant platform</li>
+                </ul>
+                <button class="cta-button cta-secondary">Start Free Trial</button>
+            </div>
+
+            <!-- Professional Plan -->
+            <div class="pricing-card card-2">
+                <div class="popular-badge">Most Popular</div>
+                <div class="plan-name">Professional</div>
+                <div class="plan-description">Comprehensive collaboration platform for cancer centers and multi-disciplinary teams</div>
+                <div class="price">
+                    <span class="currency">$</span>
+                    <span class="amount">699</span>
+                    <span class="period">/month</span>
+                </div>
+                <ul class="features-list">
+                    <li><span class="check-icon"></span>Advanced patient-provider dashboard</li>
+                    <li><span class="check-icon"></span>Nurse workflow management system</li>
+                    <li><span class="check-icon"></span>Oncologist AI-powered diagnostics</li>
+                    <li><span class="check-icon"></span>Multi-disciplinary care coordination</li>
+                    <li><span class="check-icon"></span>Patient education & engagement tools</li>
+                    <li><span class="check-icon"></span>Real-time care team notifications</li>
+                    <li><span class="check-icon"></span>Up to 10 providers per patient</li>
+                    <li><span class="check-icon"></span>Up to 1,000 patient records</li>
+                    <li><span class="check-icon"></span>24/7 priority support</li>
+                    <li><span class="check-icon"></span>Integration with EMR systems</li>
+                </ul>
+                <button class="cta-button cta-primary">Get Started Now</button>
+            </div>
+
+            <!-- Advanced Plan -->
+            <div class="pricing-card card-3">
+                <div class="plan-name">Advanced</div>
+                <div class="plan-description">Enterprise-grade platform connecting entire healthcare networks with comprehensive care coordination</div>
+                <div class="price">
+                    <span class="currency">$</span>
+                    <span class="amount">1,299</span>
+                    <span class="period">/month</span>
+                </div>
+                <ul class="features-list">
+                    <li><span class="check-icon"></span>Complete patient journey management</li>
+                    <li><span class="check-icon"></span>Advanced nurse scheduling & alerts</li>
+                    <li><span class="check-icon"></span>Oncologist research collaboration</li>
+                    <li><span class="check-icon"></span>AI-driven care pathway optimization</li>
+                    <li><span class="check-icon"></span>Patient family engagement portal</li>
+                    <li><span class="check-icon"></span>Cross-facility care coordination</li>
+                    <li><span class="check-icon"></span>Unlimited providers per patient</li>
+                    <li><span class="check-icon"></span>Unlimited patient records</li>
+                    <li><span class="check-icon"></span>Dedicated account manager</li>
+                    <li><span class="check-icon"></span>Custom API integrations</li>
+                    <li><span class="check-icon"></span>White-label solutions</li>
+                </ul>
+                <button class="cta-button cta-secondary">Contact Sales</button>
+            </div>
+        </div>
+
+        <!-- Contact Modal -->
+        <div id="contactModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Contact Enterprise Team</h2>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="organization">Organization *</label>
+                        <input type="text" id="organization" name="organization" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" rows="4" required placeholder="Tell us about your organization's needs..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Subscription Status Indicator -->
+        <div id="subscriptionStatus" class="subscription-status" style="display: none;">
+            <div class="status-indicator">
+                <span id="statusText">Checking subscription...</span>
+                <div id="statusDot" class="status-dot"></div>
+            </div>
+        </div>
+
+
+        <div class="enterprise-section">
+            <h3>Enterprise Healthcare Networks</h3>
+            <p>Connect entire healthcare systems with seamless patient, nurse, and oncologist collaboration. Our enterprise team will create a custom platform that unifies your care teams, streamlines communication, and enhances patient outcomes across multiple facilities and specialties.</p>
+            <button class="contact-button">Schedule Consultation</button>
+        </div>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.pricing-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add click handlers for buttons
+        document.querySelectorAll('.cta-button, .contact-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const planName = this.closest('.pricing-card')?.querySelector('.plan-name')?.textContent || 'Enterprise';
+                console.log(`Selected plan: ${planName}`);
+                
+                // Add a subtle animation feedback
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+                
+                // Here you would typically redirect to signup/contact form
+                alert(`Thank you for your interest in the ${planName} plan! Redirecting to signup...`);
+            });
+        });
+
+        // Add hover effects for feature list items
+        document.querySelectorAll('.features-list li').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(5px)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+
+         // Configuration
+        const API_BASE_URL = '/api';
+        const STRIPE_PUBLISHABLE_KEY = 'pk_test_your_stripe_key'; // Replace with your actual key
+        const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+
+        // Utility functions
+        function getAuthToken() {
+            return localStorage.getItem('authToken');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Subscription Status Management
+        async function checkSubscriptionStatus() {
+            const token = getAuthToken();
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/subscription/status`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    updateSubscriptionUI(data.subscription);
+                } else if (response.status === 404) {
+                    updateSubscriptionUI(null);
+                }
+            } catch (error) {
+                console.error('Error checking subscription status:', error);
+            }
+        }
+
+        function updateSubscriptionUI(subscription) {
+            const statusElement = document.getElementById('subscriptionStatus');
+            const statusText = document.getElementById('statusText');
+            const statusDot = document.getElementById('statusDot');
+
+            if (!subscription) {
+                statusElement.style.display = 'none';
+                return;
+            }
+
+            statusElement.style.display = 'block';
+            
+            switch (subscription.status) {
+                case 'ACTIVE':
+                    statusText.textContent = `${subscription.plan} Plan - Active`;
+                    statusDot.className = 'status-dot active';
+                    break;
+                case 'INACTIVE':
+                    statusText.textContent = `${subscription.plan} Plan - Payment Required`;
+                    statusDot.className = 'status-dot inactive';
+                    break;
+                case 'CANCELLED':
+                    statusText.textContent = `${subscription.plan} Plan - Cancelled`;
+                    statusDot.className = 'status-dot cancelled';
+                    break;
+                default:
+                    statusText.textContent = `${subscription.plan} Plan - ${subscription.status}`;
+                    statusDot.className = 'status-dot';
+            }
+        }
+
+        // Stripe Integration
+        async function handleSubscription(planName, price) {
+            const token = getAuthToken();
+            if (!token) {
+                alert('Please log in to subscribe');
+                return;
+            }
+
+            try {
+                // Create checkout session
+                const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        plan: planName,
+                        price: price
+                    })
+                });
+
+                if (response.ok) {
+                    const { sessionId } = await response.json();
+                    const { error } = await stripe.redirectToCheckout({ sessionId });
+                    
+                    if (error) {
+                        showNotification('Payment failed. Please try again.', 'error');
+                    }
+                } else {
+                    showNotification('Failed to create checkout session', 'error');
+                }
+            } catch (error) {
+                console.error('Subscription error:', error);
+                showNotification('An error occurred. Please try again.', 'error');
+            }
+        }
+
+        // Contact Form Management
+        function showContactModal() {
+            const modal = document.getElementById('contactModal');
+            modal.style.display = 'block';
+        }
+
+        function hideContactModal() {
+            const modal = document.getElementById('contactModal');
+            modal.style.display = 'none';
+            document.getElementById('contactForm').reset();
+        }
+
+        async function submitContactForm(formData) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/contact`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showNotification(data.message, 'success');
+                    hideContactModal();
+                } else {
+                    showNotification(data.message || 'Failed to submit form', 'error');
+                }
+            } catch (error) {
+                console.error('Contact form error:', error);
+                showNotification('Failed to submit form. Please try again.', 'error');
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check subscription status on load
+            checkSubscriptionStatus();
+
+            // Intersection Observer for scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.pricing-card').forEach(card => {
+                observer.observe(card);
+            });
+
+            // Plan selection handlers
+            document.querySelectorAll('.cta-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.pricing-card');
+                    const planName = card.querySelector('.plan-name').textContent;
+                    const amount = card.querySelector('.amount').textContent;
+                    
+                    // Add animation feedback
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+
+                    if (this.textContent.includes('Contact Sales')) {
+                        showContactModal();
+                    } else {
+                        handleSubscription(planName, parseInt(amount));
+                    }
+                });
+            });
+
+            // Enterprise contact button
+            document.querySelector('.contact-button').addEventListener('click', showContactModal);
+
+            // Modal close handlers
+            document.querySelector('.close').addEventListener('click', hideContactModal);
+            
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('contactModal');
+                if (event.target === modal) {
+                    hideContactModal();
+                }
+            });
+
+            // Contact form submission
+            document.getElementById('contactForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    organization: document.getElementById('organization').value,
+                    phone: document.getElementById('phone').value,
+                    message: document.getElementById('message').value
+                };
+
+                submitContactForm(formData);
+            });
+
+            // Feature list hover effects
+            document.querySelectorAll('.features-list li').forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+
+        // Handle URL parameters (for Stripe redirects)
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        const success = urlParams.get('success');
+        const cancelled = urlParams.get('cancelled');
+
+        if (success === 'true') {
+            showNotification('Subscription activated successfully!', 'success');
+            checkSubscriptionStatus(); // Refresh status
+        } else if (cancelled === 'true') {
+            showNotification('Subscription cancelled', 'info');
+        }
+
+    </script>
+</body>
+</html>

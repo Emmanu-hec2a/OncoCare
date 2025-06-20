@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Oncologist Dashboard - AI Cancer Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #2563eb;
+            --primary-green: #059669;
+            --light-blue: #dbeafe;
+            --light-green: #d1fae5;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --red-500: #ef4444;
+            --orange-500: #f97316;
+            --text-light: #6b7280;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border-right: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 2rem;
+        }
+
+        .logo h2 {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-connected {
+            background: var(--light-green);
+            color: var(--success);
+        }
+
+        .status-disconnected {
+            background: #fef2f2;
+            color: var(--danger);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .user-info {
+            background: var(--light-blue);
+            margin: 0 1rem 2rem 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 0.5rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 1rem;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: var(--gray-800);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-3px); }
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .notification-panel {
+            position: relative;
+        }
+
+        .notification-bell {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification-dropdown {
+            position: fixed;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            width: 350px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 10000;
+            display: none;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            transition: background 0.3s ease;
+        }
+
+        .notification-item:hover {
+            background: var(--gray-100);
+        }
+
+        .notification-item.unread {
+            background: #f0f9ff;
+            border-left: 3px solid var(--primary-blue);
+        }
+
+        .dashboard-content {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--gray-200);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .live-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .update-timestamp {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            position: absolute;
+            bottom: 0.5rem;
+            right: 1rem;
+        }
+
+        .icon-blue { background: var(--light-blue); }
+        .icon-green { background: var(--light-green); }
+        .icon-orange { background: #fed7aa; }
+        .icon-red { background: #fecaca; }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .ai-insight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-insight::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .ai-insight-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .patient-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .patient-item:hover {
+            background: var(--gray-100);
+            transform: translateX(5px);
+        }
+
+        .patient-item.updated {
+            animation: highlight 2s ease-out;
+        }
+
+        @keyframes highlight {
+            0% { background: #fef3c7; }
+            100% { background: transparent; }
+        }
+
+        .patient-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .patient-info h4 {
+            margin-bottom: 0.25rem;
+            color: var(--gray-800);
+        }
+
+        .patient-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), #3b82f6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        .text-success { color: var(--primary-green); }
+        .text-warning { color: var(--orange-500); }
+        .text-danger { color: var(--red-500); }
+
+        .appointment-alert {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .real-time-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .stat-change {
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+        }
+
+        .stat-change.positive { color: #86efac; }
+        .stat-change.negative { color: #fca5a5; }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="logo">
+                <h2>🏥 AI Cancer Care</h2>
+                <p style="color: var(--text-light); font-size: 0.9rem;">Real-Time Portal</p>
+            </div>
+            
+            <div class="connection-status" id="connectionStatus">
+                <div class="status-indicator" id="statusIndicator"></div>
+                <span id="statusText">Connecting...</span>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-avatar">Dr</div>
+                <h4 id="userName">Dr. Smith</h4>
+                <p style="color: var(--text-light); font-size: 0.9rem;">Senior Oncologist</p>
+            </div>
+            
+            <ul class="sidebar-menu" id="sidebarMenu">
+                <li>
+                    <a href="#" onclick="navigateTo('overview')" class="active">📊 Dashboard</a>
+                    <div class="notification-badge" id="overviewBadge" style="display: none;">0</div>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('patients')">👥 Patient Overview</a>
+                    <div class="notification-badge" id="patientsBadge" style="display: none;">0</div>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('treatments')">🔬 Treatment Plans</a>
+                    <div class="notification-badge" id="treatmentsBadge" style="display: none;">0</div>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('appointments')">📅 Appointments</a>
+                    <div class="notification-badge" id="appointmentsBadge" style="display: none;">0</div>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateTo('ai-insights')">🤖 AI Insights</a>
+                    <div class="notification-badge" id="aiBadge" style="display: none;">0</div>
+                </li>
+                <li>
+                    <a href="{{url_for('clinical')}}">Clinical Decision Support</a>
+                    <div class="notification-badge" id="aiBadge" style="display: none;">0</div>
+                </li>
+                <li><a href="{{url_for('logout')}}" onclick="logout()">🚪 Logout</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h1 id="pageTitle">Real-Time Dashboard</h1>
+                <div class="header-actions">
+                    <div class="notification-panel">
+                        <button class="notification-bell" onclick="toggleNotifications()">
+                            🔔
+                            <div class="notification-badge" id="notificationCount" style="display: none;">0</div>
+                        </button>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div id="notificationsList"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="showProfile()">Profile</button>
+                </div>
+            </div>
+            
+            <div class="dashboard-content" id="dashboardContent">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Real-time WebSocket simulation
+        class RealTimeConnection {
+            constructor() {
+                this.connected = false;
+                this.listeners = {};
+                this.simulateConnection();
+            }
+
+            simulateConnection() {
+                // Simulate WebSocket connection
+                setTimeout(() => {
+                    this.connected = true;
+                    this.updateConnectionStatus();
+                    this.startDataSimulation();
+                }, 2000);
+            }
+
+            updateConnectionStatus() {
+                const statusEl = document.getElementById('connectionStatus');
+                const statusText = document.getElementById('statusText');
+                const statusIndicator = document.getElementById('statusIndicator');
+                
+                if (this.connected) {
+                    statusEl.className = 'connection-status status-connected';
+                    statusText.textContent = 'Live Connected';
+                    statusIndicator.style.background = 'var(--success)';
+                } else {
+                    statusEl.className = 'connection-status status-disconnected';
+                    statusText.textContent = 'Disconnected';
+                    statusIndicator.style.background = 'var(--danger)';
+                }
+            }
+
+            on(event, callback) {
+                if (!this.listeners[event]) {
+                    this.listeners[event] = [];
+                }
+                this.listeners[event].push(callback);
+            }
+
+            emit(event, data) {
+                if (this.listeners[event]) {
+                    this.listeners[event].forEach(callback => callback(data));
+                }
+            }
+
+            startDataSimulation() {
+                // Simulate real-time patient updates
+                setInterval(() => {
+                    this.simulatePatientUpdate();
+                }, 5000);
+
+                // Simulate appointment notifications
+                setInterval(() => {
+                    this.simulateAppointmentNotification();
+                }, 15000);
+
+                // Simulate AI insights
+                setInterval(() => {
+                    this.simulateAIInsight();
+                }, 20000);
+
+                // Simulate treatment updates
+                setInterval(() => {
+                    this.simulateTreatmentUpdate();
+                }, 10000);
+            }
+
+            simulatePatientUpdate() {
+                const updates = [
+                    { type: 'vitals', patient: 'Sarah Johnson', message: 'New vital signs recorded', priority: 'normal' },
+                    { type: 'lab_results', patient: 'Michael Chen', message: 'Lab results available', priority: 'high' },
+                    { type: 'medication', patient: 'Emily Rodriguez', message: 'Medication adherence updated', priority: 'normal' },
+                    { type: 'symptoms', patient: 'David Thompson', message: 'New symptoms reported', priority: 'urgent' }
+                ];
+                
+                const update = updates[Math.floor(Math.random() * updates.length)];
+                this.emit('patientUpdate', update);
+            }
+
+            simulateAppointmentNotification() {
+                const appointments = [
+                    { patient: 'Sarah Johnson', time: 'in 30 minutes', type: 'Consultation' },
+                    { patient: 'Michael Chen', time: 'in 1 hour', type: 'Follow-up' },
+                    { patient: 'Lisa Wang', time: 'in 2 hours', type: 'Treatment' }
+                ];
+                
+                const appointment = appointments[Math.floor(Math.random() * appointments.length)];
+                this.emit('appointmentScheduled', appointment);
+            }
+
+            simulateAIInsight() {
+                const insights = [
+                    'New biomarker correlation detected for lung cancer patients',
+                    'Treatment response prediction updated for 3 patients',
+                    'Risk stratification model improved with new data',
+                    'Drug interaction alert resolved for Patient #4'
+                ];
+                
+                const insight = insights[Math.floor(Math.random() * insights.length)];
+                this.emit('aiInsight', { message: insight, timestamp: new Date() });
+            }
+
+            simulateTreatmentUpdate() {
+                const updates = [
+                    { patient: 'Sarah Johnson', treatment: 'Chemotherapy', cycle: 5, status: 'completed' },
+                    { patient: 'Michael Chen', treatment: 'Immunotherapy', cycle: 7, status: 'in_progress' },
+                    { patient: 'Emily Rodriguez', treatment: 'Surgery', phase: 'recovery', status: 'monitoring' }
+                ];
+                
+                const update = updates[Math.floor(Math.random() * updates.length)];
+                this.emit('treatmentUpdate', update);
+            }
+        }
+
+        // Initialize real-time connection
+        const rtConnection = new RealTimeConnection();
+        let currentView = 'overview';
+        let notifications = [];
+        let stats = {
+            patients: 24,
+            appointments: 8,
+            treatments: 12,
+            alerts: 3
+        };
+
+        // Set up event listeners
+        rtConnection.on('patientUpdate', handlePatientUpdate);
+        rtConnection.on('appointmentScheduled', handleAppointmentScheduled);
+        rtConnection.on('aiInsight', handleAIInsight);
+        rtConnection.on('treatmentUpdate', handleTreatmentUpdate);
+
+        function handlePatientUpdate(update) {
+            addNotification({
+                type: 'patient',
+                title: `Patient Update: ${update.patient}`,
+                message: update.message,
+                priority: update.priority,
+                timestamp: new Date()
+            });
+            
+            updateBadge('patientsBadge');
+            highlightPatientInList(update.patient);
+        }
+
+        function handleAppointmentScheduled(appointment) {
+            addNotification({
+                type: 'appointment',
+                title: 'New Appointment',
+                message: `${appointment.patient} - ${appointment.type} ${appointment.time}`,
+                priority: 'high',
+                timestamp: new Date()
+            });
+            
+            updateBadge('appointmentsBadge');
+            showAppointmentAlert(appointment);
+        }
+
+        function handleAIInsight(insight) {
+            addNotification({
+                type: 'ai',
+                title: 'AI Insight',
+                message: insight.message,
+                priority: 'normal',
+                timestamp: insight.timestamp
+            });
+            
+            updateBadge('aiBadge');
+            updateAIInsights(insight);
+        }
+
+        function handleTreatmentUpdate(update) {
+            addNotification({
+                type: 'treatment',
+                title: `Treatment Update: ${update.patient}`,
+                message: `${update.treatment} - ${update.status}`,
+                priority: 'normal',
+                timestamp: new Date()
+            });
+            
+            updateBadge('treatmentsBadge');
+            updateTreatmentProgress(update);
+        }
+
+        function addNotification(notification) {
+            notifications.unshift(notification);
+            updateNotificationCount();
+            updateNotificationsList();
+            
+            // Auto-remove after 5 minutes
+            setTimeout(() => {
+                const index = notifications.indexOf(notification);
+                if (index > -1) {
+                    notifications.splice(index, 1);
+                    updateNotificationCount();
+                    updateNotificationsList();
+                }
+            }, 300000);
+        }
+
+        function updateNotificationCount() {
+            const count = notifications.length;
+            const badge = document.getElementById('notificationCount');
+            
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function updateBadge(badgeId) {
+            const badge = document.getElementById(badgeId);
+            const currentCount = parseInt(badge.textContent) || 0;
+            badge.textContent = currentCount + 1;
+            badge.style.display = 'flex';
+        }
+
+        function updateNotificationsList() {
+            const list = document.getElementById('notificationsList');
+            list.innerHTML = notifications.map(notification => `
+                <div class="notification-item ${notification.read ? '' : 'unread'}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <strong>${notification.title}</strong>
+                            <p style="margin: 0.25rem 0; color: var(--text-light);">${notification.message}</p>
+                            <small style="color: var(--text-light);">${formatTime(notification.timestamp)}</small>
+                        </div>
+                        <span class="text-${getPriorityColor(notification.priority)}" style="font-size: 0.8rem;">
+                            ${notification.priority.toUpperCase()}
+                        </span>
+                    </div>
+                </div>
+            `).join('') || '<div class="notification-item">No new notifications</div>';
+        }
+
+        function getPriorityColor(priority) {
+            switch(priority) {
+                case 'urgent': return 'danger';
+                case 'high': return 'warning';
+                case 'normal': return 'success';
+                default: return 'success';
+            }
+        }
+
+        function formatTime(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
+            return date.toLocaleDateString();
+        }
+
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function showAppointmentAlert(appointment) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'appointment-alert';
+            alertDiv.innerHTML = `
+                <div>
+                    <strong>Upcoming Appointment</strong>
+                    <p>${appointment.patient} - ${appointment.type} ${appointment.time}</p>
+                </div>
+                <button class="btn btn-secondary" onclick="this.parentElement.remove()" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">Dismiss</button>
+            `;
+            
+            const content = document.getElementById('dashboardContent');
+            content.insertBefore(alertDiv, content.firstChild);
+            
+            // Auto-remove after 10 seconds
+            setTimeout(() => {
+                if (alertDiv.parentElement) {
+                    alertDiv.remove();
+                }
+            }, 10000);
+        }
+
+        function navigateTo(view) {
+            currentView = view;
+            updateActiveMenu();
+            updatePageTitle(view);
+            clearBadge(view + 'Badge');
+            
+            switch(view) {
+                case 'overview':
+                    showOverview();
+                    break;
+                case 'patients':
+                    showPatients();
+                    break;
+                case 'treatments':
+                    showTreatments();
+                    break;
+                case 'appointments':
+                    showAppointments();
+                    break;
+                case 'ai-insights':
+                    showAIInsights();
+                    break;
+                default:
+                    showOverview();
+            }
+        }
+
+        function clearBadge(badgeId) {
+            const badge = document.getElementById(badgeId);
+            if (badge) {
+                badge.style.display = 'none';
+                badge.textContent = '0';
+            }
+        }
+
+        function updateActiveMenu() {
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            document.querySelector(`[onclick="navigateTo('${currentView}')"]`).classList.add('active');
+        }
+
+        function updatePageTitle(view) {
+            const titles = {
+                'overview': 'Real-Time Dashboard',
+                'patients': 'Patient Overview',
+                'treatments': 'Treatment Plans',
+                'appointments': 'Appointments',
+                'ai-insights': 'AI Insights'
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[view] || 'Dashboard';
+        }
+
+        function showOverview() {
+            const content = document.getElementById('dashboardContent');
+            content.innerHTML = `
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="live-indicator"></div>
+                        <div class="card-header">
+                            <h3 class="card-title">Active Patients</h3>
+                            <div class="card-icon icon-blue">👥</div>
+                        </div>
+                        <div class="stat-value">${stats.patients}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                        <div class="update-timestamp">Last updated: ${new Date().toLocaleTimeString()}</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="live-indicator"></div>
+                        <div class="card-header">
+                            <h3 class="card-title">Today's Appointments</h3>
+                            <div class="card-icon icon-green">📅</div>
+                        </div>
+                        <div class="stat-value">${stats.appointments}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%"></div>
+                        </div>
+                        <div class="update-timestamp">Last updated: ${new Date().toLocaleTimeString()}</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="live-indicator"></div>
+                        <div class="card-header">
+                            <h3 class="card-title">Active Treatments</h3>
+                            <div class="card-icon icon-orange">🔬</div>
+                        </div>
+                        <div class="stat-value">${stats.treatments}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                        <div class="update-timestamp">Last updated: ${new Date().toLocaleTimeString()}</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="live-indicator"></div>
+                        <div class="card-header">
+                            <h3 class="card-title">Critical Alerts</h3>
+                            <div class="card-icon icon-red">⚠️</div>
+                        </div>
+                        <div class="stat-value text-danger">${stats.alerts}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 25%; background: var(--danger)"></div>
+                        </div>
+                        <div class="update-timestamp">Last updated: ${new Date().toLocaleTimeString()}</div>
+                    </div>
+                </div>
+
+                <div class="ai-insight">
+                    <div class="ai-insight-header">
+                        <div class="ai-badge">AI POWERED</div>
+                        <h3>Real-Time Insights</h3>
+                    </div>
+                    <div class="real-time-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">92%</div>
+                            <div class="stat-label">Treatment Adherence</div>
+                            <div class="stat-change positive">+2.1%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">15</div>
+                            <div class="stat-label">Risk Predictions</div>
+                            <div class="stat-change positive">+3</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">7min</div>
+                            <div class="stat-label">Avg Response Time</div>
+                            <div class="stat-change negative">-1.2min</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">98.5%</div>
+                            <div class="stat-label">System Uptime</div>
+                            <div class="stat-change positive">+0.2%</div>
+                        </div>
+                    </div>
+                    <p>AI system is actively monitoring patient data and providing real-time recommendations for optimal care delivery.</p>
+                </div>
+            `;
+        }
+
+        function showPatients() {
+            const patients = [
+                { name: 'Sarah Johnson', age: 45, condition: 'Breast Cancer', status: 'stable', lastUpdate: '2 hours ago' },
+                { name: 'Michael Chen', age: 62, condition: 'Lung Cancer', status: 'improving', lastUpdate: '1 hour ago' },
+                { name: 'Emily Rodriguez', age: 38, condition: 'Cervical Cancer', status: 'critical', lastUpdate: '30 minutes ago' },
+                { name: 'David Thompson', age: 55, condition: 'Prostate Cancer', status: 'stable', lastUpdate: '45 minutes ago' },
+                { name: 'Lisa Wang', age: 49, condition: 'Ovarian Cancer', status: 'improving', lastUpdate: '3 hours ago' }
+            ];
+
+            const content = document.getElementById('dashboardContent');
+            content.innerHTML = `
+                <div class="dashboard-grid">
+                    ${patients.map(patient => `
+                        <div class="card">
+                            <div class="live-indicator"></div>
+                            <div class="patient-item">
+                                <div class="patient-avatar">${patient.name.split(' ').map(n => n[0]).join('')}</div>
+                                <div class="patient-info">
+                                    <h4>${patient.name}</h4>
+                                    <p>Age: ${patient.age} | ${patient.condition}</p>
+                                    <p class="text-${getStatusColor(patient.status)}">Status: ${patient.status.toUpperCase()}</p>
+                                    <p>Last update: ${patient.lastUpdate}</p>
+                                </div>
+                            </div>
+                            <div style="margin-top: 1rem;">
+                                <button class="btn btn-primary" style="margin-right: 0.5rem;">View Details</button>
+                                <button class="btn btn-secondary">Send Message</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function showTreatments() {
+            const treatments = [
+                { patient: 'Sarah Johnson', treatment: 'Chemotherapy', cycle: '5/6', progress: 83, nextSession: 'Tomorrow' },
+                { patient: 'Michael Chen', treatment: 'Immunotherapy', cycle: '7/8', progress: 87, nextSession: 'Friday' },
+                { patient: 'Emily Rodriguez', treatment: 'Radiation', cycle: '12/15', progress: 80, nextSession: 'Today' },
+                { patient: 'David Thompson', treatment: 'Hormone Therapy', cycle: 'Ongoing', progress: 65, nextSession: 'Next Week' }
+            ];
+
+            const content = document.getElementById('dashboardContent');
+            content.innerHTML = `
+                <div class="dashboard-grid">
+                    ${treatments.map(treatment => `
+                        <div class="card">
+                            <div class="live-indicator"></div>
+                            <div class="card-header">
+                                <h3 class="card-title">${treatment.patient}</h3>
+                                <div class="card-icon icon-blue">🔬</div>
+                            </div>
+                            <div style="margin: 1rem 0;">
+                                <p><strong>Treatment:</strong> ${treatment.treatment}</p>
+                                <p><strong>Cycle:</strong> ${treatment.cycle}</p>
+                                <p><strong>Next Session:</strong> ${treatment.nextSession}</p>
+                            </div>
+                            <div class="progress-bar" style="margin: 1rem 0;">
+                                <div class="progress-fill" style="width: ${treatment.progress}%"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>${treatment.progress}% Complete</span>
+                                <button class="btn btn-primary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Update</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function showAppointments() {
+            const appointments = [
+                { time: '09:00', patient: 'Sarah Johnson', type: 'Consultation', status: 'confirmed' },
+                { time: '10:30', patient: 'Michael Chen', type: 'Follow-up', status: 'confirmed' },
+                { time: '14:00', patient: 'Emily Rodriguez', type: 'Treatment', status: 'pending' },
+                { time: '15:30', patient: 'David Thompson', type: 'Lab Review', status: 'confirmed' },
+                { time: '16:45', patient: 'Lisa Wang', type: 'Consultation', status: 'rescheduled' }
+            ];
+
+            const content = document.getElementById('dashboardContent');
+            content.innerHTML = `
+                <div class="dashboard-grid">
+                    ${appointments.map(appointment => `
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">${appointment.time}</h3>
+                                <div class="card-icon icon-green">📅</div>
+                            </div>
+                            <div style="margin: 1rem 0;">
+                                <p><strong>Patient:</strong> ${appointment.patient}</p>
+                                <p><strong>Type:</strong> ${appointment.type}</p>
+                                <p class="text-${getStatusColor(appointment.status)}"><strong>Status:</strong> ${appointment.status.toUpperCase()}</p>
+                            </div>
+                            <div style="margin-top: 1rem;">
+                                <button class="btn btn-primary" style="margin-right: 0.5rem; font-size: 0.8rem; padding: 0.4rem 0.8rem;">Join Call</button>
+                                <button class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Reschedule</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function showAIInsights() {
+            const insights = [
+                { title: 'Treatment Response Prediction', accuracy: '94%', patients: 12, status: 'active' },
+                { title: 'Drug Interaction Detection', accuracy: '98%', patients: 8, status: 'monitoring' },
+                { title: 'Risk Stratification Model', accuracy: '91%', patients: 15, status: 'active' },
+                { title: 'Biomarker Analysis', accuracy: '89%', patients: 6, status: 'processing' }
+            ];
+
+            const content = document.getElementById('dashboardContent');
+            content.innerHTML = `
+                <div class="ai-insight">
+                    <div class="ai-insight-header">
+                        <div class="ai-badge">AI INSIGHTS</div>
+                        <h3>Machine Learning Models</h3>
+                    </div>
+                    <p>Advanced AI algorithms are continuously analyzing patient data to provide predictive insights and treatment recommendations.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    ${insights.map(insight => `
+                        <div class="card">
+                            <div class="live-indicator"></div>
+                            <div class="card-header">
+                                <h3 class="card-title">${insight.title}</h3>
+                                <div class="card-icon icon-blue">🤖</div>
+                            </div>
+                            <div style="margin: 1rem 0;">
+                                <p><strong>Accuracy:</strong> ${insight.accuracy}</p>
+                                <p><strong>Patients Analyzed:</strong> ${insight.patients}</p>
+                                <p class="text-success"><strong>Status:</strong> ${insight.status.toUpperCase()}</p>
+                            </div>
+                            <div class="progress-bar" style="margin: 1rem 0;">
+                                <div class="progress-fill" style="width: ${insight.accuracy}"></div>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%; font-size: 0.8rem; padding: 0.4rem;">View Details</button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function getStatusColor(status) {
+            switch(status.toLowerCase()) {
+                case 'critical': return 'danger';
+                case 'stable': return 'success';
+                case 'improving': return 'success';
+                case 'pending': return 'warning';
+                case 'rescheduled': return 'warning';
+                case 'confirmed': return 'success';
+                default: return 'success';
+            }
+        }
+
+        function highlightPatientInList(patientName) {
+            const patientItems = document.querySelectorAll('.patient-item');
+            patientItems.forEach(item => {
+                const nameElement = item.querySelector('h4');
+                if (nameElement && nameElement.textContent === patientName) {
+                    item.classList.add('updated');
+                    setTimeout(() => item.classList.remove('updated'), 2000);
+                }
+            });
+        }
+
+        function updateAIInsights(insight) {
+            // Update AI insights section if currently visible
+            if (currentView === 'ai-insights') {
+                const aiSection = document.querySelector('.ai-insight');
+                if (aiSection) {
+                    const newInsight = document.createElement('div');
+                    newInsight.style.cssText = 'background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 8px; margin-top: 1rem; animation: slideIn 0.5s ease-out;';
+                    newInsight.innerHTML = `<small>${formatTime(insight.timestamp)}: ${insight.message}</small>`;
+                    aiSection.appendChild(newInsight);
+                    
+                    setTimeout(() => newInsight.remove(), 10000);
+                }
+            }
+        }
+
+        function updateTreatmentProgress(update) {
+            // Update treatment progress if currently visible
+            if (currentView === 'treatments') {
+                const cards = document.querySelectorAll('.card');
+                cards.forEach(card => {
+                    const title = card.querySelector('.card-title');
+                    if (title && title.textContent === update.patient) {
+                        card.classList.add('updated');
+                        setTimeout(() => card.classList.remove('updated'), 2000);
+                    }
+                });
+            }
+        }
+
+        function showProfile() {
+            alert('Profile functionality would be implemented here');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                alert('Logout functionality would be implemented here');
+            }
+        }
+
+        // Close notifications when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.querySelector('.notification-bell');
+            
+            if (!dropdown.contains(e.target) && !bell.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            showOverview();
+            
+            // Update stats periodically
+            setInterval(() => {
+                stats.patients += Math.floor(Math.random() * 3) - 1;
+                stats.appointments += Math.floor(Math.random() * 3) - 1;
+                stats.treatments += Math.floor(Math.random() * 3) - 1;
+                stats.alerts = Math.max(0, stats.alerts + Math.floor(Math.random() * 3) - 1);
+                
+                // Ensure positive values
+                stats.patients = Math.max(20, stats.patients);
+                stats.appointments = Math.max(5, stats.appointments);
+                stats.treatments = Math.max(8, stats.treatments);
+                
+                if (currentView === 'overview') {
+                    showOverview();
+                }
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
+                

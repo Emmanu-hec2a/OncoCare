@@ -1,0 +1,167 @@
+2025-06-17 14:13:39,993 INFO __main__ Risk assessment model trained successfully
+2025-06-17 14:13:41,486 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.2.120:5050
+2025-06-17 14:13:41,486 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-17 14:13:41,491 INFO werkzeug  * Restarting with stat
+2025-06-17 14:13:49,523 INFO __main__ Risk assessment model trained successfully
+2025-06-17 14:13:49,597 WARNING werkzeug  * Debugger is active!
+2025-06-17 14:13:49,614 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 14:13:53,801 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:13:53] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-17 14:13:54,010 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:13:54] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-17 14:13:54,013 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:13:54] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-17 14:13:54,048 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:13:54] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:13:54,066 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:13:54] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:17:46,127 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 14:17:46,893 INFO werkzeug  * Restarting with stat
+2025-06-17 14:17:56,508 INFO __main__ Risk assessment model trained successfully
+2025-06-17 14:17:56,581 WARNING werkzeug  * Debugger is active!
+2025-06-17 14:17:56,597 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 14:18:22,702 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:22] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-17 14:18:22,875 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:22] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-17 14:18:22,877 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:22] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-17 14:18:22,904 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:22] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:18:22,915 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:22] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:18:32,414 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:32] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-17 14:18:32,452 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:32] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-17 14:18:32,457 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:32] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-17 14:18:32,481 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:32] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:18:32,501 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:32] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:18:33,811 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:33] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-17 14:18:33,841 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:33] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-17 14:18:33,848 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:33] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-17 14:18:33,871 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:33] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:18:33,887 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:18:33] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:29:36,654 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 14:29:37,491 INFO werkzeug  * Restarting with stat
+2025-06-17 14:29:48,501 INFO __main__ Risk assessment model trained successfully
+2025-06-17 14:29:48,569 WARNING werkzeug  * Debugger is active!
+2025-06-17 14:29:48,583 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 14:31:25,921 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 14:31:26,852 INFO werkzeug  * Restarting with stat
+2025-06-17 14:31:36,513 INFO __main__ Risk assessment model trained successfully
+2025-06-17 14:31:36,570 WARNING werkzeug  * Debugger is active!
+2025-06-17 14:31:36,585 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 14:32:45,370 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:32:45] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-17 14:32:45,553 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:32:45] "[36mGET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-06-17 14:32:45,583 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:32:45] "[36mGET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-06-17 14:32:45,639 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:32:45] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:32:45,669 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:32:45] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 14:39:42,232 INFO __main__ Risk assessment model trained successfully
+2025-06-17 14:39:43,267 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.2.120:5050
+2025-06-17 14:39:43,268 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-17 14:39:43,272 INFO werkzeug  * Restarting with stat
+2025-06-17 14:39:51,997 INFO __main__ Risk assessment model trained successfully
+2025-06-17 14:39:52,046 WARNING werkzeug  * Debugger is active!
+2025-06-17 14:39:52,061 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 14:40:26,861 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:40:26] "GET / HTTP/1.1" 200 -
+2025-06-17 14:40:26,991 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:40:26] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-06-17 14:40:32,138 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:40:32] "[31m[1mGET /api/register HTTP/1.1[0m" 405 -
+2025-06-17 14:40:37,058 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:40:37] "[31m[1mGET /api/register HTTP/1.1[0m" 405 -
+2025-06-17 14:40:50,463 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:40:50] "GET /donate HTTP/1.1" 200 -
+2025-06-17 14:46:30,199 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 14:46:30,899 INFO werkzeug  * Restarting with stat
+2025-06-17 14:46:39,441 INFO __main__ Risk assessment model trained successfully
+2025-06-17 14:46:39,520 WARNING werkzeug  * Debugger is active!
+2025-06-17 14:46:39,536 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 14:47:07,985 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:47:07] "GET / HTTP/1.1" 200 -
+2025-06-17 14:47:10,637 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:47:10] "GET /api/register HTTP/1.1" 200 -
+2025-06-17 14:47:49,410 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:47:49] "[31m[1mPOST /api/login HTTP/1.1[0m" 400 -
+2025-06-17 14:48:56,278 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:48:56] "[31m[1mPOST /api/register HTTP/1.1[0m" 400 -
+2025-06-17 14:50:07,524 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 14:50:08,215 INFO werkzeug  * Restarting with stat
+2025-06-17 14:50:16,177 INFO __main__ Risk assessment model trained successfully
+2025-06-17 14:50:16,227 WARNING werkzeug  * Debugger is active!
+2025-06-17 14:50:16,240 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 14:50:26,110 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:50:26] "[31m[1mPOST /api/register HTTP/1.1[0m" 400 -
+2025-06-17 14:57:50,091 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 14:57:50,930 INFO werkzeug  * Restarting with stat
+2025-06-17 14:57:59,505 INFO __main__ Risk assessment model trained successfully
+2025-06-17 14:57:59,566 WARNING werkzeug  * Debugger is active!
+2025-06-17 14:57:59,581 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 14:58:11,061 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 14:58:11] "[31m[1mPOST /api/register HTTP/1.1[0m" 400 -
+2025-06-17 15:01:36,792 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 15:01:37,570 INFO werkzeug  * Restarting with stat
+2025-06-17 15:01:48,860 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:01:48,988 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:01:49,024 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:02:09,729 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 15:02:10,610 INFO werkzeug  * Restarting with stat
+2025-06-17 15:02:18,990 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:02:19,048 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:02:19,061 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:02:32,847 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 15:02:33,783 INFO werkzeug  * Restarting with stat
+2025-06-17 15:02:41,349 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:02:41,401 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:02:41,414 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:02:57,776 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:02:57] "[31m[1mPOST /api/register HTTP/1.1[0m" 400 -
+2025-06-17 15:03:39,468 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 15:03:40,134 INFO werkzeug  * Restarting with stat
+2025-06-17 15:03:48,066 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:03:48,118 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:03:48,131 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:03:56,567 INFO __main__ New user registered: kamauemilio@gmail.com
+2025-06-17 15:03:56,571 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:03:56] "[35m[1mPOST /api/register HTTP/1.1[0m" 201 -
+2025-06-17 15:04:14,236 INFO __main__ Successful login for user: kamauemilio@gmail.com
+2025-06-17 15:04:14,251 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:04:14] "POST /api/login HTTP/1.1" 200 -
+2025-06-17 15:04:15,786 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:04:15] "[33mGET /patient-dashboard HTTP/1.1[0m" 404 -
+2025-06-17 15:05:35,435 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:05:35] "GET /api/register HTTP/1.1" 200 -
+2025-06-17 15:05:35,857 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:05:35] "[33mGET /api/verify-token HTTP/1.1[0m" 404 -
+2025-06-17 15:07:40,880 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 15:07:41,752 INFO werkzeug  * Restarting with stat
+2025-06-17 15:07:49,219 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:07:49,273 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:07:49,288 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:08:31,610 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 15:08:32,294 INFO werkzeug  * Restarting with stat
+2025-06-17 15:08:39,629 ERROR __main__ Error training risk assessment model: name 'time' is not defined
+2025-06-17 15:08:39,680 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:08:39,694 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:09:09,428 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 15:09:10,095 INFO werkzeug  * Restarting with stat
+2025-06-17 15:09:20,372 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:09:20,422 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:09:20,436 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:17:50,525 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 15:17:51,240 INFO werkzeug  * Restarting with stat
+2025-06-17 15:18:02,357 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:18:02,417 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:18:02,429 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:18:34,109 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 15:18:34,903 INFO werkzeug  * Restarting with stat
+2025-06-17 15:18:46,735 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:18:46,808 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:18:46,824 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:20:03,556 INFO __main__ Successful login for user: kamauemilio@gmail.com
+2025-06-17 15:20:03,559 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:20:03] "POST /api/login HTTP/1.1" 200 -
+2025-06-17 15:20:05,171 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:20:05] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:20:25,049 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:20:25] "GET /donate HTTP/1.1" 200 -
+2025-06-17 15:26:04,626 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:26:04] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:27:10,133 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:27:10] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:27:47,462 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:27:47] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:28:26,329 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:28:26] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:29:01,121 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:29:01] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:31:09,376 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:31:09] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:31:13,415 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:31:13] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:31:26,071 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:31:26] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:31:26,742 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:31:26] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:31:26,814 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:31:26] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:31:27,075 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:31:27] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:34:31,372 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:34:31] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:34:32,281 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:34:32] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:34:32,616 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:34:32] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:34:44,563 INFO __main__ Successful login for user: kamauemilio@gmail.com
+2025-06-17 15:34:44,565 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:34:44] "POST /api/login HTTP/1.1" 200 -
+2025-06-17 15:34:46,099 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:34:46] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:38:06,510 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoCare\\app.py', reloading
+2025-06-17 15:38:07,281 INFO werkzeug  * Restarting with stat
+2025-06-17 15:38:18,726 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:38:18,787 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:38:18,803 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:39:26,157 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-17 15:39:26,833 INFO werkzeug  * Restarting with stat

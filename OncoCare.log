@@ -1,0 +1,472 @@
+2025-06-17 15:39:37,101 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:39:37,157 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:39:37,172 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:50:50,299 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:50:50] "[35m[1mGET /patient-dashboard HTTP/1.1[0m" 500 -
+2025-06-17 15:50:50,562 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:50:50] "GET /patient-dashboard?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-06-17 15:50:50,585 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:50:50] "GET /patient-dashboard?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-06-17 15:50:50,675 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:50:50] "GET /patient-dashboard?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-06-17 15:50:50,706 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:50:50] "[36mGET /patient-dashboard?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 15:52:19,157 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:52:20,205 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.2.120:5050
+2025-06-17 15:52:20,207 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-17 15:52:20,210 INFO werkzeug  * Restarting with stat
+2025-06-17 15:52:30,791 INFO __main__ Risk assessment model trained successfully
+2025-06-17 15:52:30,850 WARNING werkzeug  * Debugger is active!
+2025-06-17 15:52:30,865 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 15:52:33,983 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:52:33] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:52:34,153 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:52:34] "GET /static/script.js HTTP/1.1" 200 -
+2025-06-17 15:52:44,421 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:52:44] "GET /api/register HTTP/1.1" 200 -
+2025-06-17 15:52:44,817 ERROR __main__ Token verification error: Not enough segments
+2025-06-17 15:52:44,818 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:52:44] "[31m[1mGET /api/verify-token HTTP/1.1[0m" 401 -
+2025-06-17 15:52:56,229 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:52:56] "[31m[1mGET /api/login HTTP/1.1[0m" 405 -
+2025-06-17 15:53:02,185 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:53:02] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-17 15:53:02,236 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:53:02] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+2025-06-17 15:53:12,076 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:53:12] "GET / HTTP/1.1" 200 -
+2025-06-17 15:53:12,122 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 15:53:12] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+2025-06-17 16:14:07,594 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-17 16:14:08,961 INFO werkzeug  * Restarting with stat
+2025-06-17 16:14:29,556 INFO __main__ Risk assessment model trained successfully
+2025-06-17 16:14:29,665 WARNING werkzeug  * Debugger is active!
+2025-06-17 16:14:29,692 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 16:14:55,242 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-17 16:14:55,960 INFO werkzeug  * Restarting with stat
+2025-06-17 16:15:06,716 INFO __main__ Risk assessment model trained successfully
+2025-06-17 16:15:06,770 WARNING werkzeug  * Debugger is active!
+2025-06-17 16:15:06,783 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 16:15:14,498 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:15:14] "GET / HTTP/1.1" 200 -
+2025-06-17 16:15:17,844 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:15:17] "GET / HTTP/1.1" 200 -
+2025-06-17 16:15:18,222 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:15:18] "GET / HTTP/1.1" 200 -
+2025-06-17 16:15:21,081 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:15:21] "GET /api/register HTTP/1.1" 200 -
+2025-06-17 16:15:34,621 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:15:34] "[31m[1mPOST /api/login HTTP/1.1[0m" 401 -
+2025-06-17 16:15:43,330 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:15:43] "[31m[1mPOST /api/login HTTP/1.1[0m" 401 -
+2025-06-17 16:17:11,900 INFO __main__ Risk assessment model trained successfully
+2025-06-17 16:17:13,632 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.2.120:5050
+2025-06-17 16:17:13,632 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-17 16:17:13,636 INFO werkzeug  * Restarting with stat
+2025-06-17 16:17:25,010 INFO __main__ Risk assessment model trained successfully
+2025-06-17 16:17:25,074 WARNING werkzeug  * Debugger is active!
+2025-06-17 16:17:25,087 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 16:17:30,477 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:17:30] "[35m[1mGET /api/register HTTP/1.1[0m" 500 -
+2025-06-17 16:17:30,847 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:17:30] "GET /api/register?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-06-17 16:17:30,864 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:17:30] "GET /api/register?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-06-17 16:17:30,879 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:17:30] "GET /api/register?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-06-17 16:17:30,898 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:17:30] "[36mGET /api/register?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-17 16:17:55,786 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-17 16:17:56,596 INFO werkzeug  * Restarting with stat
+2025-06-17 16:18:08,791 INFO __main__ Risk assessment model trained successfully
+2025-06-17 16:18:08,865 WARNING werkzeug  * Debugger is active!
+2025-06-17 16:18:08,883 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-17 16:18:13,555 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:18:13] "GET /api/register HTTP/1.1" 200 -
+2025-06-17 16:18:31,636 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:18:31] "[31m[1mPOST /api/login HTTP/1.1[0m" 401 -
+2025-06-17 16:21:15,695 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:21:15] "GET /api/register HTTP/1.1" 200 -
+2025-06-17 16:21:18,363 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:21:18] "GET /api/register HTTP/1.1" 200 -
+2025-06-17 16:21:19,018 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:21:19] "GET /api/register HTTP/1.1" 200 -
+2025-06-17 16:21:19,352 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:21:19] "GET /api/register HTTP/1.1" 200 -
+2025-06-17 16:21:19,695 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:21:19] "GET /api/register HTTP/1.1" 200 -
+2025-06-17 16:21:40,070 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:21:40] "[31m[1mPOST /api/login HTTP/1.1[0m" 401 -
+2025-06-17 16:21:46,261 INFO flask-limiter ratelimit 5 per 1 minute (192.168.2.120) exceeded at endpoint: register
+2025-06-17 16:21:46,262 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:21:46] "[31m[1mGET /api/register HTTP/1.1[0m" 429 -
+2025-06-17 16:21:54,198 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:21:54] "GET / HTTP/1.1" 200 -
+2025-06-17 16:21:56,040 INFO flask-limiter ratelimit 5 per 1 minute (192.168.2.120) exceeded at endpoint: register
+2025-06-17 16:21:56,041 INFO werkzeug 192.168.2.120 - - [17/Jun/2025 16:21:56] "[31m[1mGET /api/register HTTP/1.1[0m" 429 -
+2025-06-19 19:03:28,670 INFO __main__ Risk assessment model trained successfully
+2025-06-19 19:03:29,743 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://172.17.88.192:5050
+2025-06-19 19:03:29,745 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-19 19:03:29,751 INFO werkzeug  * Restarting with stat
+2025-06-19 19:03:46,143 INFO __main__ Risk assessment model trained successfully
+2025-06-19 19:03:46,283 WARNING werkzeug  * Debugger is active!
+2025-06-19 19:03:46,306 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-19 19:03:55,585 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:03:55] "GET / HTTP/1.1" 200 -
+2025-06-19 19:03:55,726 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:03:55] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-06-19 19:04:05,468 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:04:05] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:04:35,255 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:04:35] "[31m[1mPOST /api/login HTTP/1.1[0m" 401 -
+2025-06-19 19:31:09,047 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:31:09] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:32:00,422 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:32:00] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:32:33,553 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:32:33] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:35:04,140 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:35:04] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:35:05,847 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:35:05] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:35:06,222 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:35:06] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:35:06,789 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:35:06] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:35:07,069 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:35:07] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:35:07,395 INFO flask-limiter ratelimit 5 per 1 minute (172.17.88.192) exceeded at endpoint: register
+2025-06-19 19:35:07,396 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:35:07] "[31m[1mGET /api/register HTTP/1.1[0m" 429 -
+2025-06-19 19:35:07,722 INFO flask-limiter ratelimit 5 per 1 minute (172.17.88.192) exceeded at endpoint: register
+2025-06-19 19:35:07,724 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:35:07] "[31m[1mGET /api/register HTTP/1.1[0m" 429 -
+2025-06-19 19:35:08,092 INFO flask-limiter ratelimit 5 per 1 minute (172.17.88.192) exceeded at endpoint: register
+2025-06-19 19:35:08,093 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:35:08] "[31m[1mGET /api/register HTTP/1.1[0m" 429 -
+2025-06-19 19:38:06,049 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-19 19:38:06,971 INFO werkzeug  * Restarting with stat
+2025-06-19 19:38:22,615 INFO __main__ Risk assessment model trained successfully
+2025-06-19 19:38:22,687 WARNING werkzeug  * Debugger is active!
+2025-06-19 19:38:22,703 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-19 19:38:26,858 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:38:26] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:38:29,053 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:38:29] "GET / HTTP/1.1" 200 -
+2025-06-19 19:38:33,344 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:38:33] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:39:35,646 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:39:35] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:40:02,986 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:40:02] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:40:04,336 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:40:04] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:40:04,646 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:40:04] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:40:04,953 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:40:04] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 19:40:05,264 INFO flask-limiter ratelimit 5 per 1 minute (172.17.88.192) exceeded at endpoint: register
+2025-06-19 19:40:05,265 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:40:05] "[31m[1mGET /api/register HTTP/1.1[0m" 429 -
+2025-06-19 19:40:05,588 INFO flask-limiter ratelimit 5 per 1 minute (172.17.88.192) exceeded at endpoint: register
+2025-06-19 19:40:05,590 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:40:05] "[31m[1mGET /api/register HTTP/1.1[0m" 429 -
+2025-06-19 19:41:17,353 INFO __main__ Risk assessment model trained successfully
+2025-06-19 19:41:18,286 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://172.17.88.192:5050
+2025-06-19 19:41:18,287 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-19 19:41:18,291 INFO werkzeug  * Restarting with stat
+2025-06-19 19:41:30,518 INFO __main__ Risk assessment model trained successfully
+2025-06-19 19:41:30,607 WARNING werkzeug  * Debugger is active!
+2025-06-19 19:41:30,626 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-19 19:41:47,186 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:41:47] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-06-19 19:41:47,474 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:41:47] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-06-19 19:41:47,500 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:41:47] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-06-19 19:41:47,610 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:41:47] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-06-19 19:41:47,633 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 19:41:47] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-19 21:34:33,815 INFO __main__ Risk assessment model trained successfully
+2025-06-19 21:34:34,794 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://172.17.88.192:5050
+2025-06-19 21:34:34,794 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-19 21:34:34,800 INFO werkzeug  * Restarting with stat
+2025-06-19 21:34:54,011 INFO __main__ Risk assessment model trained successfully
+2025-06-19 21:34:54,165 WARNING werkzeug  * Debugger is active!
+2025-06-19 21:34:54,212 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-19 21:35:06,019 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 21:35:06] "GET / HTTP/1.1" 200 -
+2025-06-19 21:35:06,160 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 21:35:06] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-06-19 21:35:08,791 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 21:35:08] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 21:36:14,976 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 21:36:14] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 21:47:22,767 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-19 21:47:23,602 INFO werkzeug  * Restarting with stat
+2025-06-19 21:47:49,366 INFO __main__ Risk assessment model trained successfully
+2025-06-19 21:47:49,463 WARNING werkzeug  * Debugger is active!
+2025-06-19 21:47:49,477 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-19 21:48:33,697 INFO __main__ Risk assessment model trained successfully
+2025-06-19 21:48:34,590 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://172.17.88.192:5050
+2025-06-19 21:48:34,591 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-19 21:48:34,594 INFO werkzeug  * Restarting with stat
+2025-06-19 21:48:45,378 INFO __main__ Risk assessment model trained successfully
+2025-06-19 21:48:45,440 WARNING werkzeug  * Debugger is active!
+2025-06-19 21:48:45,456 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-19 21:48:48,565 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 21:48:48] "GET / HTTP/1.1" 200 -
+2025-06-19 21:48:50,420 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 21:48:50] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 21:49:48,455 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 21:49:48] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 21:50:08,975 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 21:50:08] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 22:52:19,934 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 22:52:19] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 22:58:32,950 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 22:58:32] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 22:59:20,625 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
+2025-06-19 22:59:20,627 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 22:59:20] "[35m[1mPOST /api/register HTTP/1.1[0m" 201 -
+2025-06-19 22:59:46,712 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
+2025-06-19 22:59:46,713 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 22:59:46] "POST /api/login HTTP/1.1" 200 -
+2025-06-19 22:59:48,623 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 22:59:48] "[35m[1mGET /patient-dashboard HTTP/1.1[0m" 500 -
+2025-06-19 22:59:48,909 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 22:59:48] "GET /patient-dashboard?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-06-19 22:59:48,916 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 22:59:48] "GET /patient-dashboard?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-06-19 22:59:48,999 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 22:59:48] "GET /patient-dashboard?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-06-19 22:59:49,030 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 22:59:49] "[36mGET /patient-dashboard?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-06-19 23:02:18,044 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-19 23:02:18,910 INFO werkzeug  * Restarting with stat
+2025-06-19 23:02:32,836 INFO __main__ Risk assessment model trained successfully
+2025-06-19 23:02:32,918 WARNING werkzeug  * Debugger is active!
+2025-06-19 23:02:32,932 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-19 23:03:23,063 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:03:23] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-19 23:27:55,232 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-19 23:27:55,906 INFO werkzeug  * Restarting with stat
+2025-06-19 23:28:06,297 INFO __main__ Risk assessment model trained successfully
+2025-06-19 23:28:06,353 WARNING werkzeug  * Debugger is active!
+2025-06-19 23:28:06,367 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-19 23:28:21,782 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:28:21] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-19 23:30:21,154 INFO __main__ New user registered: claudia@gmail.com
+2025-06-19 23:30:21,156 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:30:21] "[35m[1mPOST /api/register HTTP/1.1[0m" 201 -
+2025-06-19 23:30:43,632 INFO __main__ Successful login for user: claudia@gmail.com
+2025-06-19 23:30:43,634 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:30:43] "POST /api/login HTTP/1.1" 200 -
+2025-06-19 23:30:45,161 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:30:45] "[33mGET /oncologist-dashboard HTTP/1.1[0m" 404 -
+2025-06-19 23:32:22,581 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-19 23:32:23,269 INFO werkzeug  * Restarting with stat
+2025-06-19 23:32:33,503 INFO __main__ Risk assessment model trained successfully
+2025-06-19 23:32:33,575 WARNING werkzeug  * Debugger is active!
+2025-06-19 23:32:33,596 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-19 23:32:45,629 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:32:45] "GET /oncologist-dashboard HTTP/1.1" 200 -
+2025-06-19 23:33:28,874 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:33:28] "GET /api/register HTTP/1.1" 200 -
+2025-06-19 23:43:16,419 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:43:16] "GET /donate HTTP/1.1" 200 -
+2025-06-19 23:48:48,730 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:48:48] "GET / HTTP/1.1" 200 -
+2025-06-19 23:50:52,047 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:50:52] "GET / HTTP/1.1" 200 -
+2025-06-19 23:54:38,527 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:54:38] "GET / HTTP/1.1" 200 -
+2025-06-19 23:54:40,882 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:54:40] "GET /donate HTTP/1.1" 200 -
+2025-06-19 23:55:01,094 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:55:01] "[31m[1mGET /api/login HTTP/1.1[0m" 405 -
+2025-06-19 23:55:32,304 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:55:32] "GET / HTTP/1.1" 200 -
+2025-06-19 23:55:34,460 INFO werkzeug 172.17.88.192 - - [19/Jun/2025 23:55:34] "GET /api/register HTTP/1.1" 200 -
+2025-06-20 00:02:12,990 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 00:02:13,862 INFO werkzeug  * Restarting with stat
+2025-06-20 00:02:25,656 INFO __main__ Risk assessment model trained successfully
+2025-06-20 00:02:25,714 WARNING werkzeug  * Debugger is active!
+2025-06-20 00:02:25,731 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 00:03:05,426 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 00:03:05] "GET / HTTP/1.1" 200 -
+2025-06-20 00:03:07,912 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 00:03:07] "[31m[1mGET /api/login HTTP/1.1[0m" 405 -
+2025-06-20 00:06:36,698 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 00:06:37,953 INFO werkzeug  * Restarting with stat
+2025-06-20 00:06:56,147 INFO __main__ Risk assessment model trained successfully
+2025-06-20 00:06:56,282 WARNING werkzeug  * Debugger is active!
+2025-06-20 00:06:56,311 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 00:07:00,893 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 00:07:00] "GET / HTTP/1.1" 200 -
+2025-06-20 00:07:07,739 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 00:07:07] "GET / HTTP/1.1" 200 -
+2025-06-20 00:07:10,371 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 00:07:10] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 00:07:51,263 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 00:07:51] "GET /donate HTTP/1.1" 200 -
+2025-06-20 00:28:08,966 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 00:28:09,731 INFO werkzeug  * Restarting with stat
+2025-06-20 00:57:53,275 INFO __main__ Risk assessment model trained successfully
+2025-06-20 01:02:58,669 INFO __main__ Risk assessment model trained successfully
+2025-06-20 01:07:18,776 INFO __main__ Risk assessment model trained successfully
+2025-06-20 01:09:46,093 INFO __main__ Risk assessment model trained successfully
+2025-06-20 01:09:47,020 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://172.17.88.192:5050
+2025-06-20 01:09:47,021 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-20 01:09:47,025 INFO werkzeug  * Restarting with stat
+2025-06-20 01:15:48,329 INFO __main__ Risk assessment model trained successfully
+2025-06-20 01:15:49,283 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://172.17.88.192:5050
+2025-06-20 01:15:49,285 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-20 01:15:49,288 INFO werkzeug  * Restarting with stat
+2025-06-20 01:16:00,026 INFO __main__ Risk assessment model trained successfully
+2025-06-20 01:16:00,097 WARNING werkzeug  * Debugger is active!
+2025-06-20 01:16:00,111 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 01:16:13,762 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:16:13] "GET / HTTP/1.1" 200 -
+2025-06-20 01:16:18,033 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:16:18] "[33mGET /pricing.html HTTP/1.1[0m" 404 -
+2025-06-20 01:17:01,266 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:17:01] "GET / HTTP/1.1" 200 -
+2025-06-20 01:17:03,531 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:17:03] "[33mGET /templates/pricing.html HTTP/1.1[0m" 404 -
+2025-06-20 01:19:03,515 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:19:03] "GET / HTTP/1.1" 200 -
+2025-06-20 01:19:05,950 ERROR __main__ Error fetching plans: Could not determine join condition between parent/child tables on relationship Organization.users - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
+2025-06-20 01:19:05,951 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:19:05] "[35m[1mGET /api/plans HTTP/1.1[0m" 500 -
+2025-06-20 01:21:01,697 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 01:21:02,525 INFO werkzeug  * Restarting with stat
+2025-06-20 01:21:13,938 INFO __main__ Risk assessment model trained successfully
+2025-06-20 01:21:14,015 WARNING werkzeug  * Debugger is active!
+2025-06-20 01:21:14,031 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 01:21:22,536 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:21:22] "GET / HTTP/1.1" 200 -
+2025-06-20 01:21:25,619 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:21:25] "GET /api/plans HTTP/1.1" 200 -
+2025-06-20 01:29:23,968 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:29:23] "GET /api/plans HTTP/1.1" 200 -
+2025-06-20 01:30:19,211 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:30:19] "GET /api/plans HTTP/1.1" 200 -
+2025-06-20 01:31:02,183 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:31:02] "GET /api/plans HTTP/1.1" 200 -
+2025-06-20 01:31:11,225 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:31:11] "GET / HTTP/1.1" 200 -
+2025-06-20 01:31:13,429 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:31:13] "GET /api/plans HTTP/1.1" 200 -
+2025-06-20 01:34:25,646 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:34:25] "GET /api/plans HTTP/1.1" 200 -
+2025-06-20 01:34:35,055 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:34:35] "GET / HTTP/1.1" 200 -
+2025-06-20 01:34:37,688 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:34:37] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 01:34:59,908 ERROR __main__ Login error: Could not determine join condition between parent/child tables on relationship Organization.users - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
+2025-06-20 01:34:59,910 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:34:59] "[35m[1mPOST /api/login HTTP/1.1[0m" 500 -
+2025-06-20 01:35:26,292 ERROR __main__ Login error: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Organization(organizations)]'. Original exception was: Could not determine join condition between parent/child tables on relationship Organization.users - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
+2025-06-20 01:35:26,296 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 01:35:26] "[35m[1mPOST /api/login HTTP/1.1[0m" 500 -
+2025-06-20 09:52:55,884 INFO __main__ Risk assessment model trained successfully
+2025-06-20 09:52:56,889 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://172.17.88.192:5050
+2025-06-20 09:52:56,890 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-20 09:52:56,895 INFO werkzeug  * Restarting with stat
+2025-06-20 09:53:07,119 INFO __main__ Risk assessment model trained successfully
+2025-06-20 09:53:07,187 WARNING werkzeug  * Debugger is active!
+2025-06-20 09:53:07,199 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 09:53:16,213 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 09:53:16] "GET / HTTP/1.1" 200 -
+2025-06-20 09:53:16,684 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 09:53:16] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-06-20 09:53:22,724 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 09:53:22] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 09:53:49,311 ERROR __main__ Login error: (sqlite3.OperationalError) no such column: users.organization_id
+[SQL: SELECT users.id AS users_id, users.first_name AS users_first_name, users.last_name AS users_last_name, users.email AS users_email, users.password_hash AS users_password_hash, users.role AS users_role, users.is_active AS users_is_active, users.is_verified AS users_is_verified, users.created_at AS users_created_at, users.last_login AS users_last_login, users.login_attempts AS users_login_attempts, users.locked_until AS users_locked_until, users.organization_id AS users_organization_id, users.plan_type AS users_plan_type, users.price AS users_price, users.currency AS users_currency, users.billing_cycle AS users_billing_cycle, users.max_patients AS users_max_patients, users.max_providers_per_patient AS users_max_providers_per_patient, users.features AS users_features, users.stripe_price_id AS users_stripe_price_id 
+FROM users 
+WHERE users.email = ?
+ LIMIT ? OFFSET ?]
+[parameters: ('odiwuoremmanuel10@gmail.com', 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-20 09:53:49,314 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 09:53:49] "[35m[1mPOST /api/login HTTP/1.1[0m" 500 -
+2025-06-20 09:58:52,063 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 09:58:52,913 INFO werkzeug  * Restarting with stat
+2025-06-20 09:59:05,321 INFO __main__ Risk assessment model trained successfully
+2025-06-20 09:59:05,404 WARNING werkzeug  * Debugger is active!
+2025-06-20 09:59:05,421 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 10:06:35,204 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 10:06:35,906 INFO werkzeug  * Restarting with stat
+2025-06-20 10:06:46,146 INFO __main__ Risk assessment model trained successfully
+2025-06-20 10:06:46,214 WARNING werkzeug  * Debugger is active!
+2025-06-20 10:06:46,227 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 10:07:29,890 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:07:29] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 10:07:43,980 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:07:43] "[31m[1mPOST /api/login HTTP/1.1[0m" 401 -
+2025-06-20 10:08:17,624 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:08:17] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 10:08:21,926 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:08:21] "GET / HTTP/1.1" 200 -
+2025-06-20 10:08:29,327 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:08:29] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 10:09:30,107 ERROR __main__ Registration error: (sqlite3.IntegrityError) NOT NULL constraint failed: users.plan_type
+[SQL: INSERT INTO users (first_name, last_name, email, password_hash, role, is_active, is_verified, created_at, last_login, login_attempts, locked_until, plan_type, price, currency, billing_cycle, max_patients, max_providers_per_patient, stripe_price_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('Javan', 'Otieno', 'javan@gmail.com', '$2b$12$Zl7TFOUVH/uJ82NnzANZIOxnl293WLTiF/DsEbGQ9fPM9KzqzQjm.', 'patient', 1, 0, '2025-06-20 07:09:30.103021', None, 0, None, None, None, 'USD', 'monthly', None, None, None)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-06-20 10:09:30,113 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:09:30] "[35m[1mPOST /api/register HTTP/1.1[0m" 500 -
+2025-06-20 10:09:42,250 ERROR __main__ Registration error: (sqlite3.IntegrityError) NOT NULL constraint failed: users.plan_type
+[SQL: INSERT INTO users (first_name, last_name, email, password_hash, role, is_active, is_verified, created_at, last_login, login_attempts, locked_until, plan_type, price, currency, billing_cycle, max_patients, max_providers_per_patient, stripe_price_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('Javan', 'Otieno', 'javan@gmail.com', '$2b$12$BV.BQfEJkFVtDaKn91LyMuEd650FI3XX9lLkQyh3XsvHXuYDD35Ya', 'patient', 1, 0, '2025-06-20 07:09:42.249934', None, 0, None, None, None, 'USD', 'monthly', None, None, None)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-06-20 10:09:42,252 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:09:42] "[35m[1mPOST /api/register HTTP/1.1[0m" 500 -
+2025-06-20 10:09:44,659 ERROR __main__ Registration error: (sqlite3.IntegrityError) NOT NULL constraint failed: users.plan_type
+[SQL: INSERT INTO users (first_name, last_name, email, password_hash, role, is_active, is_verified, created_at, last_login, login_attempts, locked_until, plan_type, price, currency, billing_cycle, max_patients, max_providers_per_patient, stripe_price_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('Javan', 'Otieno', 'javan@gmail.com', '$2b$12$7NoMz7gmUPPjbyWDkvFobuskwTvrThgHXrIToGoWFzW3kQ375zAb.', 'patient', 1, 0, '2025-06-20 07:09:44.658442', None, 0, None, None, None, 'USD', 'monthly', None, None, None)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-06-20 10:09:44,662 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:09:44] "[35m[1mPOST /api/register HTTP/1.1[0m" 500 -
+2025-06-20 10:09:46,352 ERROR __main__ Registration error: (sqlite3.IntegrityError) NOT NULL constraint failed: users.plan_type
+[SQL: INSERT INTO users (first_name, last_name, email, password_hash, role, is_active, is_verified, created_at, last_login, login_attempts, locked_until, plan_type, price, currency, billing_cycle, max_patients, max_providers_per_patient, stripe_price_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('Javan', 'Otieno', 'javan@gmail.com', '$2b$12$/ZZB7hjazt.dsfccxCXAE.zKcWCLcWk9BnM.Ai7MZlMMu.OXc4cy6', 'patient', 1, 0, '2025-06-20 07:09:46.351854', None, 0, None, None, None, 'USD', 'monthly', None, None, None)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-06-20 10:09:46,354 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:09:46] "[35m[1mPOST /api/register HTTP/1.1[0m" 500 -
+2025-06-20 10:09:48,111 ERROR __main__ Registration error: (sqlite3.IntegrityError) NOT NULL constraint failed: users.plan_type
+[SQL: INSERT INTO users (first_name, last_name, email, password_hash, role, is_active, is_verified, created_at, last_login, login_attempts, locked_until, plan_type, price, currency, billing_cycle, max_patients, max_providers_per_patient, stripe_price_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('Javan', 'Otieno', 'javan@gmail.com', '$2b$12$VTGbK/SKDCxYY4CVHMJQW.fvRNRy2l/TeJ1jGFcP78cawgBxbk6oC', 'patient', 1, 0, '2025-06-20 07:09:48.110760', None, 0, None, None, None, 'USD', 'monthly', None, None, None)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-06-20 10:09:48,113 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:09:48] "[35m[1mPOST /api/register HTTP/1.1[0m" 500 -
+2025-06-20 10:09:49,731 INFO flask-limiter ratelimit 5 per 1 minute (172.17.88.192) exceeded at endpoint: register
+2025-06-20 10:09:49,732 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:09:49] "[31m[1mPOST /api/register HTTP/1.1[0m" 429 -
+2025-06-20 10:09:53,312 INFO flask-limiter ratelimit 5 per 1 minute (172.17.88.192) exceeded at endpoint: register
+2025-06-20 10:09:53,313 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:09:53] "[31m[1mPOST /api/register HTTP/1.1[0m" 429 -
+2025-06-20 10:09:55,427 INFO flask-limiter ratelimit 5 per 1 minute (172.17.88.192) exceeded at endpoint: register
+2025-06-20 10:09:55,429 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:09:55] "[31m[1mPOST /api/register HTTP/1.1[0m" 429 -
+2025-06-20 10:09:57,988 INFO flask-limiter ratelimit 5 per 1 minute (172.17.88.192) exceeded at endpoint: register
+2025-06-20 10:09:57,989 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:09:57] "[31m[1mPOST /api/register HTTP/1.1[0m" 429 -
+2025-06-20 10:09:59,976 INFO flask-limiter ratelimit 5 per 1 minute (172.17.88.192) exceeded at endpoint: register
+2025-06-20 10:09:59,977 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:09:59] "[31m[1mPOST /api/register HTTP/1.1[0m" 429 -
+2025-06-20 10:17:45,132 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 10:17:45,983 INFO werkzeug  * Restarting with stat
+2025-06-20 10:17:56,853 INFO __main__ Risk assessment model trained successfully
+2025-06-20 10:17:56,926 WARNING werkzeug  * Debugger is active!
+2025-06-20 10:17:56,940 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 10:19:33,713 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 10:19:34,428 INFO werkzeug  * Restarting with stat
+2025-06-20 10:19:46,034 INFO __main__ Risk assessment model trained successfully
+2025-06-20 10:19:46,102 WARNING werkzeug  * Debugger is active!
+2025-06-20 10:19:46,115 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 10:20:17,669 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 10:20:18,470 INFO werkzeug  * Restarting with stat
+2025-06-20 10:20:28,745 INFO __main__ Risk assessment model trained successfully
+2025-06-20 10:20:28,810 WARNING werkzeug  * Debugger is active!
+2025-06-20 10:20:28,823 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 10:21:21,089 INFO __main__ Risk assessment model trained successfully
+2025-06-20 10:21:22,023 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://172.17.88.192:5050
+2025-06-20 10:21:22,025 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-20 10:21:22,028 INFO werkzeug  * Restarting with stat
+2025-06-20 10:21:32,039 INFO __main__ Risk assessment model trained successfully
+2025-06-20 10:21:32,103 WARNING werkzeug  * Debugger is active!
+2025-06-20 10:21:32,115 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 10:21:44,105 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:21:44] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 10:21:48,430 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:21:48] "GET / HTTP/1.1" 200 -
+2025-06-20 10:21:49,612 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:21:49] "GET / HTTP/1.1" 200 -
+2025-06-20 10:21:49,987 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:21:49] "GET / HTTP/1.1" 200 -
+2025-06-20 10:21:53,867 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:21:53] "GET /api/plans HTTP/1.1" 200 -
+2025-06-20 10:22:05,622 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:22:05] "GET / HTTP/1.1" 200 -
+2025-06-20 10:22:07,702 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:22:07] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 10:22:50,605 ERROR __main__ Registration error: __init__() got an unexpected keyword argument 'plan_type'
+2025-06-20 10:22:50,607 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:22:50] "[35m[1mPOST /api/register HTTP/1.1[0m" 500 -
+2025-06-20 10:24:14,541 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 10:24:15,212 INFO werkzeug  * Restarting with stat
+2025-06-20 10:24:25,601 INFO __main__ Risk assessment model trained successfully
+2025-06-20 10:24:25,670 WARNING werkzeug  * Debugger is active!
+2025-06-20 10:24:25,683 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 10:24:42,603 ERROR __main__ Registration error: (sqlite3.IntegrityError) NOT NULL constraint failed: users.plan_type
+[SQL: INSERT INTO users (first_name, last_name, email, password_hash, role, is_active, is_verified, created_at, last_login, login_attempts, locked_until, price, currency, billing_cycle, max_patients, max_providers_per_patient, stripe_price_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('Javan', 'Otieno', 'javan@gmail.com', '$2b$12$.A6uLEp8HgY.daeo6IaBh.Go2EU7skCtY8Iw3TojsLmQYuzmk1xo.', 'patient', 1, 0, '2025-06-20 07:24:42.602744', None, 0, None, None, 'USD', 'monthly', None, None, None)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-06-20 10:24:42,606 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:24:42] "[35m[1mPOST /api/register HTTP/1.1[0m" 500 -
+2025-06-20 10:24:45,999 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:24:45] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 10:25:26,660 ERROR __main__ Registration error: (sqlite3.IntegrityError) NOT NULL constraint failed: users.plan_type
+[SQL: INSERT INTO users (first_name, last_name, email, password_hash, role, is_active, is_verified, created_at, last_login, login_attempts, locked_until, price, currency, billing_cycle, max_patients, max_providers_per_patient, stripe_price_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('Javan', 'Otieno', 'javan@gmail.com', '$2b$12$F.qYEJbwab62bdS5mjLUiOAGLVhmkENKJEQftv4wMVNcIM/ARqjUO', 'patient', 1, 0, '2025-06-20 07:25:26.659377', None, 0, None, None, 'USD', 'monthly', None, None, None)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-06-20 10:25:26,661 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:25:26] "[35m[1mPOST /api/register HTTP/1.1[0m" 500 -
+2025-06-20 10:27:35,620 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 10:27:36,335 INFO werkzeug  * Restarting with stat
+2025-06-20 10:27:46,969 INFO __main__ Risk assessment model trained successfully
+2025-06-20 10:27:47,039 WARNING werkzeug  * Debugger is active!
+2025-06-20 10:27:47,053 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 10:28:09,064 ERROR __main__ Registration error: (sqlite3.IntegrityError) NOT NULL constraint failed: users.plan_type
+[SQL: INSERT INTO users (first_name, last_name, email, password_hash, role, is_active, is_verified, created_at, last_login, login_attempts, locked_until, price, currency, billing_cycle, max_patients, max_providers_per_patient, stripe_price_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('Javan', 'Otieno', 'javan@gmail.com', '$2b$12$DbmiD54d6jtc5zqydijwzehx1bFa1Lrenx06nXihRPLhbPmbJoX1W', 'patient', 1, 0, '2025-06-20 07:28:09.064011', None, 0, None, None, 'USD', 'monthly', None, None, None)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-06-20 10:28:09,067 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:28:09] "[35m[1mPOST /api/register HTTP/1.1[0m" 500 -
+2025-06-20 10:28:17,725 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:28:17] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 10:28:20,972 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:28:20] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 10:28:24,869 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:28:24] "GET / HTTP/1.1" 200 -
+2025-06-20 10:28:27,388 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:28:27] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 10:29:08,958 ERROR __main__ Registration error: (sqlite3.IntegrityError) NOT NULL constraint failed: users.plan_type
+[SQL: INSERT INTO users (first_name, last_name, email, password_hash, role, is_active, is_verified, created_at, last_login, login_attempts, locked_until, price, currency, billing_cycle, max_patients, max_providers_per_patient, stripe_price_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('Javan', 'Otieno', 'javan@gmail.com', '$2b$12$Ooy5mpNLZ3lBrLuTptGidekktO5oY8Roj2IvaQMvLEjC07sAik7Ca', 'patient', 1, 0, '2025-06-20 07:29:08.957870', None, 0, None, None, 'USD', 'monthly', None, None, None)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-06-20 10:29:08,963 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:29:08] "[35m[1mPOST /api/register HTTP/1.1[0m" 500 -
+2025-06-20 10:35:21,070 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-20 10:35:22,516 INFO werkzeug  * Restarting with stat
+2025-06-20 10:35:36,646 INFO __main__ Risk assessment model trained successfully
+2025-06-20 10:35:36,743 WARNING werkzeug  * Debugger is active!
+2025-06-20 10:35:36,756 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-20 10:36:56,574 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:36:56] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 10:36:58,044 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:36:58] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 10:37:37,888 INFO __main__ New user registered: javan@gmail.com
+2025-06-20 10:37:37,890 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:37:37] "[35m[1mPOST /api/register HTTP/1.1[0m" 201 -
+2025-06-20 10:38:00,228 INFO __main__ Successful login for user: javan@gmail.com
+2025-06-20 10:38:00,230 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:38:00] "POST /api/login HTTP/1.1" 200 -
+2025-06-20 10:38:01,798 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 10:38:01] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-20 11:33:26,274 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 11:33:26] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-20 11:58:28,008 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 11:58:28] "GET /patient-dashboard HTTP/1.1" 200 -
+2025-06-20 12:34:28,769 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 12:34:28] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 12:34:33,644 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 12:34:33] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 12:35:10,702 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
+2025-06-20 12:35:10,704 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 12:35:10] "[35m[1mPOST /api/register HTTP/1.1[0m" 201 -
+2025-06-20 12:35:31,470 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
+2025-06-20 12:35:31,472 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 12:35:31] "POST /api/login HTTP/1.1" 200 -
+2025-06-20 12:35:33,016 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 12:35:33] "GET /oncologist-dashboard HTTP/1.1" 200 -
+2025-06-20 12:49:50,345 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 12:49:50] "GET /oncologist-dashboard HTTP/1.1" 200 -
+2025-06-20 12:53:17,432 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 12:53:17] "GET /oncologist-dashboard HTTP/1.1" 200 -
+2025-06-20 14:12:32,214 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 14:12:32] "GET /oncologist-dashboard HTTP/1.1" 200 -
+2025-06-20 20:41:27,740 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 20:41:27] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 20:41:32,827 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 20:41:32] "GET / HTTP/1.1" 200 -
+2025-06-20 20:41:56,435 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 20:41:56] "GET /donate HTTP/1.1" 200 -
+2025-06-20 20:42:09,163 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 20:42:09] "GET /api/plans HTTP/1.1" 200 -
+2025-06-20 20:43:07,058 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 20:43:07] "GET /api/login HTTP/1.1" 200 -
+2025-06-20 22:06:57,559 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 22:06:57] "GET / HTTP/1.1" 200 -
+2025-06-20 22:40:58,551 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 22:40:58] "GET / HTTP/1.1" 200 -
+2025-06-20 22:41:08,298 INFO werkzeug 172.17.88.192 - - [20/Jun/2025 22:41:08] "GET / HTTP/1.1" 200 -
+2025-06-21 00:15:51,825 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-21 00:15:57,571 INFO werkzeug  * Restarting with stat
+2025-06-21 00:16:59,284 INFO __main__ Risk assessment model trained successfully
+2025-06-21 00:26:00,425 INFO __main__ Risk assessment model trained successfully
+2025-06-21 00:26:01,516 INFO __main__ All ML models initialized successfully
+2025-06-21 00:30:52,016 INFO __main__ Risk assessment model trained successfully
+2025-06-21 00:30:52,843 INFO __main__ All ML models initialized successfully
+2025-06-21 00:30:53,896 INFO werkzeug [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://172.17.88.192:5050
+2025-06-21 00:30:53,898 INFO werkzeug [33mPress CTRL+C to quit[0m
+2025-06-21 00:30:53,903 INFO werkzeug  * Restarting with stat
+2025-06-21 00:31:04,364 INFO __main__ Risk assessment model trained successfully
+2025-06-21 00:31:05,258 INFO __main__ All ML models initialized successfully
+2025-06-21 00:31:05,370 WARNING werkzeug  * Debugger is active!
+2025-06-21 00:31:05,385 INFO werkzeug  * Debugger PIN: 123-667-917
+2025-06-21 00:39:33,949 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-06-21 00:39:36,161 INFO werkzeug  * Restarting with stat
+2025-06-21 00:40:20,355 INFO __main__ Risk assessment model trained successfully
+2025-06-21 00:40:24,361 INFO __main__ All ML models initialized successfully
+2025-06-21 00:40:24,551 WARNING werkzeug  * Debugger is active!
+2025-06-21 00:40:24,626 INFO werkzeug  * Debugger PIN: 123-667-917

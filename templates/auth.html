@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CancerCare AI - Secure Access</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.8); }
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg flex items-center justify-center p-4">
+    <!-- Background decoration -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-white opacity-10 rounded-full floating"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-white opacity-5 rounded-full floating" style="animation-delay: -3s;"></div>
+        <div class="absolute top-1/2 left-1/4 w-20 h-20 bg-white opacity-20 rounded-full floating" style="animation-delay: -1s;"></div>
+    </div>
+
+    <!-- Main container -->
+    <div class="relative w-full max-w-md">
+        <!-- Logo and branding -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4 pulse-glow">
+                <i class="fas fa-user-md text-2xl text-indigo-600"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-2">CancerCare AI</h1>
+            <p class="text-indigo-200">Intelligent Cancer Management System</p>
+        </div>
+
+        <!-- Auth container -->
+        <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+            <!-- Form toggle buttons -->
+            <div class="flex bg-white bg-opacity-10 rounded-lg p-1 mb-6">
+                <button id="loginBtn" class="flex-1 py-2 px-4 rounded-md text-white font-medium transition-all duration-300 bg-white bg-opacity-20">
+                    Sign In
+                </button>
+                <button id="registerBtn" class="flex-1 py-2 px-4 rounded-md text-indigo-200 font-medium transition-all duration-300 hover:text-white">
+                    Register
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">Email Address</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-300"></i>
+                        <input type="email" id="loginEmail" required 
+                               class="w-full pl-10 pr-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300"
+                               placeholder="Enter your email">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">Password</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-300"></i>
+                        <input type="password" id="loginPassword" required 
+                               class="w-full pl-10 pr-12 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300"
+                               placeholder="Enter your password">
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-300 hover:text-white" onclick="togglePassword('loginPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center text-indigo-200">
+                        <input type="checkbox" class="mr-2 rounded">
+                        Remember me
+                    </label>
+                    <a href="#" class="text-white hover:text-indigo-200 transition-colors duration-300">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600 transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="space-y-4 hidden">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-2">First Name</label>
+                        <input type="text" id="firstName" required 
+                               class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300"
+                               placeholder="First name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-white mb-2">Last Name</label>
+                        <input type="text" id="lastName" required 
+                               class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300"
+                               placeholder="Last name">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">Email Address</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-300"></i>
+                        <input type="email" id="registerEmail" required 
+                               class="w-full pl-10 pr-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300"
+                               placeholder="Enter your email">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">User Role</label>
+                    <div class="relative">
+                        <i class="fas fa-user-tag absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-300"></i>
+                        <select id="role" required 
+                                class="w-full pl-10 pr-8 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300 appearance-none">
+                            <option value="" class="text-gray-800">Select your role</option>
+                            <option value="patient" class="text-gray-800">Patient</option>
+                            <option value="nurse" class="text-gray-800">Nurse</option>
+                            <option value="oncologist" class="text-gray-800">Oncologist</option>
+                        </select>
+                        <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-300 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">Password</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-300"></i>
+                        <input type="password" id="registerPassword" required minlength="8"
+                               class="w-full pl-10 pr-12 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300"
+                               placeholder="Create a strong password">
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-indigo-300 hover:text-white" onclick="togglePassword('registerPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div id="passwordStrength" class="mt-2 text-sm"></div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">Confirm Password</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-300"></i>
+                        <input type="password" id="confirmPassword" required 
+                               class="w-full pl-10 pr-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300"
+                               placeholder="Confirm your password">
+                    </div>
+                </div>
+
+                <div class="flex items-start">
+                    <input type="checkbox" id="agreeTerms" required class="mt-1 mr-3 rounded">
+                    <label for="agreeTerms" class="text-sm text-indigo-200">
+                        I agree to the <a href="#" class="text-white hover:text-indigo-200 underline">Terms of Service</a> and 
+                        <a href="#" class="text-white hover:text-indigo-200 underline">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600 transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    Create Account
+                </button>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-8 text-indigo-200 text-sm">
+            <p>&copy; 2025 CancerCare AI. Secure healthcare technology.</p>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="glass-effect rounded-lg p-8 text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+            <p class="text-white">Processing...</p>
+        </div>
+    </div>
+
+    <!-- Alert messages -->
+    <div id="alertContainer" class="fixed top-4 right-4 z-50"></div>
+
+    <script>
+        // Global variables
+        let authToken = null;
+
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAuth();
+        });
+
+        function initializeAuth() {
+            // Get DOM elements
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const registerPasswordInput = document.getElementById('registerPassword');
+            const passwordStrengthDiv = document.getElementById('passwordStrength');
+
+            // Form toggle functionality
+            if (loginBtn && registerBtn && loginForm && registerForm) {
+                loginBtn.addEventListener('click', () => switchToLogin());
+                registerBtn.addEventListener('click', () => switchToRegister());
+            }
+
+            // Password strength checker
+            if (registerPasswordInput && passwordStrengthDiv) {
+                registerPasswordInput.addEventListener('input', function(e) {
+                    const strength = checkPasswordStrength(e.target.value);
+                    displayPasswordStrength(strength);
+                });
+            }
+
+            // Form submissions
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+
+            if (registerForm) {
+                registerForm.addEventListener('submit', handleRegister);
+            }
+
+            console.log('Authentication system initialized');
+        }
+
+        function switchToLogin() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            
+            loginBtn.classList.add('bg-white', 'bg-opacity-20', 'text-white');
+            loginBtn.classList.remove('text-indigo-200');
+            
+            registerBtn.classList.remove('bg-white', 'bg-opacity-20', 'text-white');
+            registerBtn.classList.add('text-indigo-200');
+        }
+
+        function switchToRegister() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+
+            registerForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+            
+            registerBtn.classList.add('bg-white', 'bg-opacity-20', 'text-white');
+            registerBtn.classList.remove('text-indigo-200');
+            
+            loginBtn.classList.remove('bg-white', 'bg-opacity-20', 'text-white');
+            loginBtn.classList.add('text-indigo-200');
+        }
+
+        // Password visibility toggle
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            
+            const button = input.parentElement.querySelector('button[onclick*="' + inputId + '"]');
+            const icon = button?.querySelector('i');
+            if (!icon) return;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let score = 0;
+            const checks = {
+                length: password.length >= 8,
+                lowercase: /[a-z]/.test(password),
+                uppercase: /[A-Z]/.test(password),
+                numbers: /[0-9]/.test(password),
+                special: /[^A-Za-z0-9]/.test(password)
+            };
+
+            score = Object.values(checks).filter(Boolean).length;
+
+            const levels = [
+                { score: 0, text: 'Very Weak', color: 'bg-red-500' },
+                { score: 1, text: 'Weak', color: 'bg-red-400' },
+                { score: 2, text: 'Fair', color: 'bg-yellow-400' },
+                { score: 3, text: 'Good', color: 'bg-blue-400' },
+                { score: 4, text: 'Strong', color: 'bg-green-400' },
+                { score: 5, text: 'Very Strong', color: 'bg-green-500' }
+            ];
+
+            return { ...levels[Math.min(score, 5)], score };
+        }
+
+        function displayPasswordStrength(strength) {
+            const passwordStrengthDiv = document.getElementById('passwordStrength');
+            if (!passwordStrengthDiv) return;
+
+            passwordStrengthDiv.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <div class="flex space-x-1">
+                        ${[1,2,3,4,5].map(i => `
+                            <div class="w-4 h-1 rounded ${i <= strength.score ? strength.color : 'bg-gray-400'}"></div>
+                        `).join('')}
+                    </div>
+                    <span class="text-white text-xs">${strength.text}</span>
+                </div>
+            `;
+        }
+
+        // Alert system
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            if (!alertContainer) {
+                console.warn('Alert container not found');
+                console.log(type + ': ' + message);
+                return;
+            }
+
+            const alertId = 'alert-' + Date.now();
+            const alertColors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+
+            const alertHTML = `
+                <div id="${alertId}" class="mb-4 p-4 rounded-lg ${alertColors[type]} text-white shadow-lg transform translate-x-full transition-transform duration-300">
+                    <div class="flex items-center justify-between">
+                        <span>${message}</span>
+                        <button onclick="closeAlert('${alertId}')" class="ml-4 text-white hover:text-gray-200">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            alertContainer.insertAdjacentHTML('beforeend', alertHTML);
+            
+            // Slide in
+            setTimeout(() => {
+                const alertElement = document.getElementById(alertId);
+                if (alertElement) {
+                    alertElement.classList.remove('translate-x-full');
+                }
+            }, 100);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => closeAlert(alertId), 5000);
+        }
+
+        function closeAlert(alertId) {
+            const alert = document.getElementById(alertId);
+            if (alert) {
+                alert.classList.add('translate-x-full');
+                setTimeout(() => alert.remove(), 300);
+            }
+        }
+
+        // Validation functions
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 8;
+        }
+
+        // Login form handler
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            // Validation
+            if (!validateEmail(email)) {
+                showAlert('Please enter a valid email address.', 'error');
+                return;
+            }
+
+            if (!validatePassword(password)) {
+                showAlert('Password must be at least 8 characters long.', 'error');
+                return;
+            }
+
+            await submitLogin(email, password);
+        }
+
+        async function submitLogin(email, password) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            try {
+                if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Login successful! Redirecting...', 'success');
+                    authToken = data.token;
+                    
+                    setTimeout(() => {
+                        const dashboardUrls = {
+                            patient: '/patient-dashboard',
+                            nurse: '/nurse-dashboard',
+                            oncologist: '/oncologist-dashboard'
+                        };
+                        window.location.href = dashboardUrls[data.user.role] || '/dashboard';
+                    }, 1500);
+                } else {
+                    showAlert(data.message || 'Login failed. Please check your credentials.', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error. Please check your connection.', 'error');
+                console.error('Login error:', error);
+            } finally {
+                if (loadingOverlay) loadingOverlay.classList.add('hidden');
+            }
+        }
+
+        // Register form handler
+        async function handleRegister(e) {
+            e.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('registerEmail').value.trim(),
+                role: document.getElementById('role').value,
+                password: document.getElementById('registerPassword').value,
+                confirmPassword: document.getElementById('confirmPassword').value,
+                agreeTerms: document.getElementById('agreeTerms').checked
+            };
+
+            // Validation
+            if (!formData.firstName || !formData.lastName) {
+                showAlert('Please enter your full name.', 'error');
+                return;
+            }
+
+            if (!validateEmail(formData.email)) {
+                showAlert('Please enter a valid email address.', 'error');
+                return;
+            }
+
+            if (!formData.role) {
+                showAlert('Please select your role.', 'error');
+                return;
+            }
+
+            if (!validatePassword(formData.password)) {
+                showAlert('Password must be at least 8 characters long.', 'error');
+                return;
+            }
+
+            if (formData.password !== formData.confirmPassword) {
+                showAlert('Passwords do not match.', 'error');
+                return;
+            }
+
+            if (!formData.agreeTerms) {
+                showAlert('Please agree to the terms and conditions.', 'error');
+                return;
+            }
+
+            await submitRegistration(formData);
+        }
+
+        async function submitRegistration(formData) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            try {
+                if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        firstName: formData.firstName,
+                        lastName: formData.lastName,
+                        email: formData.email,
+                        role: formData.role,
+                        password: formData.password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Registration successful! Please sign in.', 'success');
+                    setTimeout(() => {
+                        switchToLogin();
+                        // Clear registration form
+                        document.getElementById('registerForm').reset();
+                    }, 1500);
+                } else {
+                    showAlert(data.message || 'Registration failed. Please try again.', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error. Please check your connection.', 'error');
+                console.error('Registration error:', error);
+            } finally {
+                if (loadingOverlay) loadingOverlay.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time AI Cancer Care Management</title>
+    <style>
+        :root {
+            --primary-blue: #3b82f6;
+            --primary-green: #10b981;
+            --red-500: #ef4444;
+            --orange-500: #f59e0b;
+            --purple-500: #8b5cf6;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --text-light: #6b7280;
+            --light-blue: #eff6ff;
+            --light-green: #f0fdf4;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-info {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-connected { background: #10b981; }
+        .status-disconnected { background: #ef4444; }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 2rem 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 1rem 2rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: white;
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .real-time-stats {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .live-update-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--primary-green);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .icon-blue { background: var(--light-blue); }
+        .icon-green { background: var(--light-green); }
+        .icon-orange { background: #fef3c7; }
+        .icon-red { background: #fee2e2; }
+        .icon-purple { background: #f3e8ff; }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .ai-insight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .ai-insight-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .ai-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-secondary {
+            background: var(--gray-200);
+            color: #1e293b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            padding: 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .time-slot.available {
+            background: var(--light-green);
+            border-color: var(--primary-green);
+        }
+
+        .time-slot.selected {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .time-slot.unavailable {
+            background: var(--gray-200);
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            border-left: 4px solid var(--primary-green);
+            padding: 1rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            border-left-color: var(--red-500);
+        }
+
+        .chat-widget {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 300px;
+            max-height: 400px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: var(--primary-blue);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            height: 250px;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+        }
+
+        .chat-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .data-stream {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .chat-widget {
+                width: calc(100vw - 2rem);
+                right: 1rem;
+                left: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏥 CancerCare AI</h2>
+                <div class="user-info">
+                    <div>👤 <span id="currentUser">Sarah Johnson</span></div>
+                    <div>Patient Portal</div>
+                </div>
+                <div class="connection-status">
+                    <div class="status-indicator status-connected" id="connectionStatus"></div>
+                    <span id="connectionText">Connected - Live Updates</span>
+                </div>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" onclick="navigateTo('overview')" class="active">📊 Dashboard</a></li>
+                <li><a href="#" onclick="navigateTo('treatments')">💊 My Treatments</a></li>
+                <li><a href="#" onclick="navigateTo('appointments')">📅 Appointments</a></li>
+                <li><a href="#" onclick="navigateTo('medications')">💉 Medications</a></li>
+                <li><a href="#" onclick="navigateTo('reports')">📋 Reports</a></li>
+                <li><a href="#" onclick="navigateTo('ai-insights')">🤖 AI Insights</a></li>
+                <li><a href="#" onclick="navigateTo('support')">💬 Support</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <div>
+                    <h1>Welcome back, <span id="welcomeUser">Sarah</span> 👋</h1>
+                    <p>Real-time health monitoring and AI insights</p>
+                </div>
+                <div class="real-time-stats">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="status-indicator status-connected"></div>
+                        <span>Live Updates</span>
+                    </div>
+                    <div>|</div>
+                    <div>Last sync: <span id="lastSync">Just now</span></div>
+                    <div>|</div>
+                    <div id="currentTime"></div>
+                </div>
+            </div>
+
+            <div id="dashboardContent">
+                <!-- Content will be dynamically loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Appointment Scheduling Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('appointmentModal')">&times;</span>
+            <h2>Schedule New Appointment</h2>
+            <form id="appointmentForm">
+                <div class="form-group">
+                    <label for="appointmentType">Appointment Type</label>
+                    <select id="appointmentType" required>
+                        <option value="">Select type...</option>
+                        <option value="consultation">Oncology Consultation</option>
+                        <option value="chemotherapy">Chemotherapy Session</option>
+                        <option value="lab">Lab Work</option>
+                        <option value="imaging">Imaging/Scan</option>
+                        <option value="followup">Follow-up Visit</option>
+                        <option value="emergency">Urgent Consultation</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="preferredProvider">Preferred Provider</label>
+                    <select id="preferredProvider" required>
+                        <option value="">Loading providers...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointmentDate">Preferred Date</label>
+                    <input type="date" id="appointmentDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Available Time Slots</label>
+                    <div id="timeSlots" class="time-slots">
+                        <!-- Time slots will be populated dynamically -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointmentNotes">Notes (Optional)</label>
+                    <textarea id="appointmentNotes" rows="3" placeholder="Any specific concerns or requests..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary">Schedule Appointment</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('appointmentModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- AI Chat Widget -->
+    <div id="chatWidget" class="chat-widget">
+        <div class="chat-header">
+            <span>🤖 AI Assistant</span>
+            <button onclick="toggleChat()" style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div style="color: var(--text-light); font-size: 0.8rem; text-align: center; margin: 1rem 0;">
+                AI Assistant ready to help with your care
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Ask about your treatment..." onkeypress="handleChatEnter(event)">
+            <button onclick="sendMessage()" class="btn btn-primary" style="padding: 0.5rem 1rem;">Send</button>
+        </div>
+    </div>
+
+    <button class="chat-toggle" onclick="toggleChat()">💬</button>
+
+    <!-- Notification System -->
+    <div id="notification" class="notification">
+        <div id="notificationContent"></div>
+    </div>
+
+    <script>
+        let currentView = 'overview';
+        let websocket = null;
+        let isConnected = false;
+        let selectedTimeSlot = null;
+        
+        // Simulated real-time patient data with live updates
+        const patientData = {
+            profile: {
+                name: 'Sarah Johnson',
+                age: 45,
+                diagnosis: 'Breast Cancer',
+                stage: 'Stage II',
+                treatmentStart: '2024-03-15',
+                patientId: 'PT-2024-001'
+            },
+            treatments: {
+                current: 'Chemotherapy + Targeted Therapy',
+                cycle: 4,
+                totalCycles: 8,
+                progress: 50,
+                nextSession: '2024-06-18',
+                protocol: 'AC-T Protocol',
+                lastUpdated: new Date()
+            },
+            vitals: {
+                healthScore: 85,
+                lastUpdate: new Date(),
+                trends: 'improving',
+                realTimeData: {
+                    heartRate: 72,
+                    bloodPressure: '120/80',
+                    temperature: 98.6,
+                    oxygenSat: 98
+                }
+            },
+            aiInsights: {
+                risk: 'Low',
+                recommendations: [],
+                lastAnalysis: new Date(),
+                confidence: 94
+            }
+        };
+
+        // Healthcare providers data
+        const providers = {
+            oncologists: [
+                { id: 'onc001', name: 'Dr. Sarah Smith', specialty: 'Medical Oncology', available: true },
+                { id: 'onc002', name: 'Dr. Michael Chen', specialty: 'Radiation Oncology', available: true },
+                { id: 'onc003', name: 'Dr. Emily Rodriguez', specialty: 'Surgical Oncology', available: false }
+            ],
+            nurses: [
+                { id: 'rn001', name: 'Nurse Jennifer Wilson', specialty: 'Oncology', available: true },
+                { id: 'rn002', name: 'Nurse David Thompson', specialty: 'Infusion', available: true },
+                { id: 'rn003', name: 'Nurse Lisa Anderson', specialty: 'Patient Care', available: true }
+            ]
+        };
+
+        // Initialize WebSocket connection (simulated)
+        function initWebSocket() {
+            // Simulate WebSocket connection
+            console.log('Initializing WebSocket connection...');
+            
+            // Simulate connection delay
+            setTimeout(() => {
+                isConnected = true;
+                updateConnectionStatus(true);
+                startRealTimeUpdates();
+                showNotification('Connected to real-time monitoring system', 'success');
+            }, 1000);
+        }
+
+        function updateConnectionStatus(connected) {
+            const indicator = document.getElementById('connectionStatus');
+            const text = document.getElementById('connectionText');
+            
+            if (connected) {
+                indicator.className = 'status-indicator status-connected';
+                text.textContent = 'Connected - Live Updates';
+            } else {
+                indicator.className = 'status-indicator status-disconnected';
+                text.textContent = 'Disconnected - Offline Mode';
+            }
+        }
+
+        function startRealTimeUpdates() {
+            // Simulate real-time data updates every 30 seconds
+            setInterval(() => {
+                updateVitalSigns();
+                updateAIInsights();
+                updateLastSync();
+            }, 30000);
+
+            // Update current time every second
+            setInterval(updateCurrentTime, 1000);
+        }
+
+        function updateVitalSigns() {
+            if (!isConnected) return;
+            
+            // Simulate vital sign variations
+            patientData.vitals.realTimeData.heartRate = 68 + Math.floor(Math.random() * 10);
+            patientData.vitals.realTimeData.oxygenSat = 96 + Math.floor(Math.random() * 4);
+            patientData.vitals.healthScore = Math.max(75, Math.min(95, patientData.vitals.healthScore + (Math.random() - 0.5) * 5));
+            
+            // Update UI if on overview
+            if (currentView === 'overview') {
+                const healthScoreEl = document.getElementById('healthScore');
+                if (healthScoreEl) {
+                    healthScoreEl.textContent = Math.round(patientData.vitals.healthScore);
+                }
+            }
+        }
+
+        function updateAIInsights() {
+            const insights = [
+                "Your response to treatment continues to exceed expectations",
+                "Biomarker levels show 15% improvement since last week",
+                "Consider light exercise to maintain energy levels",
+                "Hydration levels optimal - continue current intake",
+                "Next lab work recommended in 3 days for monitoring"
+            ];
+            
+            patientData.aiInsights.recommendations = [
+                insights[Math.floor(Math.random() * insights.length)]
+            ];
+            patientData.aiInsights.lastAnalysis = new Date();
+        }
+
+        function updateLastSync() {
+            const syncEl = document.getElementById('lastSync');
+            if (syncEl) {
+                syncEl.textContent = 'Just now';
+            }
+        }
+
+        function updateCurrentTime() {
+            const timeEl = document.getElementById('currentTime');
+            if (timeEl) {
+                timeEl.textContent = new Date().toLocaleTimeString();
+            }
+        }
+
+        function navigateTo(view) {
+            currentView = view;
+            updateActiveMenuItem();
+            
+            switch(view) {
+                case 'overview':
+                    showOverview();
+                    break;
+                case 'treatments':
+                    showTreatments();
+                    break;
+                case 'appointments':
+                    showAppointments();
+                    break;
+                case 'medications':
+                    showMedications();
+                    break;
+                case 'ai-insights':
+                    showAIInsights();
+                    break;
+                case 'support':
+                    showSupport();
+                    break;
+                default:
+                    showOverview();
+            }
+        }
+
+        function updateActiveMenuItem() {
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        function showOverview() {
+            const content = document.getElementById('dashboardContent');
+            content.innerHTML = `
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="live-update-badge">LIVE</div>
+                        <div class="card-header">
+                            <span class="card-title">Treatment Progress</span>
+                            <div class="card-icon icon-blue">💊</div>
+                        </div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary-blue); margin-bottom: 1rem;">
+                            <span id="treatmentProgress">${patientData.treatments.progress}</span>%
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${patientData.treatments.progress}%;" id="progressBar"></div>
+                        </div>
+                        <p style="margin-top: 0.5rem; color: var(--text-light);">
+                            ${patientData.treatments.cycle} of ${patientData.treatments.totalCycles} cycles completed
+                        </p>
+                        <p style="margin-top: 0.5rem; font-weight: 600;">
+                            Next session: ${patientData.treatments.nextSession}
+                        </p>
+                        <div class="data-stream">
+                            📊 Real-time: Treatment response monitored • Biomarkers tracked • AI analysis active
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="live-update-badge">LIVE</div>
+                        <div class="card-header">
+                            <span class="card-title">Health Score</span>
+                            <div class="card-icon icon-green">❤️</div>
+                        </div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary-green); margin-bottom: 1rem;">
+                            <span id="healthScore">${Math.round(patientData.vitals.healthScore)}</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.9rem; margin: 1rem 0;">
+                            <div>HR: <span id="heartRate">${patientData.vitals.realTimeData.heartRate}</span> bpm</div>
+                            <div>SpO2: <span id="oxygenSat">${patientData.vitals.realTimeData.oxygenSat}</span>%</div>
+                        </div>
+                        <p style="color: var(--text-light);">Based on real-time vitals and lab results</p>
+                        <p style="margin-top: 0.5rem; color: var(--primary-green);">
+                            📈 Trending ${patientData.vitals.trends}
+                        </p>
+                        <div class="data-stream">
+                            💓 Live vitals • 🧪 Lab integration • 🤖 AI monitoring
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Quick Actions</span>
+                            <div class="card-icon icon-purple">⚡</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <button class="btn btn-primary" onclick="openSchedulingModal()">
+                                📅 Schedule Appointment
+                            </button>
+                            <button class="btn btn-success" onclick="reportSymptom()">
+                                📝 Report Symptoms
+                            </button>
+                            <button class="btn btn-secondary" onclick="contactProvider()">
+                                📞 Contact Care Team
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-insight">
+                    <div class="ai-insight-header">
+                        <span class="ai-badge">AI LIVE</span>
+                        <strong>Real-time AI Health Insights</strong>
+                    </div>
+                    <div id="aiInsightsContent">
+                        <p>🔍 <strong>Current Analysis:</strong> ${patientData.aiInsights.recommendations[0] || 'Analyzing your latest data...'}</p>
+                        <p>📊 <strong>Confidence Level:</strong> ${patientData.aiInsights.confidence}% (High reliability)</p>
+                        <p>⏰ <strong>Last Updated:</strong> ${patientData.aiInsights.lastAnalysis.toLocaleTimeString()}</p>
+                       <div style="margin-top: 1rem;">
+                           <button class="btn btn-primary" onclick="refreshAIAnalysis()">🔄 Refresh Analysis</button>
+                       </div>
+                   </div>
+               </div>
+           `;
+       }
+
+       function showTreatments() {
+           const content = document.getElementById('dashboardContent');
+           content.innerHTML = `
+               <div class="dashboard-grid">
+                   <div class="card">
+                       <div class="card-header">
+                           <span class="card-title">Current Treatment Plan</span>
+                           <div class="card-icon icon-blue">💊</div>
+                       </div>
+                       <h3>${patientData.treatments.current}</h3>
+                       <p style="margin: 1rem 0; color: var(--text-light);">Protocol: ${patientData.treatments.protocol}</p>
+                       <div class="progress-bar">
+                           <div class="progress-fill" style="width: ${patientData.treatments.progress}%;"></div>
+                       </div>
+                       <p style="margin-top: 1rem;">Cycle ${patientData.treatments.cycle} of ${patientData.treatments.totalCycles}</p>
+                   </div>
+                   
+                   <div class="card">
+                       <div class="card-header">
+                           <span class="card-title">Treatment History</span>
+                           <div class="card-icon icon-green">📋</div>
+                       </div>
+                       <div style="font-size: 0.9rem;">
+                           <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--gray-200);">
+                               <strong>Cycle 3</strong> - June 10, 2024<br>
+                               <span style="color: var(--primary-green);">✓ Completed successfully</span>
+                           </div>
+                           <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--gray-200);">
+                               <strong>Cycle 2</strong> - May 27, 2024<br>
+                               <span style="color: var(--primary-green);">✓ Completed successfully</span>
+                           </div>
+                           <div>
+                               <strong>Cycle 1</strong> - May 13, 2024<br>
+                               <span style="color: var(--primary-green);">✓ Completed successfully</span>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           `;
+       }
+
+       function showAppointments() {
+           const content = document.getElementById('dashboardContent');
+           content.innerHTML = `
+               <div class="dashboard-grid">
+                   <div class="card">
+                       <div class="card-header">
+                           <span class="card-title">Upcoming Appointments</span>
+                           <div class="card-icon icon-purple">📅</div>
+                       </div>
+                       <div style="display: flex; flex-direction: column; gap: 1rem;">
+                           <div style="padding: 1rem; background: var(--light-blue); border-radius: 8px;">
+                               <strong>Chemotherapy Session</strong><br>
+                               <span style="color: var(--text-light);">June 25, 2024 at 9:00 AM</span><br>
+                               <span>Dr. Sarah Smith • Room 302</span>
+                           </div>
+                           <div style="padding: 1rem; background: var(--light-green); border-radius: 8px;">
+                               <strong>Lab Work</strong><br>
+                               <span style="color: var(--text-light);">June 22, 2024 at 8:00 AM</span><br>
+                               <span>Lab Center • Fasting required</span>
+                           </div>
+                       </div>
+                       <button class="btn btn-primary" onclick="openSchedulingModal()" style="margin-top: 1rem;">
+                           Schedule New Appointment
+                       </button>
+                   </div>
+               </div>
+           `;
+       }
+
+       function showMedications() {
+           const content = document.getElementById('dashboardContent');
+           content.innerHTML = `
+               <div class="dashboard-grid">
+                   <div class="card">
+                       <div class="card-header">
+                           <span class="card-title">Current Medications</span>
+                           <div class="card-icon icon-orange">💉</div>
+                       </div>
+                       <div style="display: flex; flex-direction: column; gap: 1rem;">
+                           <div style="padding: 1rem; border: 1px solid var(--gray-200); border-radius: 8px;">
+                               <strong>Doxorubicin</strong><br>
+                               <span style="color: var(--text-light);">60 mg/m² IV every 21 days</span><br>
+                               <span style="color: var(--primary-green);">Next dose: June 25, 2024</span>
+                           </div>
+                           <div style="padding: 1rem; border: 1px solid var(--gray-200); border-radius: 8px;">
+                               <strong>Cyclophosphamide</strong><br>
+                               <span style="color: var(--text-light);">600 mg/m² IV every 21 days</span><br>
+                               <span style="color: var(--primary-green);">Next dose: June 25, 2024</span>
+                           </div>
+                           <div style="padding: 1rem; border: 1px solid var(--gray-200); border-radius: 8px;">
+                               <strong>Ondansetron</strong><br>
+                               <span style="color: var(--text-light);">8 mg PO as needed for nausea</span><br>
+                               <span style="color: var(--orange-500);">PRN medication</span>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           `;
+       }
+
+       function showAIInsights() {
+           const content = document.getElementById('dashboardContent');
+           content.innerHTML = `
+               <div class="ai-insight">
+                   <div class="ai-insight-header">
+                       <span class="ai-badge">AI ANALYSIS</span>
+                       <strong>Comprehensive Health Insights</strong>
+                   </div>
+                   <div style="margin-top: 1rem;">
+                       <h3>Treatment Response Analysis</h3>
+                       <p style="margin: 1rem 0;">Your body is responding exceptionally well to the current treatment protocol. Biomarker analysis shows a 78% improvement in tumor markers since treatment initiation.</p>
+                       
+                       <h3 style="margin-top: 2rem;">Predictive Insights</h3>
+                       <p style="margin: 1rem 0;">Based on current response patterns, there's a 94% probability of achieving complete pathological response by treatment completion.</p>
+                       
+                       <h3 style="margin-top: 2rem;">Recommendations</h3>
+                       <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                           <li>Continue current exercise routine - improves treatment tolerance by 23%</li>
+                           <li>Maintain hydration levels above 2.5L daily</li>
+                           <li>Consider meditation app - reduces treatment anxiety by 31%</li>
+                       </ul>
+                       
+                       <button class="btn btn-primary" onclick="refreshAIAnalysis()">Generate New Analysis</button>
+                   </div>
+               </div>
+           `;
+       }
+
+       function showSupport() {
+           const content = document.getElementById('dashboardContent');
+           content.innerHTML = `
+               <div class="dashboard-grid">
+                   <div class="card">
+                       <div class="card-header">
+                           <span class="card-title">Care Team Contacts</span>
+                           <div class="card-icon icon-blue">👥</div>
+                       </div>
+                       <div style="display: flex; flex-direction: column; gap: 1rem;">
+                           <div style="padding: 1rem; border: 1px solid var(--gray-200); border-radius: 8px;">
+                               <strong>Dr. Sarah Smith</strong><br>
+                               <span style="color: var(--text-light);">Medical Oncologist</span><br>
+                               <button class="btn btn-primary" style="margin-top: 0.5rem;">📞 Call</button>
+                           </div>
+                           <div style="padding: 1rem; border: 1px solid var(--gray-200); border-radius: 8px;">
+                               <strong>Nurse Jennifer Wilson</strong><br>
+                               <span style="color: var(--text-light);">Oncology Nurse</span><br>
+                               <button class="btn btn-primary" style="margin-top: 0.5rem;">💬 Message</button>
+                           </div>
+                       </div>
+                   </div>
+                   
+                   <div class="card">
+                       <div class="card-header">
+                           <span class="card-title">Emergency Contacts</span>
+                           <div class="card-icon icon-red">🚨</div>
+                       </div>
+                       <div style="display: flex; flex-direction: column; gap: 1rem;">
+                           <button class="btn" style="background: var(--red-500); color: white;">
+                               🚨 Emergency Oncology Line
+                           </button>
+                           <button class="btn btn-secondary">
+                               📞 24/7 Nurse Hotline
+                           </button>
+                       </div>
+                   </div>
+               </div>
+           `;
+       }
+
+       function openSchedulingModal() {
+           document.getElementById('appointmentModal').style.display = 'block';
+           loadProviders();
+           setMinDate();
+       }
+
+       function closeModal(modalId) {
+           document.getElementById(modalId).style.display = 'none';
+           if (modalId === 'appointmentModal') {
+               document.getElementById('appointmentForm').reset();
+               selectedTimeSlot = null;
+           }
+       }
+
+       function loadProviders() {
+           const select = document.getElementById('preferredProvider');
+           select.innerHTML = '<option value="">Select provider...</option>';
+           
+           providers.oncologists.forEach(provider => {
+               if (provider.available) {
+                   const option = document.createElement('option');
+                   option.value = provider.id;
+                   option.textContent = `${provider.name} - ${provider.specialty}`;
+                   select.appendChild(option);
+               }
+           });
+       }
+
+       function setMinDate() {
+           const dateInput = document.getElementById('appointmentDate');
+           const today = new Date();
+           dateInput.min = today.toISOString().split('T')[0];
+           
+           dateInput.addEventListener('change', loadTimeSlots);
+       }
+
+       function loadTimeSlots() {
+           const selectedDate = document.getElementById('appointmentDate').value;
+           const timeSlotsContainer = document.getElementById('timeSlots');
+           
+           if (!selectedDate) return;
+           
+           const timeSlots = [
+               '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM',
+               '11:00 AM', '11:30 AM', '2:00 PM', '2:30 PM',
+               '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM'
+           ];
+           
+           timeSlotsContainer.innerHTML = '';
+           
+           timeSlots.forEach(time => {
+               const slot = document.createElement('div');
+               slot.className = 'time-slot available';
+               slot.textContent = time;
+               slot.onclick = () => selectTimeSlot(slot, time);
+               timeSlotsContainer.appendChild(slot);
+           });
+       }
+
+       function selectTimeSlot(element, time) {
+           document.querySelectorAll('.time-slot').forEach(slot => {
+               slot.classList.remove('selected');
+           });
+           element.classList.add('selected');
+           selectedTimeSlot = time;
+       }
+
+       document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+           e.preventDefault();
+           
+           if (!selectedTimeSlot) {
+               showNotification('Please select a time slot', 'error');
+               return;
+           }
+           
+           const formData = {
+               type: document.getElementById('appointmentType').value,
+               provider: document.getElementById('preferredProvider').value,
+               date: document.getElementById('appointmentDate').value,
+               time: selectedTimeSlot,
+               notes: document.getElementById('appointmentNotes').value
+           };
+           
+           // Simulate API call
+           setTimeout(() => {
+               closeModal('appointmentModal');
+               showNotification('Appointment scheduled successfully!', 'success');
+           }, 1000);
+       });
+
+       function reportSymptom() {
+           showNotification('Symptom reporting feature coming soon', 'info');
+       }
+
+       function contactProvider() {
+           showNotification('Connecting to care team...', 'info');
+       }
+
+       function refreshAIAnalysis() {
+           showNotification('Refreshing AI analysis...', 'info');
+           updateAIInsights();
+           setTimeout(() => {
+               showNotification('AI analysis updated with latest data', 'success');
+               if (currentView === 'overview') {
+                   showOverview();
+               } else if (currentView === 'ai-insights') {
+                   showAIInsights();
+               }
+           }, 2000);
+       }
+
+       function toggleChat() {
+           const widget = document.getElementById('chatWidget');
+           const toggle = document.querySelector('.chat-toggle');
+           
+           if (widget.style.display === 'none' || !widget.style.display) {
+               widget.style.display = 'flex';
+               toggle.style.display = 'none';
+           } else {
+               widget.style.display = 'none';
+               toggle.style.display = 'block';
+           }
+       }
+
+       function handleChatEnter(event) {
+           if (event.key === 'Enter') {
+               sendMessage();
+           }
+       }
+
+       function sendMessage() {
+           const input = document.getElementById('chatInput');
+           const message = input.value.trim();
+           
+           if (!message) return;
+           
+           const messagesContainer = document.getElementById('chatMessages');
+           
+           // Add user message
+           const userMessage = document.createElement('div');
+           userMessage.style.cssText = 'background: var(--light-blue); padding: 0.5rem; border-radius: 8px; margin-bottom: 0.5rem; text-align: right;';
+           userMessage.textContent = message;
+           messagesContainer.appendChild(userMessage);
+           
+           // Simulate AI response
+           setTimeout(() => {
+               const aiResponse = document.createElement('div');
+               aiResponse.style.cssText = 'background: var(--light-green); padding: 0.5rem; border-radius: 8px; margin-bottom: 0.5rem;';
+               aiResponse.innerHTML = `<strong>🤖 AI:</strong> ${getAIResponse(message)}`;
+               messagesContainer.appendChild(aiResponse);
+               messagesContainer.scrollTop = messagesContainer.scrollHeight;
+           }, 1000);
+           
+           input.value = '';
+           messagesContainer.scrollTop = messagesContainer.scrollHeight;
+       }
+
+       function getAIResponse(message) {
+           const responses = {
+               'pain': 'I understand you\'re experiencing pain. On a scale of 1-10, how would you rate it? I can help you contact your care team or provide pain management suggestions.',
+               'nausea': 'Nausea is a common side effect. Try eating small, bland meals and stay hydrated. Your prescribed anti-nausea medication should help. Contact your nurse if it persists.',
+               'tired': 'Fatigue is normal during treatment. Light exercise, adequate rest, and proper nutrition can help. Would you like me to suggest some gentle exercises?',
+               'appointment': 'I can help you schedule an appointment. Would you like me to open the scheduling form?',
+               'default': 'I\'m here to help with your cancer care questions. You can ask about symptoms, appointments, medications, or treatment progress.'
+           };
+           
+           const lowerMessage = message.toLowerCase();
+           for (const [key, response] of Object.entries(responses)) {
+               if (lowerMessage.includes(key)) {
+                   return response;
+               }
+           }
+           return responses.default;
+       }
+
+       function showNotification(message, type = 'success') {
+           const notification = document.getElementById('notification');
+           const content = document.getElementById('notificationContent');
+           
+           content.textContent = message;
+           notification.className = `notification ${type === 'error' ? 'error' : ''}`;
+           notification.classList.add('show');
+           
+           setTimeout(() => {
+               notification.classList.remove('show');
+           }, 3000);
+       }
+
+       // Appointment storage and management
+        let appointments = [
+            {
+                id: 'apt001',
+                type: 'Chemotherapy Session',
+                provider: 'Dr. Sarah Smith',
+                date: '2024-06-25',
+                time: '9:00 AM',
+                location: 'Room 302',
+                status: 'scheduled',
+                notes: 'Cycle 5 treatment',
+                created: new Date('2024-06-15')
+            },
+            {
+                id: 'apt002',
+                type: 'Lab Work',
+                provider: 'Lab Center',
+                date: '2024-06-22',
+                time: '8:00 AM',
+                location: 'Lab Center',
+                status: 'scheduled',
+                notes: 'Fasting required',
+                created: new Date('2024-06-10')
+            }
+        ];
+
+        // Function to add new appointment
+        function addAppointment(appointmentData) {
+            const newAppointment = {
+                id: 'apt' + Date.now(),
+                ...appointmentData,
+                status: 'scheduled',
+                created: new Date()
+            };
+            
+            appointments.push(newAppointment);
+            updateAppointmentReminders();
+            return newAppointment;
+        }
+
+        // Function to get appointment status based on date/time
+        function getAppointmentStatus(date, time) {
+            const appointmentDateTime = new Date(`${date} ${time}`);
+            const now = new Date();
+            const diffHours = (appointmentDateTime - now) / (1000 * 60 * 60);
+            
+            if (diffHours < 0) {
+                return 'missed';
+            } else if (diffHours <= 24) {
+                return 'upcoming';
+            } else if (diffHours <= 48) {
+                return 'soon';
+            }
+            return 'scheduled';
+        }
+
+        // Function to get status color and background
+        function getStatusStyling(status) {
+            switch(status) {
+                case 'missed':
+                    return { bg: '#fef2f2', border: '#ef4444', text: '#dc2626' };
+                case 'upcoming':
+                    return { bg: '#fff7ed', border: '#f59e0b', text: '#d97706' };
+                case 'soon':
+                    return { bg: '#eff6ff', border: '#3b82f6', text: '#2563eb' };
+                default:
+                    return { bg: '#f0fdf4', border: '#10b981', text: '#059669' };
+            }
+        }
+
+        // Function to update appointment reminders
+        function updateAppointmentReminders() {
+            const now = new Date();
+            let reminderCount = 0;
+            
+            appointments.forEach(apt => {
+                const appointmentDateTime = new Date(`${apt.date} ${apt.time}`);
+                const diffHours = (appointmentDateTime - now) / (1000 * 60 * 60);
+                
+                // Update status
+                apt.status = getAppointmentStatus(apt.date, apt.time);
+                
+                // Count reminders (appointments within 24 hours)
+                if (diffHours > 0 && diffHours <= 24) {
+                    reminderCount++;
+                }
+            });
+            
+            // Update notification badge in sidebar
+            updateSidebarNotificationBadge(reminderCount);
+            
+            // Show reminder notifications
+            showAppointmentReminders();
+        }
+
+        // Function to update sidebar notification badge
+        function updateSidebarNotificationBadge(count) {
+            const appointmentLink = document.querySelector('a[onclick*="appointments"]');
+            if (appointmentLink) {
+                // Remove existing badge
+                const existingBadge = appointmentLink.querySelector('.notification-badge');
+                if (existingBadge) {
+                    existingBadge.remove();
+                }
+                
+                // Add new badge if count > 0
+                if (count > 0) {
+                    const badge = document.createElement('span');
+                    badge.className = 'notification-badge';
+                    badge.textContent = count;
+                    badge.style.cssText = `
+                        position: absolute;
+                        top: 0.5rem;
+                        right: 1rem;
+                        background: #ef4444;
+                        color: white;
+                        font-size: 0.7rem;
+                        padding: 0.2rem 0.5rem;
+                        border-radius: 10px;
+                        min-width: 18px;
+                        text-align: center;
+                    `;
+                    appointmentLink.style.position = 'relative';
+                    appointmentLink.appendChild(badge);
+                }
+            }
+        }
+
+        // Function to show appointment reminders
+        function showAppointmentReminders() {
+            const now = new Date();
+            const upcomingAppointments = appointments.filter(apt => {
+                const appointmentDateTime = new Date(`${apt.date} ${apt.time}`);
+                const diffHours = (appointmentDateTime - now) / (1000 * 60 * 60);
+                return diffHours > 0 && diffHours <= 24;
+            });
+            
+            if (upcomingAppointments.length > 0) {
+                const appointment = upcomingAppointments[0];
+                const appointmentDateTime = new Date(`${appointment.date} ${appointment.time}`);
+                const diffHours = Math.ceil((appointmentDateTime - now) / (1000 * 60 * 60));
+                
+                let reminderMessage = '';
+                if (diffHours <= 2) {
+                    reminderMessage = `⏰ Reminder: ${appointment.type} in ${diffHours} hour${diffHours > 1 ? 's' : ''}`;
+                } else {
+                    reminderMessage = `📅 Upcoming: ${appointment.type} tomorrow at ${appointment.time}`;
+                }
+                
+                // Show notification every 30 minutes for appointments within 2 hours
+                if (diffHours <= 2) {
+                    showNotification(reminderMessage, 'warning');
+                }
+            }
+        }
+
+        // Enhanced showAppointments function
+        function showAppointments() {
+            updateAppointmentReminders(); // Update statuses first
+            
+            const content = document.getElementById('dashboardContent');
+            
+            // Sort appointments by date and time
+            const sortedAppointments = [...appointments].sort((a, b) => {
+                const dateA = new Date(`${a.date} ${a.time}`);
+                const dateB = new Date(`${b.date} ${b.time}`);
+                return dateA - dateB;
+            });
+            
+            // Separate appointments by status
+            const upcomingAppointments = sortedAppointments.filter(apt => 
+                ['scheduled', 'soon', 'upcoming'].includes(apt.status)
+            );
+            const missedAppointments = sortedAppointments.filter(apt => apt.status === 'missed');
+            
+            let appointmentHTML = '';
+            
+            // Upcoming appointments
+            if (upcomingAppointments.length > 0) {
+                appointmentHTML += `
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Upcoming Appointments</span>
+                            <div class="card-icon icon-purple">📅</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                `;
+                
+                upcomingAppointments.forEach(apt => {
+                    const styling = getStatusStyling(apt.status);
+                    const appointmentDate = new Date(`${apt.date} ${apt.time}`);
+                    const now = new Date();
+                    const isToday = appointmentDate.toDateString() === now.toDateString();
+                    const isTomorrow = appointmentDate.toDateString() === new Date(now.getTime() + 24*60*60*1000).toDateString();
+                    
+                    let dateDisplay = apt.date;
+                    if (isToday) dateDisplay = 'Today';
+                    else if (isTomorrow) dateDisplay = 'Tomorrow';
+                    
+                    appointmentHTML += `
+                        <div style="padding: 1rem; background: ${styling.bg}; border: 1px solid ${styling.border}; border-radius: 8px; position: relative;">
+                            ${apt.status === 'upcoming' ? '<div style="position: absolute; top: 0.5rem; right: 0.5rem; background: #f59e0b; color: white; font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 10px;">URGENT</div>' : ''}
+                            <strong style="color: ${styling.text};">${apt.type}</strong><br>
+                            <span style="color: var(--text-light);">${dateDisplay} at ${apt.time}</span><br>
+                            <span>${apt.provider} • ${apt.location}</span>
+                            ${apt.notes ? `<br><small style="color: var(--text-light); font-style: italic;">${apt.notes}</small>` : ''}
+                            <div style="margin-top: 0.5rem;">
+                                <button class="btn btn-primary" onclick="rescheduleAppointment('${apt.id}')" style="font-size: 0.8rem; padding: 0.25rem 0.75rem; margin-right: 0.5rem;">Reschedule</button>
+                                <button class="btn btn-secondary" onclick="cancelAppointment('${apt.id}')" style="font-size: 0.8rem; padding: 0.25rem 0.75rem;">Cancel</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                appointmentHTML += `
+                        </div>
+                        <button class="btn btn-primary" onclick="openSchedulingModal()" style="margin-top: 1rem;">
+                            Schedule New Appointment
+                        </button>
+                    </div>
+                `;
+            } else {
+                appointmentHTML += `
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">No Upcoming Appointments</span>
+                            <div class="card-icon icon-purple">📅</div>
+                        </div>
+                        <p style="color: var(--text-light); margin-bottom: 1rem;">You have no scheduled appointments.</p>
+                        <button class="btn btn-primary" onclick="openSchedulingModal()">
+                            Schedule New Appointment
+                        </button>
+                    </div>
+                `;
+            }
+            
+            // Missed appointments
+            if (missedAppointments.length > 0) {
+                appointmentHTML += `
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Missed Appointments</span>
+                            <div class="card-icon icon-red">⚠️</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                `;
+                
+                missedAppointments.forEach(apt => {
+                    const styling = getStatusStyling(apt.status);
+                    appointmentHTML += `
+                        <div style="padding: 1rem; background: ${styling.bg}; border: 1px solid ${styling.border}; border-radius: 8px;">
+                            <strong style="color: ${styling.text};">${apt.type} - MISSED</strong><br>
+                            <span style="color: var(--text-light);">${apt.date} at ${apt.time}</span><br>
+                            <span>${apt.provider} • ${apt.location}</span>
+                            <div style="margin-top: 0.5rem;">
+                                <button class="btn btn-primary" onclick="rescheduleAppointment('${apt.id}')" style="font-size: 0.8rem; padding: 0.25rem 0.75rem;">Reschedule</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                appointmentHTML += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            content.innerHTML = `<div class="dashboard-grid">${appointmentHTML}</div>`;
+        }
+
+        // Function to reschedule appointment
+        function rescheduleAppointment(appointmentId) {
+            const appointment = appointments.find(apt => apt.id === appointmentId);
+            if (appointment) {
+                // Pre-fill the scheduling modal with existing appointment data
+                openSchedulingModal();
+                
+                // Set the form values
+                setTimeout(() => {
+                    document.getElementById('appointmentType').value = appointment.type.toLowerCase().replace(' ', '-');
+                    document.getElementById('appointmentNotes').value = appointment.notes || '';
+                }, 100);
+                
+                // Store the appointment ID for updating instead of creating new
+                window.reschedulingAppointmentId = appointmentId;
+            }
+        }
+
+        // Function to cancel appointment
+        function cancelAppointment(appointmentId) {
+            if (confirm('Are you sure you want to cancel this appointment?')) {
+                appointments = appointments.filter(apt => apt.id !== appointmentId);
+                updateAppointmentReminders();
+                showAppointments(); // Refresh the view
+                showNotification('Appointment cancelled successfully', 'success');
+            }
+        }
+
+        // Enhanced appointment form submission
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedTimeSlot) {
+                showNotification('Please select a time slot', 'error');
+                return;
+            }
+            
+            const formData = {
+                type: document.getElementById('appointmentType').selectedOptions[0].text,
+                provider: document.getElementById('preferredProvider').selectedOptions[0].text,
+                date: document.getElementById('appointmentDate').value,
+                time: selectedTimeSlot,
+                location: 'TBD',
+                notes: document.getElementById('appointmentNotes').value
+            };
+            
+            // Check if we're rescheduling or creating new
+            if (window.reschedulingAppointmentId) {
+                // Update existing appointment
+                const appointmentIndex = appointments.findIndex(apt => apt.id === window.reschedulingAppointmentId);
+                if (appointmentIndex !== -1) {
+                    appointments[appointmentIndex] = {
+                        ...appointments[appointmentIndex],
+                        ...formData,
+                        status: 'scheduled'
+                    };
+                    showNotification('Appointment rescheduled successfully!', 'success');
+                }
+                delete window.reschedulingAppointmentId;
+            } else {
+                // Create new appointment
+                addAppointment(formData);
+                showNotification('Appointment scheduled successfully!', 'success');
+            }
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                closeModal('appointmentModal');
+                if (currentView === 'appointments') {
+                    showAppointments(); // Refresh appointments view
+                }
+            }, 1000);
+        });
+
+        // Enhanced notification function with warning type
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const content = document.getElementById('notificationContent');
+            
+            content.textContent = message;
+            
+            let notificationClass = 'notification';
+            if (type === 'error') notificationClass += ' error';
+            else if (type === 'warning') notificationClass += ' warning';
+            
+            notification.className = notificationClass;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, type === 'warning' ? 5000 : 3000); // Show warnings longer
+        }
+
+       // Initialize dashboard
+       document.addEventListener('DOMContentLoaded', function() {
+           initWebSocket();
+           showOverview();
+           updateCurrentTime();
+
+           // Set up periodic reminder checks (every 30 minutes)
+            setInterval(updateAppointmentReminders, 30 * 60 * 1000);
+            
+            // Initial reminder check
+            updateAppointmentReminders();
+           
+           // Close modals when clicking outside
+           window.onclick = function(event) {
+               const modal = document.getElementById('appointmentModal');
+               if (event.target === modal) {
+                   closeModal('appointmentModal');
+               }
+           };
+       });
+
+       // Add CSS for warning notifications (add this to your existing styles)
+        const additionalCSS = `
+        .notification.warning {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            background: #ef4444;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        `;
+
+        // Inject additional CSS
+        const style = document.createElement('style');
+        style.textContent = additionalCSS;
+        document.head.appendChild(style);
+   </script>
+</body>
+</html>
