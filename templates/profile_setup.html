@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile - Healthcare AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="gradient-bg">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-2xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-white mb-2">
+                    <i class="fas fa-user-md mr-3"></i>
+                    Complete Your Profile
+                </h1>
+                <p class="text-indigo-200 text-lg">Help us provide personalized care by completing your medical profile</p>
+            </div>
+
+            <!-- Profile Setup Form -->
+            <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+                <form id="profileForm" class="space-y-6">
+                    <!-- Progress Bar -->
+                    <div class="mb-8">
+                        <div class="flex justify-between text-sm text-indigo-200 mb-2">
+                            <span>Profile Completion</span>
+                            <span id="progressText">0/6 fields</span>
+                        </div>
+                        <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+                            <div id="progressBar" class="bg-white h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Basic Info Section -->
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6 mb-6">
+                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                            <i class="fas fa-info-circle mr-2 text-indigo-300"></i>
+                            Basic Information
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Age</label>
+                                <input type="number" id="age" required min="1" max="120"
+                                       class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300"
+                                       placeholder="Enter your age">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Gender</label>
+                                <select id="gender" required 
+                                        class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300">
+                                    <option value="" class="text-gray-800">Select gender</option>
+                                    <option value="Male" class="text-gray-800">Male</option>
+                                    <option value="Female" class="text-gray-800">Female</option>
+                                    <option value="Other" class="text-gray-800">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medical Info Section -->
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6 mb-6">
+                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                            <i class="fas fa-stethoscope mr-2 text-indigo-300"></i>
+                            Medical Information
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Diagnosis</label>
+                                <input type="text" id="diagnosis" required 
+                                       class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300"
+                                       placeholder="Enter your diagnosis">
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-white mb-2">Stage</label>
+                                    <select id="stage" required 
+                                            class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300">
+                                        <option value="" class="text-gray-800">Select stage</option>
+                                        <option value="Stage I" class="text-gray-800">Stage I</option>
+                                        <option value="Stage II" class="text-gray-800">Stage II</option>
+                                        <option value="Stage III" class="text-gray-800">Stage III</option>
+                                        <option value="Stage IV" class="text-gray-800">Stage IV</option>
+                                        <option value="Remission" class="text-gray-800">Remission</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-white mb-2">Date Diagnosed</label>
+                                    <input type="date" id="dateDiagnosed" required 
+                                           class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Optional Info Section -->
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6 mb-6">
+                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                            <i class="fas fa-user-friends mr-2 text-indigo-300"></i>
+                            Additional Information <span class="text-sm font-normal text-indigo-200 ml-2">(Optional)</span>
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Emergency Contact</label>
+                                <input type="tel" id="emergencyContact" 
+                                       class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300"
+                                       placeholder="Emergency contact phone number">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Insurance Information</label>
+                                <textarea id="insuranceInfo" rows="3"
+                                          class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-300 resize-none"
+                                          placeholder="Insurance provider, policy number, etc."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="submitBtn" disabled
+                            class="w-full py-4 bg-white bg-opacity-30 text-white font-semibold rounded-lg transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed hover:enabled:bg-white hover:enabled:text-indigo-600 hover:enabled:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Complete Profile Setup
+                    </button>
+                </form>
+            </div>
+
+            <!-- Skip for now link -->
+            <div class="text-center mt-4">
+                <a href="#" id="skipLink" class="text-indigo-200 hover:text-white transition-colors duration-300 text-sm">
+                    I'll complete this later
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 flex items-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mr-4"></div>
+            <span class="text-gray-700 font-medium">Setting up your profile...</span>
+        </div>
+    </div>
+
+    <script>
+        // Form validation and progress tracking
+        const form = document.getElementById('profileForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const requiredFields = ['age', 'gender', 'diagnosis', 'stage', 'dateDiagnosed'];
+        
+        // Update progress as user fills form
+        function updateProgress() {
+            let filledFields = 0;
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field.value.trim()) {
+                    filledFields++;
+                }
+            });
+            
+            const progress = (filledFields / requiredFields.length) * 100;
+            progressBar.style.width = progress + '%';
+            progressText.textContent = `${filledFields}/${requiredFields.length} fields`;
+            
+            // Enable submit button when all required fields are filled
+            submitBtn.disabled = filledFields < requiredFields.length;
+            
+            if (filledFields === requiredFields.length) {
+                submitBtn.classList.remove('bg-opacity-30');
+                submitBtn.classList.add('bg-white', 'text-indigo-600');
+            } else {
+                submitBtn.classList.add('bg-opacity-30');
+                submitBtn.classList.remove('bg-white', 'text-indigo-600');
+            }
+        }
+        
+        // Add event listeners to all form fields
+        requiredFields.forEach(fieldId => {
+            document.getElementById(fieldId).addEventListener('input', updateProgress);
+            document.getElementById(fieldId).addEventListener('change', updateProgress);
+        });
+        
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.remove('hidden');
+            
+            try {
+                const formData = {
+                    user_id: localStorage.getItem('user_id'),
+                    age: parseInt(document.getElementById('age').value),
+                    gender: document.getElementById('gender').value,
+                    diagnosis: document.getElementById('diagnosis').value,
+                    stage: document.getElementById('stage').value,
+                    date_diagnosed: document.getElementById('dateDiagnosed').value,
+                    emergency_contact: document.getElementById('emergencyContact').value,
+                    insurance_info: document.getElementById('insuranceInfo').value
+                };
+                
+                const response = await fetch('/api/patient/profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        //'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store patient_id and redirect to dashboard
+                    localStorage.setItem('patient_id', data.patient_id);
+                    
+                    // Show success message
+                    alert('Profile setup complete! Welcome to your dashboard.');
+                    window.location.href = '/patient-dashboard';
+                } else {
+                    alert(data.message || 'Failed to create profile. Please try again.');
+                }
+            } catch (error) {
+                console.error('Profile setup error:', error);
+                alert('An error occurred. Please try again.');
+            } finally {
+                loadingOverlay.classList.add('hidden');
+            }
+        });
+        
+        // Skip link (creates basic profile or redirects to limited dashboard)
+        document.getElementById('skipLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('You can complete your profile later, but some features may be limited. Continue?')) {
+                window.location.href = '/patient-dashboard';
+            }
+        });
+        
+        // Initialize progress on page load
+        updateProgress();
+    </script>
+</body>
+</html>

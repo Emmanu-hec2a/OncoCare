@@ -427,6 +427,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ email, password })
                 });
 
@@ -434,15 +435,44 @@
 
                 if (response.ok) {
                     showAlert('Login successful! Redirecting...', 'success');
-                    authToken = data.token;
+                    
+                    // Store user data in localStorage (THIS IS THE KEY FIX)
+                    localStorage.setItem('access_token', data.access_token);
+                    localStorage.setItem('user_id', data.user_id);
+                    localStorage.setItem('role', data.role);
+                    
+                    console.log('Stored login data:', {
+                        user_id: data.user_id,
+                        role: data.role,
+                        access_token: data.access_token
+                    });
+                    
+                    // For patients, also store patient_id
+                    if (data.role === 'patient') {
+                        localStorage.setItem('patient_id', data.user_id);
+                    }
+                    
+                    // Keep your existing token variable if needed elsewhere
+                    authToken = data.access_token;
                     
                     setTimeout(() => {
-                        const dashboardUrls = {
-                            patient: '/patient-dashboard',
-                            nurse: '/nurse-dashboard',
-                            oncologist: '/oncologist-dashboard'
-                        };
-                        window.location.href = dashboardUrls[data.user.role] || '/dashboard';
+                        if (data.role === 'patient') {
+                            // Check if patient profile is complete
+                            if (data.profile_complete) {
+                                localStorage.setItem('patient_id', data.patient_id);
+                                window.location.href = '/patient-dashboard';
+                            } else {
+                                // Redirect to profile setup
+                                window.location.href = '/setup-profile';
+                            }
+                        } else {
+                            // For nurses/oncologists - existing logic
+                            const dashboardUrls = {
+                                nurse: '/nurse-dashboard',
+                                oncologist: '/oncologist-dashboard'
+                            };
+                            window.location.href = dashboardUrls[data.role] || '/dashboard';
+                        }
                     }, 1500);
                 } else {
                     showAlert(data.message || 'Login failed. Please check your credentials.', 'error');

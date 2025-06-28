@@ -541,7 +541,7 @@
             
             <div class="user-info">
                 <div class="user-avatar">Dr</div>
-                <h4 id="userName">Dr. Smith</h4>
+                <h4 id="userName">{{oncologist_name}}</h4>
                 <p style="color: var(--text-light); font-size: 0.9rem;">Senior Oncologist</p>
             </div>
             
@@ -563,14 +563,14 @@
                     <div class="notification-badge" id="appointmentsBadge" style="display: none;">0</div>
                 </li>
                 <li>
-                    <a href="#" onclick="navigateTo('ai-insights')">🤖 AI Insights</a>
+                    <a href="{{url_for('clinical')}}">🔎 Clinical Decision Support</a>
                     <div class="notification-badge" id="aiBadge" style="display: none;">0</div>
                 </li>
                 <li>
-                    <a href="{{url_for('clinical')}}">Clinical Decision Support</a>
+                    <a href="#" onclick="navigateTo('ai-insights')">🤖 AI Insights</a>
                     <div class="notification-badge" id="aiBadge" style="display: none;">0</div>
                 </li>
-                <li><a href="{{url_for('logout')}}" onclick="logout()">🚪 Logout</a></li>
+                <li><a href="#" onclick="logout()">🚪 Logout</a></li>
             </ul>
         </div>
         
@@ -592,27 +592,76 @@
             </div>
             
             <div class="dashboard-content" id="dashboardContent">
-                <!-- Content will be loaded here -->
+                <div class="loading">Loading dashboard data...</div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+
     <script>
-        // Real-time WebSocket simulation
+// WebSocket connection for real-time updates
         class RealTimeConnection {
             constructor() {
+                this.socket = null;
                 this.connected = false;
-                this.listeners = {};
-                this.simulateConnection();
+                this.reconnectAttempts = 0;
+                this.maxReconnectAttempts = 5;
+                this.connect();
             }
 
-            simulateConnection() {
-                // Simulate WebSocket connection
-                setTimeout(() => {
+            connect() {
+                try {
+                    this.socket = io();
+                    this.setupEventListeners();
+                } catch (error) {
+                    console.error('Socket connection failed:', error);
+                    this.handleConnectionError();
+                }
+            }
+
+            setupEventListeners() {
+                this.socket.on('connect', () => {
                     this.connected = true;
+                    this.reconnectAttempts = 0;
                     this.updateConnectionStatus();
-                    this.startDataSimulation();
-                }, 2000);
+                    console.log('Connected to server');
+                });
+
+                this.socket.on('disconnect', () => {
+                    this.connected = false;
+                    this.updateConnectionStatus();
+                    console.log('Disconnected from server');
+                });
+
+                this.socket.on('connect_error', () => {
+                    this.handleConnectionError();
+                });
+
+                this.socket.on('patient_update', (data) => {
+                    this.handlePatientUpdate(data);
+                });
+
+                this.socket.on('new_alert', (data) => {
+                    this.handleNewAlert(data);
+                });
+
+                this.socket.on('status', (data) => {
+                    console.log('Status:', data.msg);
+                });
+            }
+
+            handleConnectionError() {
+                this.connected = false;
+                this.updateConnectionStatus();
+                
+                if (this.reconnectAttempts < this.maxReconnectAttempts) {
+                    this.reconnectAttempts++;
+                    setTimeout(() => {
+                        console.log(`Reconnection attempt ${this.reconnectAttempts}`);
+                        this.connect();
+                    }, 3000 * this.reconnectAttempts);
+                }
             }
 
             updateConnectionStatus() {
@@ -631,171 +680,232 @@
                 }
             }
 
-            on(event, callback) {
-                if (!this.listeners[event]) {
-                    this.listeners[event] = [];
+            handlePatientUpdate(data) {
+                console.log('Patient update:', data);
+                
+                addNotification({
+                    type: 'patient',
+                    title: `Patient Update`,
+                    message: `${data.update_type} update received`,
+                    priority: 'normal',
+                    timestamp: new Date(data.timestamp)
+                });
+                
+                updateBadge('patientsBadge');
+                
+                // Refresh current view if it's patients
+                if (currentView === 'patients') {
+                    loadPatients();
                 }
-                this.listeners[event].push(callback);
             }
 
-            emit(event, data) {
-                if (this.listeners[event]) {
-                    this.listeners[event].forEach(callback => callback(data));
+            handleNewAlert(data) {
+                console.log('New alert:', data);
+                
+                addNotification({
+                    type: 'alert',
+                    title: data.title,
+                    message: `${data.patient_name}: ${data.message}`,
+                    priority: data.priority,
+                    timestamp: new Date(data.timestamp)
+                });
+                
+                updateBadge('overviewBadge');
+                
+                // Show alert popup for critical alerts
+                if (data.priority === 'critical') {
+                    showCriticalAlert(data);
                 }
-            }
-
-            startDataSimulation() {
-                // Simulate real-time patient updates
-                setInterval(() => {
-                    this.simulatePatientUpdate();
-                }, 5000);
-
-                // Simulate appointment notifications
-                setInterval(() => {
-                    this.simulateAppointmentNotification();
-                }, 15000);
-
-                // Simulate AI insights
-                setInterval(() => {
-                    this.simulateAIInsight();
-                }, 20000);
-
-                // Simulate treatment updates
-                setInterval(() => {
-                    this.simulateTreatmentUpdate();
-                }, 10000);
-            }
-
-            simulatePatientUpdate() {
-                const updates = [
-                    { type: 'vitals', patient: 'Sarah Johnson', message: 'New vital signs recorded', priority: 'normal' },
-                    { type: 'lab_results', patient: 'Michael Chen', message: 'Lab results available', priority: 'high' },
-                    { type: 'medication', patient: 'Emily Rodriguez', message: 'Medication adherence updated', priority: 'normal' },
-                    { type: 'symptoms', patient: 'David Thompson', message: 'New symptoms reported', priority: 'urgent' }
-                ];
                 
-                const update = updates[Math.floor(Math.random() * updates.length)];
-                this.emit('patientUpdate', update);
-            }
-
-            simulateAppointmentNotification() {
-                const appointments = [
-                    { patient: 'Sarah Johnson', time: 'in 30 minutes', type: 'Consultation' },
-                    { patient: 'Michael Chen', time: 'in 1 hour', type: 'Follow-up' },
-                    { patient: 'Lisa Wang', time: 'in 2 hours', type: 'Treatment' }
-                ];
-                
-                const appointment = appointments[Math.floor(Math.random() * appointments.length)];
-                this.emit('appointmentScheduled', appointment);
-            }
-
-            simulateAIInsight() {
-                const insights = [
-                    'New biomarker correlation detected for lung cancer patients',
-                    'Treatment response prediction updated for 3 patients',
-                    'Risk stratification model improved with new data',
-                    'Drug interaction alert resolved for Patient #4'
-                ];
-                
-                const insight = insights[Math.floor(Math.random() * insights.length)];
-                this.emit('aiInsight', { message: insight, timestamp: new Date() });
-            }
-
-            simulateTreatmentUpdate() {
-                const updates = [
-                    { patient: 'Sarah Johnson', treatment: 'Chemotherapy', cycle: 5, status: 'completed' },
-                    { patient: 'Michael Chen', treatment: 'Immunotherapy', cycle: 7, status: 'in_progress' },
-                    { patient: 'Emily Rodriguez', treatment: 'Surgery', phase: 'recovery', status: 'monitoring' }
-                ];
-                
-                const update = updates[Math.floor(Math.random() * updates.length)];
-                this.emit('treatmentUpdate', update);
+                // Refresh dashboard stats
+                if (currentView === 'overview') {
+                    loadDashboardStats();
+                }
             }
         }
 
-        // Initialize real-time connection
+        // Add this function to check session status
+        async function checkSessionStatus() {
+            try {
+                const response = await fetch('/api/auth/status', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Session status response:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Session data:', data);
+                    return data;
+                } else {
+                    console.log('Session invalid or expired');
+                    return null;
+                }
+            } catch (error) {
+                console.error('Session check error:', error);
+                return null;
+            }
+        }
+
+        // Call this before making other API calls
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Checking session status...');
+            const sessionData = await checkSessionStatus();
+            
+            if (sessionData) {
+                console.log('Session is valid, loading dashboard...');
+                loadDashboardData();
+            } else {
+                console.log('No valid session found');
+                // Don't redirect immediately, let's see what's happening
+            }
+        });
+
+        // Global variables
         const rtConnection = new RealTimeConnection();
         let currentView = 'overview';
         let notifications = [];
-        let stats = {
-            patients: 24,
-            appointments: 8,
-            treatments: 12,
-            alerts: 3
-        };
+        let dashboardData = {};
 
-        // Set up event listeners
-        rtConnection.on('patientUpdate', handlePatientUpdate);
-        rtConnection.on('appointmentScheduled', handleAppointmentScheduled);
-        rtConnection.on('aiInsight', handleAIInsight);
-        rtConnection.on('treatmentUpdate', handleTreatmentUpdate);
-
-        function handlePatientUpdate(update) {
-            addNotification({
-                type: 'patient',
-                title: `Patient Update: ${update.patient}`,
-                message: update.message,
-                priority: update.priority,
-                timestamp: new Date()
-            });
-            
-            updateBadge('patientsBadge');
-            highlightPatientInList(update.patient);
-        }
-
-        function handleAppointmentScheduled(appointment) {
-            addNotification({
-                type: 'appointment',
-                title: 'New Appointment',
-                message: `${appointment.patient} - ${appointment.type} ${appointment.time}`,
-                priority: 'high',
-                timestamp: new Date()
-            });
-            
-            updateBadge('appointmentsBadge');
-            showAppointmentAlert(appointment);
-        }
-
-        function handleAIInsight(insight) {
-            addNotification({
-                type: 'ai',
-                title: 'AI Insight',
-                message: insight.message,
-                priority: 'normal',
-                timestamp: insight.timestamp
-            });
-            
-            updateBadge('aiBadge');
-            updateAIInsights(insight);
-        }
-
-        function handleTreatmentUpdate(update) {
-            addNotification({
-                type: 'treatment',
-                title: `Treatment Update: ${update.patient}`,
-                message: `${update.treatment} - ${update.status}`,
-                priority: 'normal',
-                timestamp: new Date()
-            });
-            
-            updateBadge('treatmentsBadge');
-            updateTreatmentProgress(update);
-        }
-
-        function addNotification(notification) {
-            notifications.unshift(notification);
-            updateNotificationCount();
-            updateNotificationsList();
-            
-            // Auto-remove after 5 minutes
-            setTimeout(() => {
-                const index = notifications.indexOf(notification);
-                if (index > -1) {
-                    notifications.splice(index, 1);
-                    updateNotificationCount();
-                    updateNotificationsList();
+        // Updated API Functions
+        async function apiCall(endpoint, options = {}) {
+            try {
+                const response = await fetch(endpoint, {
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            }, 300000);
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                showError(`Failed to load data: ${error.message}`);
+                throw error;
+            }
+        }
+
+        async function loadDashboardStats() {
+            try {
+                const stats = await apiCall('/api/dashboard/stats');
+                dashboardData.stats = stats;
+                
+                if (currentView === 'overview') {
+                    showOverview();
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard stats:', error);
+            }
+        }
+
+        async function loadPatients() {
+            try {
+                const patients = await apiCall('/api/patients');
+                dashboardData.patients = patients;
+                
+                if (currentView === 'patients') {
+                    showPatients();
+                }
+            } catch (error) {
+                console.error('Failed to load patients:', error);
+            }
+        }
+
+        async function loadAppointments() {
+            try {
+                const appointments = await apiCall('/api/appointments');
+                dashboardData.appointments = appointments;
+                
+                if (currentView === 'appointments') {
+                    showAppointments();
+                }
+            } catch (error) {
+                console.error('Failed to load appointments:', error);
+            }
+        }
+
+        async function loadTreatments() {
+            try {
+                const treatments = await apiCall('/api/treatments');
+                dashboardData.treatments = treatments;
+                
+                if (currentView === 'treatments') {
+                    showTreatments();
+                }
+            } catch (error) {
+                console.error('Failed to load treatments:', error);
+            }
+        }
+
+        async function loadAlerts() {
+            try {
+                const alerts = await apiCall('/api/alerts');
+                dashboardData.alerts = alerts;
+                
+                // Convert alerts to notifications
+                alerts.forEach(alert => {
+                    if (!alert.is_read) {
+                        addNotification({
+                            type: 'alert',
+                            title: alert.title,
+                            message: `${alert.patient_name}: ${alert.message}`,
+                            priority: alert.priority,
+                            timestamp: new Date(alert.created_at),
+                            id: alert.id
+                        });
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to load alerts:', error);
+            }
+        }
+
+        async function loadAIInsights() {
+            try {
+                const insights = await apiCall('/api/ai-insights');
+                dashboardData.aiInsights = insights;
+                
+                if (currentView === 'ai-insights') {
+                    showAIInsights();
+                }
+            } catch (error) {
+                console.error('Failed to load AI insights:', error);
+            }
+        }
+
+        // Notification functions
+        function addNotification(notification) {
+            // Check if notification already exists
+            const exists = notifications.some(n => 
+                n.id === notification.id || 
+                (n.title === notification.title && n.message === notification.message)
+            );
+            
+            if (!exists) {
+                notifications.unshift(notification);
+                updateNotificationCount();
+                updateNotificationsList();
+                
+                // Auto-remove after 5 minutes
+                setTimeout(() => {
+                    const index = notifications.indexOf(notification);
+                    if (index > -1) {
+                        notifications.splice(index, 1);
+                        updateNotificationCount();
+                        updateNotificationsList();
+                    }
+                }, 300000);
+            }
         }
 
         function updateNotificationCount() {
@@ -812,9 +922,11 @@
 
         function updateBadge(badgeId) {
             const badge = document.getElementById(badgeId);
-            const currentCount = parseInt(badge.textContent) || 0;
-            badge.textContent = currentCount + 1;
-            badge.style.display = 'flex';
+            if (badge) {
+                const currentCount = parseInt(badge.textContent) || 0;
+                badge.textContent = currentCount + 1;
+                badge.style.display = 'flex';
+            }
         }
 
         function updateNotificationsList() {
@@ -837,8 +949,10 @@
 
         function getPriorityColor(priority) {
             switch(priority) {
-                case 'urgent': return 'danger';
+                case 'critical': return 'danger';
                 case 'high': return 'warning';
+                case 'medium': return 'warning';
+                case 'low': return 'success';
                 case 'normal': return 'success';
                 default: return 'success';
             }
@@ -860,13 +974,13 @@
             dropdown.classList.toggle('show');
         }
 
-        function showAppointmentAlert(appointment) {
+        function showCriticalAlert(alert) {
             const alertDiv = document.createElement('div');
             alertDiv.className = 'appointment-alert';
             alertDiv.innerHTML = `
                 <div>
-                    <strong>Upcoming Appointment</strong>
-                    <p>${appointment.patient} - ${appointment.type} ${appointment.time}</p>
+                    <strong>🚨 Critical Alert</strong>
+                    <p>${alert.patient_name}: ${alert.message}</p>
                 </div>
                 <button class="btn btn-secondary" onclick="this.parentElement.remove()" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">Dismiss</button>
             `;
@@ -874,14 +988,34 @@
             const content = document.getElementById('dashboardContent');
             content.insertBefore(alertDiv, content.firstChild);
             
-            // Auto-remove after 10 seconds
+            // Auto-remove after 15 seconds
             setTimeout(() => {
                 if (alertDiv.parentElement) {
                     alertDiv.remove();
                 }
-            }, 10000);
+            }, 15000);
         }
 
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.innerHTML = `
+                <strong>Error:</strong> ${message}
+                <button onclick="this.parentElement.remove()" style="float: right; background: none; border: none; color: white; cursor: pointer;">×</button>
+            `;
+            
+            const content = document.getElementById('dashboardContent');
+            content.insertBefore(errorDiv, content.firstChild);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (errorDiv.parentElement) {
+                    errorDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Navigation functions
         function navigateTo(view) {
             currentView = view;
             updateActiveMenu();
@@ -890,22 +1024,22 @@
             
             switch(view) {
                 case 'overview':
-                    showOverview();
+                    loadDashboardStats();
                     break;
                 case 'patients':
-                    showPatients();
+                    loadPatients();
                     break;
                 case 'treatments':
-                    showTreatments();
+                    loadTreatments();
                     break;
                 case 'appointments':
-                    showAppointments();
+                    loadAppointments();
                     break;
                 case 'ai-insights':
-                    showAIInsights();
+                    loadAIInsights();
                     break;
                 default:
-                    showOverview();
+                    loadDashboardStats();
             }
         }
 
@@ -919,7 +1053,10 @@
 
         function updateActiveMenu() {
             document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
-            document.querySelector(`[onclick="navigateTo('${currentView}')"]`).classList.add('active');
+            const activeLink = document.querySelector(`[onclick="navigateTo('${currentView}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
         }
 
         function updatePageTitle(view) {
@@ -934,8 +1071,11 @@
             document.getElementById('pageTitle').textContent = titles[view] || 'Dashboard';
         }
 
+        // Display functions
         function showOverview() {
             const content = document.getElementById('dashboardContent');
+            const stats = dashboardData.stats || {};
+            
             content.innerHTML = `
                 <div class="dashboard-grid">
                     <div class="card">
@@ -944,112 +1084,129 @@
                             <h3 class="card-title">Active Patients</h3>
                             <div class="card-icon icon-blue">👥</div>
                         </div>
-                        <div class="stat-value">${stats.patients}</div>
+                        <div class="stat-value">${stats.patients || 0}</div>
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: 75%"></div>
                         </div>
                         <div class="update-timestamp">Last updated: ${new Date().toLocaleTimeString()}</div>
                     </div>
-
+                    
                     <div class="card">
                         <div class="live-indicator"></div>
                         <div class="card-header">
                             <h3 class="card-title">Today's Appointments</h3>
                             <div class="card-icon icon-green">📅</div>
                         </div>
-                        <div class="stat-value">${stats.appointments}</div>
+                        <div class="stat-value">${stats.appointments || 0}</div>
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: 60%"></div>
                         </div>
-                        <div class="update-timestamp">Last updated: ${new Date().toLocaleTimeString()}</div>
+                        <div class="update-timestamp">Next appointment in 2 hours</div>
                     </div>
-
+                    
                     <div class="card">
                         <div class="live-indicator"></div>
                         <div class="card-header">
                             <h3 class="card-title">Active Treatments</h3>
-                            <div class="card-icon icon-orange">🔬</div>
+                            <div class="card-icon icon-purple">🔬</div>
                         </div>
-                        <div class="stat-value">${stats.treatments}</div>
+                        <div class="stat-value">${stats.treatments || 0}</div>
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: 85%"></div>
                         </div>
-                        <div class="update-timestamp">Last updated: ${new Date().toLocaleTimeString()}</div>
+                        <div class="update-timestamp">3 critical updates</div>
                     </div>
-
+                    
                     <div class="card">
                         <div class="live-indicator"></div>
                         <div class="card-header">
                             <h3 class="card-title">Critical Alerts</h3>
-                            <div class="card-icon icon-red">⚠️</div>
+                            <div class="card-icon icon-red">🚨</div>
                         </div>
-                        <div class="stat-value text-danger">${stats.alerts}</div>
+                        <div class="stat-value">${stats.alerts || 0}</div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: 25%; background: var(--danger)"></div>
+                            <div class="progress-fill" style="width: 25%"></div>
                         </div>
-                        <div class="update-timestamp">Last updated: ${new Date().toLocaleTimeString()}</div>
+                        <div class="update-timestamp">Requires immediate attention</div>
                     </div>
                 </div>
-
-                <div class="ai-insight">
-                    <div class="ai-insight-header">
-                        <div class="ai-badge">AI POWERED</div>
-                        <h3>Real-Time Insights</h3>
-                    </div>
-                    <div class="real-time-stats">
-                        <div class="stat-card">
-                            <div class="stat-value">92%</div>
-                            <div class="stat-label">Treatment Adherence</div>
-                            <div class="stat-change positive">+2.1%</div>
+                
+                <div class="real-time-section">
+                    <h2>Real-Time Updates</h2>
+                    <div class="update-cards">
+                        <div class="update-card">
+                            <h4>📊 Vital Signs</h4>
+                            <p>${stats.recent_updates?.vitals || 0} new readings in the last hour</p>
+                            <small>Last update: ${new Date().toLocaleTimeString()}</small>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value">15</div>
-                            <div class="stat-label">Risk Predictions</div>
-                            <div class="stat-change positive">+3</div>
+                        <div class="update-card">
+                            <h4>🧪 Lab Results</h4>
+                            <p>${stats.recent_updates?.labs || 0} new results available</p>
+                            <small>Last update: ${new Date().toLocaleTimeString()}</small>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value">7min</div>
-                            <div class="stat-label">Avg Response Time</div>
-                            <div class="stat-change negative">-1.2min</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">98.5%</div>
-                            <div class="stat-label">System Uptime</div>
-                            <div class="stat-change positive">+0.2%</div>
+                        <div class="update-card">
+                            <h4>💊 Treatment Updates</h4>
+                            <p>${stats.recent_updates?.treatments || 0} treatment modifications</p>
+                            <small>Last update: ${new Date().toLocaleTimeString()}</small>
                         </div>
                     </div>
-                    <p>AI system is actively monitoring patient data and providing real-time recommendations for optimal care delivery.</p>
                 </div>
             `;
         }
 
         function showPatients() {
-            const patients = [
-                { name: 'Sarah Johnson', age: 45, condition: 'Breast Cancer', status: 'stable', lastUpdate: '2 hours ago' },
-                { name: 'Michael Chen', age: 62, condition: 'Lung Cancer', status: 'improving', lastUpdate: '1 hour ago' },
-                { name: 'Emily Rodriguez', age: 38, condition: 'Cervical Cancer', status: 'critical', lastUpdate: '30 minutes ago' },
-                { name: 'David Thompson', age: 55, condition: 'Prostate Cancer', status: 'stable', lastUpdate: '45 minutes ago' },
-                { name: 'Lisa Wang', age: 49, condition: 'Ovarian Cancer', status: 'improving', lastUpdate: '3 hours ago' }
-            ];
-
             const content = document.getElementById('dashboardContent');
+            const patients = dashboardData.patients || [];
+            
             content.innerHTML = `
-                <div class="dashboard-grid">
+                <div class="patients-header">
+                    <h2>Patient Overview</h2>
+                    <div class="filter-controls">
+                        <select onchange="filterPatients(this.value)">
+                            <option value="all">All Patients</option>
+                            <option value="critical">Critical</option>
+                            <option value="stable">Stable</option>
+                            <option value="improving">Improving</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="refreshPatients()">🔄 Refresh</button>
+                    </div>
+                </div>
+                
+                <div class="patients-grid">
                     ${patients.map(patient => `
-                        <div class="card">
-                            <div class="live-indicator"></div>
-                            <div class="patient-item">
-                                <div class="patient-avatar">${patient.name.split(' ').map(n => n[0]).join('')}</div>
+                        <div class="patient-card" data-status="${patient.status}">
+                            <div class="patient-header">
+                                <div class="patient-avatar">${patient.name.charAt(0)}</div>
                                 <div class="patient-info">
                                     <h4>${patient.name}</h4>
-                                    <p>Age: ${patient.age} | ${patient.condition}</p>
-                                    <p class="text-${getStatusColor(patient.status)}">Status: ${patient.status.toUpperCase()}</p>
-                                    <p>Last update: ${patient.lastUpdate}</p>
+                                    <p>Age: ${patient.age} | ${patient.diagnosis}</p>
+                                    <span class="status-badge status-${patient.status}">${patient.status}</span>
                                 </div>
                             </div>
-                            <div style="margin-top: 1rem;">
-                                <button class="btn btn-primary" style="margin-right: 0.5rem;">View Details</button>
-                                <button class="btn btn-secondary">Send Message</button>
+                            
+                            <div class="patient-vitals">
+                                <div class="vital-item">
+                                    <span class="vital-label">Heart Rate:</span>
+                                    <span class="vital-value">${patient.latest_vitals.heart_rate || 'N/A'} bpm</span>
+                                </div>
+                                <div class="vital-item">
+                                    <span class="vital-label">Blood Pressure:</span>
+                                    <span class="vital-value">${patient.latest_vitals.blood_pressure || 'N/A'}</span>
+                                </div>
+                                <div class="vital-item">
+                                    <span class="vital-label">Pain Level:</span>
+                                    <span class="vital-value">${patient.latest_vitals.pain_level || 'N/A'}/10</span>
+                                </div>
+                            </div>
+                            
+                            <div class="patient-schedule">
+                                <p><strong>Last Visit:</strong> ${patient.last_visit ? new Date(patient.last_visit).toLocaleDateString() : 'N/A'}</p>
+                                <p><strong>Next Appointment:</strong> ${patient.next_appointment ? new Date(patient.next_appointment).toLocaleDateString() : 'Not scheduled'}</p>
+                            </div>
+                            
+                            <div class="patient-actions">
+                                <button class="btn btn-secondary" onclick="viewPatientDetails(${patient.id})">View Details</button>
+                                <button class="btn btn-primary" onclick="scheduleAppointment(${patient.id})">Schedule</button>
                             </div>
                         </div>
                     `).join('')}
@@ -1058,34 +1215,49 @@
         }
 
         function showTreatments() {
-            const treatments = [
-                { patient: 'Sarah Johnson', treatment: 'Chemotherapy', cycle: '5/6', progress: 83, nextSession: 'Tomorrow' },
-                { patient: 'Michael Chen', treatment: 'Immunotherapy', cycle: '7/8', progress: 87, nextSession: 'Friday' },
-                { patient: 'Emily Rodriguez', treatment: 'Radiation', cycle: '12/15', progress: 80, nextSession: 'Today' },
-                { patient: 'David Thompson', treatment: 'Hormone Therapy', cycle: 'Ongoing', progress: 65, nextSession: 'Next Week' }
-            ];
-
             const content = document.getElementById('dashboardContent');
+            const treatments = dashboardData.treatments || [];
+            
             content.innerHTML = `
-                <div class="dashboard-grid">
+                <div class="treatments-header">
+                    <h2>Treatment Plans</h2>
+                    <button class="btn btn-primary" onclick="addNewTreatment()">+ New Treatment</button>
+                </div>
+                
+                <div class="treatments-list">
                     ${treatments.map(treatment => `
-                        <div class="card">
-                            <div class="live-indicator"></div>
-                            <div class="card-header">
-                                <h3 class="card-title">${treatment.patient}</h3>
-                                <div class="card-icon icon-blue">🔬</div>
+                        <div class="treatment-card">
+                            <div class="treatment-header">
+                                <div class="treatment-info">
+                                    <h4>${treatment.patient_name}</h4>
+                                    <p>${treatment.treatment_type} - ${treatment.medication}</p>
+                                </div>
+                                <div class="treatment-status">
+                                    <span class="progress-text">Cycle ${treatment.current_cycle}/${treatment.total_cycles}</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: ${treatment.progress}%"></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div style="margin: 1rem 0;">
-                                <p><strong>Treatment:</strong> ${treatment.treatment}</p>
-                                <p><strong>Cycle:</strong> ${treatment.cycle}</p>
-                                <p><strong>Next Session:</strong> ${treatment.nextSession}</p>
+                            
+                            <div class="treatment-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Progress:</span>
+                                    <span class="detail-value">${treatment.progress}%</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Adherence:</span>
+                                    <span class="detail-value">${treatment.adherence_rate}%</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Last Updated:</span>
+                                    <span class="detail-value">${new Date(treatment.last_updated).toLocaleDateString()}</span>
+                                </div>
                             </div>
-                            <div class="progress-bar" style="margin: 1rem 0;">
-                                <div class="progress-fill" style="width: ${treatment.progress}%"></div>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span>${treatment.progress}% Complete</span>
-                                <button class="btn btn-primary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Update</button>
+                            
+                            <div class="treatment-actions">
+                                <button class="btn btn-secondary" onclick="editTreatment(${treatment.id})">Edit</button>
+                                <button class="btn btn-primary" onclick="viewTreatmentDetails(${treatment.id})">Details</button>
                             </div>
                         </div>
                     `).join('')}
@@ -1094,171 +1266,667 @@
         }
 
         function showAppointments() {
-            const appointments = [
-                { time: '09:00', patient: 'Sarah Johnson', type: 'Consultation', status: 'confirmed' },
-                { time: '10:30', patient: 'Michael Chen', type: 'Follow-up', status: 'confirmed' },
-                { time: '14:00', patient: 'Emily Rodriguez', type: 'Treatment', status: 'pending' },
-                { time: '15:30', patient: 'David Thompson', type: 'Lab Review', status: 'confirmed' },
-                { time: '16:45', patient: 'Lisa Wang', type: 'Consultation', status: 'rescheduled' }
-            ];
-
             const content = document.getElementById('dashboardContent');
+            const appointments = dashboardData.appointments || [];
+            
             content.innerHTML = `
-                <div class="dashboard-grid">
-                    ${appointments.map(appointment => `
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">${appointment.time}</h3>
-                                <div class="card-icon icon-green">📅</div>
+                <div class="appointments-header">
+                    <h2>Today's Appointments</h2>
+                    <div class="date-controls">
+                        <input type="date" id="appointmentDate" onchange="loadAppointmentsByDate(this.value)" value="${new Date().toISOString().split('T')[0]}">
+                        <button class="btn btn-primary" onclick="scheduleNewAppointment()">+ Schedule</button>
+                    </div>
+                </div>
+                
+                <div class="appointments-timeline">
+                    ${appointments.length === 0 ? 
+                        '<p class="no-appointments">No appointments scheduled for today</p>' :
+                        appointments.map(appointment => `
+                            <div class="appointment-item status-${appointment.status}">
+                                <div class="appointment-time">
+                                    <span class="time">${appointment.time}</span>
+                                    <span class="status-indicator"></span>
+                                </div>
+                                <div class="appointment-details">
+                                    <h4>${appointment.patient_name}</h4>
+                                    <p>${appointment.type}</p>
+                                    <span class="appointment-status">${appointment.status}</span>
+                                </div>
+                                <div class="appointment-actions">
+                                    <button class="btn btn-secondary" onclick="rescheduleAppointment(${appointment.id})">Reschedule</button>
+                                    <button class="btn btn-primary" onclick="startAppointment(${appointment.id})">Start</button>
+                                </div>
                             </div>
-                            <div style="margin: 1rem 0;">
-                                <p><strong>Patient:</strong> ${appointment.patient}</p>
-                                <p><strong>Type:</strong> ${appointment.type}</p>
-                                <p class="text-${getStatusColor(appointment.status)}"><strong>Status:</strong> ${appointment.status.toUpperCase()}</p>
-                            </div>
-                            <div style="margin-top: 1rem;">
-                                <button class="btn btn-primary" style="margin-right: 0.5rem; font-size: 0.8rem; padding: 0.4rem 0.8rem;">Join Call</button>
-                                <button class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Reschedule</button>
-                            </div>
-                        </div>
-                    `).join('')}
+                        `).join('')
+                    }
                 </div>
             `;
         }
 
         function showAIInsights() {
-            const insights = [
-                { title: 'Treatment Response Prediction', accuracy: '94%', patients: 12, status: 'active' },
-                { title: 'Drug Interaction Detection', accuracy: '98%', patients: 8, status: 'monitoring' },
-                { title: 'Risk Stratification Model', accuracy: '91%', patients: 15, status: 'active' },
-                { title: 'Biomarker Analysis', accuracy: '89%', patients: 6, status: 'processing' }
-            ];
-
             const content = document.getElementById('dashboardContent');
+            const insights = dashboardData.aiInsights || {};
+            
             content.innerHTML = `
-                <div class="ai-insight">
-                    <div class="ai-insight-header">
-                        <div class="ai-badge">AI INSIGHTS</div>
-                        <h3>Machine Learning Models</h3>
+                <div class="ai-insights-header">
+                    <h2>AI-Powered Insights</h2>
+                    <div class="insights-refresh">
+                        <span>Last updated: ${new Date().toLocaleTimeString()}</span>
+                        <button class="btn btn-secondary" onclick="refreshAIInsights()">🔄 Refresh</button>
                     </div>
-                    <p>Advanced AI algorithms are continuously analyzing patient data to provide predictive insights and treatment recommendations.</p>
                 </div>
-
-                <div class="dashboard-grid">
-                    ${insights.map(insight => `
-                        <div class="card">
-                            <div class="live-indicator"></div>
-                            <div class="card-header">
-                                <h3 class="card-title">${insight.title}</h3>
-                                <div class="card-icon icon-blue">🤖</div>
-                            </div>
-                            <div style="margin: 1rem 0;">
-                                <p><strong>Accuracy:</strong> ${insight.accuracy}</p>
-                                <p><strong>Patients Analyzed:</strong> ${insight.patients}</p>
-                                <p class="text-success"><strong>Status:</strong> ${insight.status.toUpperCase()}</p>
-                            </div>
-                            <div class="progress-bar" style="margin: 1rem 0;">
-                                <div class="progress-fill" style="width: ${insight.accuracy}"></div>
-                            </div>
-                            <button class="btn btn-primary" style="width: 100%; font-size: 0.8rem; padding: 0.4rem;">View Details</button>
+                
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">📊</div>
+                        <h3>Treatment Adherence</h3>
+                        <div class="insight-value">${insights.treatment_adherence || 0}%</div>
+                        <p>Average adherence across all active treatments</p>
+                        <div class="insight-trend ${insights.treatment_adherence > 80 ? 'positive' : 'negative'}">
+                            ${insights.treatment_adherence > 80 ? '↗️ Good adherence' : '⚠️ Needs attention'}
                         </div>
-                    `).join('')}
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">🎯</div>
+                        <h3>Risk Predictions</h3>
+                        <div class="insight-value">${insights.risk_predictions || 0}</div>
+                        <p>Patients identified at risk</p>
+                        <div class="insight-trend ${insights.risk_predictions === 0 ? 'positive' : 'negative'}">
+                            ${insights.risk_predictions === 0 ? '✅ All stable' : '⚠️ Monitor closely'}
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">⏱️</div>
+                        <h3>Response Time</h3>
+                        <div class="insight-value">${insights.avg_response_time || 0}m</div>
+                        <p>Average alert response time</p>
+                        <div class="insight-trend ${insights.avg_response_time < 30 ? 'positive' : 'negative'}">
+                            ${insights.avg_response_time < 30 ? '⚡ Excellent' : '📈 Room for improvement'}
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">📈</div>
+                        <h3>System Performance</h3>
+                        <div class="insight-value">${insights.system_uptime || 0}%</div>
+                        <p>System uptime and reliability</p>
+                        <div class="insight-trend positive">✅ Optimal performance</div>
+                    </div>
+                </div>
+                
+                <div class="ai-recommendations">
+                    <h3>AI Recommendations</h3>
+                    <div class="recommendations-list">
+                        <div class="recommendation-item">
+                            <div class="recommendation-priority high">HIGH</div>
+                            <div class="recommendation-content">
+                                <h4>Patient Monitoring Alert</h4>
+                                <p>Consider increasing monitoring frequency for patients with adherence rates below 75%</p>
+                            </div>
+                        </div>
+                        <div class="recommendation-item">
+                            <div class="recommendation-priority medium">MEDIUM</div>
+                            <div class="recommendation-content">
+                                <h4>Treatment Optimization</h4>
+                                <p>3 patients show potential for treatment cycle adjustment based on response patterns</p>
+                            </div>
+                        </div>
+                        <div class="recommendation-item">
+                            <div class="recommendation-priority low">LOW</div>
+                            <div class="recommendation-content">
+                                <h4>System Optimization</h4>
+                                <p>Consider scheduling maintenance during low-activity periods</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
         }
 
-        function getStatusColor(status) {
-            switch(status.toLowerCase()) {
-                case 'critical': return 'danger';
-                case 'stable': return 'success';
-                case 'improving': return 'success';
-                case 'pending': return 'warning';
-                case 'rescheduled': return 'warning';
-                case 'confirmed': return 'success';
-                default: return 'success';
-            }
-        }
-
-        function highlightPatientInList(patientName) {
-            const patientItems = document.querySelectorAll('.patient-item');
-            patientItems.forEach(item => {
-                const nameElement = item.querySelector('h4');
-                if (nameElement && nameElement.textContent === patientName) {
-                    item.classList.add('updated');
-                    setTimeout(() => item.classList.remove('updated'), 2000);
+        // Action functions
+        function filterPatients(status) {
+            const cards = document.querySelectorAll('.patient-card');
+            cards.forEach(card => {
+                if (status === 'all' || card.dataset.status === status) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
                 }
             });
         }
 
-        function updateAIInsights(insight) {
-            // Update AI insights section if currently visible
-            if (currentView === 'ai-insights') {
-                const aiSection = document.querySelector('.ai-insight');
-                if (aiSection) {
-                    const newInsight = document.createElement('div');
-                    newInsight.style.cssText = 'background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 8px; margin-top: 1rem; animation: slideIn 0.5s ease-out;';
-                    newInsight.innerHTML = `<small>${formatTime(insight.timestamp)}: ${insight.message}</small>`;
-                    aiSection.appendChild(newInsight);
-                    
-                    setTimeout(() => newInsight.remove(), 10000);
-                }
-            }
+        function refreshPatients() {
+            loadPatients();
         }
 
-        function updateTreatmentProgress(update) {
-            // Update treatment progress if currently visible
-            if (currentView === 'treatments') {
-                const cards = document.querySelectorAll('.card');
-                cards.forEach(card => {
-                    const title = card.querySelector('.card-title');
-                    if (title && title.textContent === update.patient) {
-                        card.classList.add('updated');
-                        setTimeout(() => card.classList.remove('updated'), 2000);
-                    }
-                });
-            }
+        function viewPatientDetails(patientId) {
+            console.log('Viewing patient details for:', patientId);
+            // Implementation would open patient details modal/page
+        }
+
+        function scheduleAppointment(patientId) {
+            console.log('Scheduling appointment for patient:', patientId);
+            // Implementation would open appointment scheduling modal
+        }
+
+        function addNewTreatment() {
+            console.log('Adding new treatment');
+            // Implementation would open treatment creation modal
+        }
+
+        function editTreatment(treatmentId) {
+            console.log('Editing treatment:', treatmentId);
+            // Implementation would open treatment editing modal
+        }
+
+        function viewTreatmentDetails(treatmentId) {
+            console.log('Viewing treatment details:', treatmentId);
+            // Implementation would open treatment details modal
+        }
+
+        function loadAppointmentsByDate(date) {
+            apiCall(`/api/appointments?date=${date}`)
+                .then(appointments => {
+                    dashboardData.appointments = appointments;
+                    showAppointments();
+                })
+                .catch(error => console.error('Failed to load appointments by date:', error));
+        }
+
+        function scheduleNewAppointment() {
+            console.log('Scheduling new appointment');
+            // Implementation would open appointment scheduling modal
+        }
+
+        function rescheduleAppointment(appointmentId) {
+            console.log('Rescheduling appointment:', appointmentId);
+            // Implementation would open rescheduling modal
+        }
+
+        function startAppointment(appointmentId) {
+            console.log('Starting appointment:', appointmentId);
+            // Implementation would start appointment session
+        }
+
+        function refreshAIInsights() {
+            loadAIInsights();
         }
 
         function showProfile() {
-            alert('Profile functionality would be implemented here');
+            console.log('Showing user profile');
+            // Implementation would open profile modal
         }
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
-                alert('Logout functionality would be implemented here');
+                window.location.href = '/logout';
             }
         }
 
-        // Close notifications when clicking outside
-        document.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('notificationDropdown');
-            const bell = document.querySelector('.notification-bell');
+        // Utility functions
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function formatDateTime(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getStatusColor(status) {
+            const statusColors = {
+                'stable': 'success',
+                'critical': 'danger',
+                'improving': 'success',
+                'deteriorating': 'warning',
+                'active': 'primary',
+                'completed': 'success',
+                'paused': 'warning',
+                'scheduled': 'info',
+                'confirmed': 'success',
+                'cancelled': 'danger'
+            };
+            return statusColors[status] || 'secondary';
+        }
+
+        function debounce(func, delay) {
+            let timeoutId;
+            return function (...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        // Search and filter functionality
+        function initializeSearch() {
+            const searchInput = document.createElement('input');
+            searchInput.type = 'text';
+            searchInput.placeholder = 'Search patients, treatments, appointments...';
+            searchInput.className = 'search-input';
+            searchInput.addEventListener('input', debounce(performSearch, 300));
             
-            if (!dropdown.contains(e.target) && !bell.contains(e.target)) {
-                dropdown.classList.remove('show');
+            // Add search input to header if it doesn't exist
+            const headerActions = document.querySelector('.header-actions');
+            if (headerActions && !document.querySelector('.search-input')) {
+                headerActions.insertBefore(searchInput, headerActions.firstChild);
+            }
+        }
+
+        function performSearch(event) {
+            const query = event.target.value.toLowerCase();
+            const currentCards = document.querySelectorAll('.patient-card, .treatment-card, .appointment-item');
+            
+            currentCards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(query) || query === '') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Data export functionality
+        function exportData(dataType) {
+            let data = [];
+            let filename = '';
+            
+            switch(dataType) {
+                case 'patients':
+                    data = dashboardData.patients || [];
+                    filename = 'patients_export.csv';
+                    break;
+                case 'treatments':
+                    data = dashboardData.treatments || [];
+                    filename = 'treatments_export.csv';
+                    break;
+                case 'appointments':
+                    data = dashboardData.appointments || [];
+                    filename = 'appointments_export.csv';
+                    break;
+                default:
+                    console.error('Unknown data type for export');
+                    return;
+            }
+            
+            if (data.length === 0) {
+                showError('No data available for export');
+                return;
+            }
+            
+            const csv = convertToCSV(data);
+            downloadCSV(csv, filename);
+        }
+
+        function convertToCSV(data) {
+            if (data.length === 0) return '';
+            
+            const headers = Object.keys(data[0]);
+            const csvHeaders = headers.join(',');
+            
+            const csvRows = data.map(row => {
+                return headers.map(header => {
+                    const value = row[header];
+                    // Handle nested objects and arrays
+                    if (typeof value === 'object' && value !== null) {
+                        return JSON.stringify(value).replace(/"/g, '""');
+                    }
+                    // Escape commas and quotes
+                    return `"${String(value).replace(/"/g, '""')}"`;
+                }).join(',');
+            });
+            
+            return [csvHeaders, ...csvRows].join('\n');
+        }
+
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        // Print functionality
+        function printCurrentView() {
+            const content = document.getElementById('dashboardContent').innerHTML;
+            const printWindow = window.open('', '_blank');
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>AI Cancer Care - ${currentView}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .card, .patient-card, .treatment-card { 
+                            border: 1px solid #ddd; 
+                            padding: 15px; 
+                            margin: 10px 0; 
+                            break-inside: avoid;
+                        }
+                        .no-print { display: none !important; }
+                        @media print {
+                            .card, .patient-card, .treatment-card { 
+                                page-break-inside: avoid; 
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>AI Cancer Care - ${currentView.charAt(0).toUpperCase() + currentView.slice(1)}</h1>
+                    <p>Generated on: ${new Date().toLocaleString()}</p>
+                    <hr>
+                    ${content}
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 250);
+        }
+
+        // Keyboard shortcuts
+        function initializeKeyboardShortcuts() {
+            document.addEventListener('keydown', (event) => {
+                // Only handle shortcuts when not typing in an input
+                if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+                    return;
+                }
+                
+                if (event.ctrlKey || event.metaKey) {
+                    switch(event.key) {
+                        case '1':
+                            event.preventDefault();
+                            navigateTo('overview');
+                            break;
+                        case '2':
+                            event.preventDefault();
+                            navigateTo('patients');
+                            break;
+                        case '3':
+                            event.preventDefault();
+                            navigateTo('treatments');
+                            break;
+                        case '4':
+                            event.preventDefault();
+                            navigateTo('appointments');
+                            break;
+                        case '5':
+                            event.preventDefault();
+                            navigateTo('ai-insights');
+                            break;
+                        case 'r':
+                            event.preventDefault();
+                            refreshCurrentView();
+                            break;
+                        case 'p':
+                            event.preventDefault();
+                            printCurrentView();
+                            break;
+                        case 'e':
+                            event.preventDefault();
+                            exportData(currentView);
+                            break;
+                    }
+                }
+                
+                // Escape key to close modals/dropdowns
+                if (event.key === 'Escape') {
+                    const dropdown = document.getElementById('notificationDropdown');
+                    if (dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                    }
+                }
+            });
+        }
+
+        function refreshCurrentView() {
+            switch(currentView) {
+                case 'overview':
+                    loadDashboardStats();
+                    break;
+                case 'patients':
+                    loadPatients();
+                    break;
+                case 'treatments':
+                    loadTreatments();
+                    break;
+                case 'appointments':
+                    loadAppointments();
+                    break;
+                case 'ai-insights':
+                    loadAIInsights();
+                    break;
+            }
+        }
+
+        // Auto-refresh functionality
+        let autoRefreshInterval;
+        let autoRefreshEnabled = true;
+
+        function startAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            autoRefreshInterval = setInterval(() => {
+                if (autoRefreshEnabled && document.visibilityState === 'visible') {
+                    // Refresh current view data
+                    refreshCurrentView();
+                    
+                    // Always refresh dashboard stats for notifications
+                    if (currentView !== 'overview') {
+                        loadDashboardStats();
+                    }
+                    
+                    console.log('Auto-refresh completed');
+                }
+            }, 30000); // Refresh every 30 seconds
+        }
+
+        function toggleAutoRefresh() {
+            autoRefreshEnabled = !autoRefreshEnabled;
+            const button = document.getElementById('autoRefreshToggle');
+            if (button) {
+                button.textContent = autoRefreshEnabled ? '⏸️ Pause Auto-refresh' : '▶️ Resume Auto-refresh';
+                button.className = autoRefreshEnabled ? 'btn btn-warning' : 'btn btn-success';
+            }
+        }
+
+        // Initialize auto-refresh controls
+        function addAutoRefreshControls() {
+            const headerActions = document.querySelector('.header-actions');
+            if (headerActions && !document.getElementById('autoRefreshToggle')) {
+                const autoRefreshButton = document.createElement('button');
+                autoRefreshButton.id = 'autoRefreshToggle';
+                autoRefreshButton.className = 'btn btn-warning';
+                autoRefreshButton.innerHTML = '⏸️ Pause Auto-refresh';
+                autoRefreshButton.onclick = toggleAutoRefresh;
+                autoRefreshButton.title = 'Toggle auto-refresh (Ctrl+R to manual refresh)';
+                
+                headerActions.insertBefore(autoRefreshButton, headerActions.firstChild);
+            }
+        }
+
+        // Page visibility handling
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                // Page became visible, refresh data
+                refreshCurrentView();
             }
         });
-        // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            showOverview();
+
+        // Error handling and retry logic
+        function handleNetworkError(error, retryFunction, maxRetries = 3) {
+            let retryCount = 0;
             
-            // Update stats periodically
-            setInterval(() => {
-                stats.patients += Math.floor(Math.random() * 3) - 1;
-                stats.appointments += Math.floor(Math.random() * 3) - 1;
-                stats.treatments += Math.floor(Math.random() * 3) - 1;
-                stats.alerts = Math.max(0, stats.alerts + Math.floor(Math.random() * 3) - 1);
-                
-                // Ensure positive values
-                stats.patients = Math.max(20, stats.patients);
-                stats.appointments = Math.max(5, stats.appointments);
-                stats.treatments = Math.max(8, stats.treatments);
-                
-                if (currentView === 'overview') {
-                    showOverview();
+            const retry = () => {
+                retryCount++;
+                if (retryCount <= maxRetries) {
+                    console.log(`Retrying... Attempt ${retryCount}/${maxRetries}`);
+                    setTimeout(() => {
+                        retryFunction()
+                            .catch(() => {
+                                if (retryCount < maxRetries) {
+                                    retry();
+                                } else {
+                                    showError(`Failed after ${maxRetries} attempts. Please check your connection.`);
+                                }
+                            });
+                    }, 1000 * retryCount); // Exponential backoff
+                } else {
+                    showError(`Maximum retry attempts (${maxRetries}) exceeded. Please refresh the page.`);
                 }
-            }, 30000);
-        });
+            };
+            
+            retry();
+        }
+
+        // Initialize tooltips
+        function initializeTooltips() {
+            const elementsWithTooltips = document.querySelectorAll('[title]');
+            elementsWithTooltips.forEach(element => {
+                element.addEventListener('mouseenter', showTooltip);
+                element.addEventListener('mouseleave', hideTooltip);
+            });
+        }
+
+        function showTooltip(event) {
+            const element = event.target;
+            const title = element.getAttribute('title');
+            
+            if (title) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = title;
+                tooltip.style.position = 'absolute';
+                tooltip.style.zIndex = '1000';
+                tooltip.style.background = 'rgba(0, 0, 0, 0.8)';
+                tooltip.style.color = 'white';
+                tooltip.style.padding = '5px 10px';
+                tooltip.style.borderRadius = '4px';
+                tooltip.style.fontSize = '12px';
+                tooltip.style.pointerEvents = 'none';
+                
+                document.body.appendChild(tooltip);
+                
+                const rect = element.getBoundingClientRect();
+                tooltip.style.left = rect.left + 'px';
+                tooltip.style.top = (rect.top - tooltip.offsetHeight - 5) + 'px';
+                
+                element.setAttribute('data-tooltip-id', tooltip.id = Date.now());
+                element.removeAttribute('title'); // Prevent default tooltip
+            }
+        }
+
+        function hideTooltip(event) {
+            const element = event.target;
+            const tooltipId = element.getAttribute('data-tooltip-id');
+            
+            if (tooltipId) {
+                const tooltip = document.getElementById(tooltipId);
+                if (tooltip) {
+                    tooltip.remove();
+                }
+                element.removeAttribute('data-tooltip-id');
+                element.setAttribute('title', element.textContent); // Restore title if needed
+            }
+        }
+
+        // Initialize application
+        function initializeApp() {
+            console.log('Initializing AI Cancer Care Dashboard...');
+            
+            // Load initial data
+            loadDashboardStats();
+            loadAlerts(); // Load existing alerts into notifications
+            
+            // Initialize UI components
+            initializeSearch();
+            initializeKeyboardShortcuts();
+            initializeTooltips();
+            addAutoRefreshControls();
+            
+            // Start auto-refresh
+            startAutoRefresh();
+            
+            // Hide loading indicator
+            const loadingElements = document.querySelectorAll('.loading');
+            loadingElements.forEach(el => el.style.display = 'none');
+            
+            console.log('Dashboard initialized successfully');
+        }
+
+        // Cleanup function
+        function cleanup() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            if (rtConnection.socket) {
+                rtConnection.socket.disconnect();
+            }
+        }
+
+        // Handle page unload
+        window.addEventListener('beforeunload', cleanup);
+
+        // Initialize when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+
+        // Handle window resize for responsive behavior
+        window.addEventListener('resize', debounce(() => {
+            // Trigger re-layout if needed
+            const content = document.getElementById('dashboardContent');
+            if (content) {
+                content.style.display = 'none';
+                content.offsetHeight; // Trigger reflow
+                content.style.display = '';
+            }
+        }, 250));
+
+        // Expose global functions for debugging
+        window.dashboardAPI = {
+            navigateTo,
+            refreshCurrentView,
+            exportData,
+            printCurrentView,
+            toggleAutoRefresh,
+            rtConnection,
+            dashboardData,
+            notifications
+        };
     </script>
 </body>
 </html>

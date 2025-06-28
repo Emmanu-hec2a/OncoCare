@@ -380,74 +380,293 @@
             border-left-color: var(--red-500);
         }
 
+        /* Chat Widget Styles */
         .chat-widget {
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 300px;
-            max-height: 400px;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            display: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
             flex-direction: column;
+            z-index: 1000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         .chat-header {
-            background: var(--primary-blue);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 1rem;
-            border-radius: 12px 12px 0 0;
+            padding: 15px 20px;
+            border-radius: 15px 15px 0 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: 600;
         }
 
         .chat-messages {
-            height: 250px;
+            flex: 1;
             overflow-y: auto;
-            padding: 1rem;
+            padding: 15px;
+            background: #f8f9fa;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 10px;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .user-message {
+            align-self: flex-end;
+        }
+
+        .ai-message {
+            align-self: flex-start;
+        }
+
+        .message-content {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .user-message .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .ai-message .message-content {
+            background: white;
+            color: #333;
+        }
+
+        .message-text {
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 5px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            text-align: right;
+        }
+
+        .user-message .message-time {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .ai-message .message-time {
+            color: #666;
+        }
+
+        .error-message .message-content {
+            background: #dc3545;
+            color: white;
         }
 
         .chat-input {
-            padding: 1rem;
-            border-top: 1px solid var(--gray-200);
+            padding: 15px;
+            background: white;
+            border-radius: 0 0 15px 15px;
             display: flex;
-            gap: 0.5rem;
+            gap: 10px;
+            border-top: 1px solid #e9ecef;
         }
 
         .chat-input input {
             flex: 1;
-            padding: 0.5rem;
-            border: 1px solid var(--gray-300);
-            border-radius: 6px;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
         }
 
-        .chat-toggle {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 60px;
-            height: 60px;
-            background: var(--primary-blue);
+        .chat-input input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .chat-input button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 50%;
-            font-size: 1.5rem;
+            border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .chat-input button:active {
+            transform: translateY(0);
+        }
+
+        /* Typing indicator */
+        .typing {
+            opacity: 0.7;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+            padding: 8px 0;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: typingDots 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes typingDots {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar styling */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Chat toggle button (if you want a floating button to open chat) */
+        .chat-toggle-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+        }
+
+        .chat-toggle-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        .chat-toggle-btn:active {
+            transform: translateY(-1px) scale(0.98);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .chat-toggle-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%);
+            pointer-events: none;
+        }
+
+        /* Pulse animation */
+        .chat-toggle-btn::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0;
+            z-index: -1;
+            animation: pulse 2s infinite;
+        }
+
+
+        /* Hide chat widget initially */
+        .chat-widget.hidden {
+            display: none;
         }
 
         .pulse {
             animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+         @keyframes pulse {
+            0% {
+                opacity: 0;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.2);
+            }
         }
 
         .data-stream {
@@ -477,9 +696,13 @@
             }
 
             .chat-widget {
-                width: calc(100vw - 2rem);
-                right: 1rem;
-                left: 1rem;
+                width: calc(100vw - 20px);
+                height: 70vh;
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: 400px;
+                margin: 0 auto;
             }
         }
     </style>
@@ -490,7 +713,7 @@
             <div class="sidebar-header">
                 <h2>🏥 CancerCare AI</h2>
                 <div class="user-info">
-                    <div>👤 <span id="currentUser">Sarah Johnson</span></div>
+                    <div>👤 <span id="currentUser">{{ user_name }}</span></div>
                     <div>Patient Portal</div>
                 </div>
                 <div class="connection-status">
@@ -512,7 +735,7 @@
         <main class="main-content">
             <div class="header">
                 <div>
-                    <h1>Welcome back, <span id="welcomeUser">Sarah</span> 👋</h1>
+                    <h1>Welcome back, <span id="welcomeUser">{{ user_name }}</span> 👋</h1>
                     <p>Real-time health monitoring and AI insights</p>
                 </div>
                 <div class="real-time-stats">
@@ -521,8 +744,8 @@
                         <span>Live Updates</span>
                     </div>
                     <div>|</div>
-                    <div>Last sync: <span id="lastSync">Just now</span></div>
-                    <div>|</div>
+                    <!--div>Last sync: <span id="lastSync">Just now</span></div>
+                    <div>|</div-->
                     <div id="currentTime"></div>
                 </div>
             </div>
@@ -601,7 +824,7 @@
         </div>
     </div>
 
-    <button class="chat-toggle" onclick="toggleChat()">💬</button>
+    <button class="chat-toggle-btn" onclick="toggleChat()">💬</button>
 
     <!-- Notification System -->
     <div id="notification" class="notification">
@@ -1134,8 +1357,507 @@
        });
 
        function reportSymptom() {
-           showNotification('Symptom reporting feature coming soon', 'info');
-       }
+            // Create modal overlay
+            const modalOverlay = document.createElement('div');
+            modalOverlay.id = 'symptomTrackerModal';
+            modalOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 10000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                backdrop-filter: blur(5px);
+            `;
+
+            // Create the main container
+            const container = document.createElement('div');
+            container.style.cssText = `
+                max-width: 1200px;
+                width: 90%;
+                max-height: 90vh;
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 20px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+                position: relative;
+            `;
+
+            // Add close button
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '×';
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 15px;
+                right: 20px;
+                background: none;
+                border: none;
+                font-size: 30px;
+                color: white;
+                cursor: pointer;
+                z-index: 1001;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.3s ease;
+            `;
+            closeBtn.onmouseover = () => closeBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+            closeBtn.onmouseout = () => closeBtn.style.background = 'none';
+
+            // Create the HTML content
+            container.innerHTML = `
+                <style>
+                    #symptomTrackerModal .form-group {
+                        margin-bottom: 25px;
+                    }
+
+                    #symptomTrackerModal .form-group label {
+                        display: block;
+                        margin-bottom: 8px;
+                        color: #555;
+                        font-weight: 500;
+                    }
+
+                    #symptomTrackerModal .form-group input,
+                    #symptomTrackerModal .form-group select,
+                    #symptomTrackerModal .form-group textarea {
+                        width: 100%;
+                        padding: 12px 15px;
+                        border: 2px solid #e9ecef;
+                        border-radius: 10px;
+                        font-size: 1rem;
+                        transition: all 0.3s ease;
+                        box-sizing: border-box;
+                    }
+
+                    #symptomTrackerModal .form-group input:focus,
+                    #symptomTrackerModal .form-group select:focus,
+                    #symptomTrackerModal .form-group textarea:focus {
+                        outline: none;
+                        border-color: #3498db;
+                        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+                    }
+
+                    #symptomTrackerModal .severity-scale {
+                        display: flex;
+                        gap: 10px;
+                        margin-top: 10px;
+                    }
+
+                    #symptomTrackerModal .severity-btn {
+                        flex: 1;
+                        padding: 12px;
+                        border: 2px solid #e9ecef;
+                        background: white;
+                        border-radius: 10px;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        text-align: center;
+                        font-weight: 500;
+                    }
+
+                    #symptomTrackerModal .severity-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                    }
+
+                    #symptomTrackerModal .severity-btn.active {
+                        background: #3498db;
+                        color: white;
+                        border-color: #3498db;
+                    }
+
+                    #symptomTrackerModal .severity-1.active { background: #27ae60; border-color: #27ae60; }
+                    #symptomTrackerModal .severity-2.active { background: #f39c12; border-color: #f39c12; }
+                    #symptomTrackerModal .severity-3.active { background: #e74c3c; border-color: #e74c3c; }
+
+                    #symptomTrackerModal .submit-btn {
+                        width: 100%;
+                        padding: 15px;
+                        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+                        color: white;
+                        border: none;
+                        border-radius: 10px;
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        margin-top: 10px;
+                    }
+
+                    #symptomTrackerModal .submit-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
+                    }
+
+                    #symptomTrackerModal .symptoms-list {
+                        max-height: 400px;
+                        overflow-y: auto;
+                        border: 1px solid #e9ecef;
+                        border-radius: 10px;
+                        background: white;
+                    }
+
+                    #symptomTrackerModal .symptom-item {
+                        padding: 15px;
+                        border-bottom: 1px solid #f1f3f4;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        transition: background 0.3s ease;
+                    }
+
+                    #symptomTrackerModal .symptom-item:hover {
+                        background: #f8f9fa;
+                    }
+
+                    #symptomTrackerModal .symptom-item:last-child {
+                        border-bottom: none;
+                    }
+
+                    #symptomTrackerModal .symptom-info h4 {
+                        color: #2c3e50;
+                        margin-bottom: 5px;
+                    }
+
+                    #symptomTrackerModal .symptom-meta {
+                        font-size: 0.9rem;
+                        color: #666;
+                    }
+
+                    #symptomTrackerModal .severity-badge {
+                        padding: 5px 12px;
+                        border-radius: 20px;
+                        font-size: 0.8rem;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                    }
+
+                    #symptomTrackerModal .severity-mild { background: #d5f4e6; color: #27ae60; }
+                    #symptomTrackerModal .severity-moderate { background: #fef5e7; color: #f39c12; }
+                    #symptomTrackerModal .severity-severe { background: #fadbd8; color: #e74c3c; }
+
+                    #symptomTrackerModal .stats-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                        gap: 15px;
+                        margin-bottom: 25px;
+                    }
+
+                    #symptomTrackerModal .stat-card {
+                        background: white;
+                        padding: 20px;
+                        border-radius: 10px;
+                        text-align: center;
+                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                    }
+
+                    #symptomTrackerModal .stat-value {
+                        font-size: 2rem;
+                        font-weight: bold;
+                        color: #3498db;
+                    }
+
+                    #symptomTrackerModal .stat-label {
+                        font-size: 0.9rem;
+                        color: #666;
+                        margin-top: 5px;
+                    }
+
+                    #symptomTrackerModal .alert {
+                        padding: 15px;
+                        border-radius: 10px;
+                        margin-bottom: 20px;
+                        display: none;
+                    }
+
+                    #symptomTrackerModal .alert.success {
+                        background: #d5f4e6;
+                        color: #27ae60;
+                        border: 1px solid #27ae60;
+                    }
+
+                    #symptomTrackerModal .alert.error {
+                        background: #fadbd8;
+                        color: #e74c3c;
+                        border: 1px solid #e74c3c;
+                    }
+
+                    #symptomTrackerModal .alert.info {
+                        background: #e3f2fd;
+                        color: #1976d2;
+                        border: 1px solid #1976d2;
+                    }
+
+                    @media (max-width: 768px) {
+                        #symptomTrackerModal .main-content {
+                            grid-template-columns: 1fr;
+                        }
+                        
+                        #symptomTrackerModal .tracking-section {
+                            border-left: none;
+                            border-top: 1px solid #e9ecef;
+                        }
+                    }
+                </style>
+
+                <div class="main-content" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 600px; overflow-y: auto; max-height: 60vh;">
+                    <div class="form-section" style="padding: 40px; background: white;">
+                        <h2 style="font-size: 1.5rem; color: #2c3e50; margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+                            📝 Report New Symptom
+                        </h2>
+
+                        <div class="alert" id="symptomAlert"></div>
+
+                        <form id="symptomForm">
+                            <div class="form-group">
+                                <label for="patientId">Patient ID</label>
+                                <input type="text" id="patientId" name="patientId" required placeholder="Enter patient ID">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="symptomType">Symptom Type</label>
+                                <select id="symptomType" name="symptomType" required>
+                                    <option value="">Select symptom...</option>
+                                    <option value="pain">Pain</option>
+                                    <option value="nausea">Nausea</option>
+                                    <option value="fatigue">Fatigue</option>
+                                    <option value="vomiting">Vomiting</option>
+                                    <option value="loss_of_appetite">Loss of Appetite</option>
+                                    <option value="shortness_of_breath">Shortness of Breath</option>
+                                    <option value="fever">Fever</option>
+                                    <option value="constipation">Constipation</option>
+                                    <option value="diarrhea">Diarrhea</option>
+                                    <option value="sleep_issues">Sleep Issues</option>
+                                    <option value="anxiety">Anxiety</option>
+                                    <option value="depression">Depression</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="location">Location (if applicable)</label>
+                                <input type="text" id="location" name="location" placeholder="e.g., abdomen, chest, head">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Severity Level</label>
+                                <div class="severity-scale">
+                                    <div class="severity-btn severity-1" data-severity="1">
+                                        Mild<br><small>1-3</small>
+                                    </div>
+                                    <div class="severity-btn severity-2" data-severity="2">
+                                        Moderate<br><small>4-6</small>
+                                    </div>
+                                    <div class="severity-btn severity-3" data-severity="3">
+                                        Severe<br><small>7-10</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">Additional Notes</label>
+                                <textarea id="description" name="description" rows="4" placeholder="Describe the symptom in detail..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="medication">Current Medications</label>
+                                <input type="text" id="medication" name="medication" placeholder="List relevant medications">
+                            </div>
+
+                            <button type="submit" class="submit-btn">Report Symptom</button>
+                        </form>
+                    </div>
+
+                    <div class="tracking-section" style="padding: 40px; background: #f8f9fa; border-left: 1px solid #e9ecef;">
+                        <h2 style="font-size: 1.5rem; color: #2c3e50; margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+                            📊 Symptoms Overview
+                        </h2>
+
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalSymptoms">0</div>
+                                <div class="stat-label">Total Reports</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="todaySymptoms">0</div>
+                                <div class="stat-label">Today</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="avgSeverity">0</div>
+                                <div class="stat-label">Avg Severity</div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-bottom: 15px; color: #2c3e50;">Recent Symptoms</h3>
+                        <div class="symptoms-list" id="symptomsList">
+                            <div style="padding: 40px; text-align: center; color: #666;">
+                                No symptoms reported yet
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(closeBtn);
+            modalOverlay.appendChild(container);
+            document.body.appendChild(modalOverlay);
+
+            // Initialize symptom tracker functionality
+            let symptoms = JSON.parse(localStorage.getItem('symptoms') || '[]');
+            let selectedSeverity = null;
+
+            // Setup event listeners
+            function setupEventListeners() {
+                // Close modal
+                closeBtn.addEventListener('click', closeModal);
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) closeModal();
+                });
+
+                // Form submission
+                document.getElementById('symptomForm').addEventListener('submit', handleFormSubmit);
+
+                // Severity selection
+                document.querySelectorAll('.severity-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        selectedSeverity = parseInt(this.dataset.severity);
+                    });
+                });
+            }
+
+            function closeModal() {
+                document.body.removeChild(modalOverlay);
+            }
+
+            function handleFormSubmit(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const symptomData = {
+                    id: Date.now(),
+                    patient_id: formData.get('patientId'),
+                    symptom_type: formData.get('symptomType'),
+                    location: formData.get('location'),
+                    severity: selectedSeverity,
+                    description: formData.get('description'),
+                    medication: formData.get('medication'),
+                    timestamp: new Date().toISOString()
+                };
+
+                // Validate required fields
+                if (!symptomData.patient_id || !symptomData.symptom_type || !symptomData.severity) {
+                    showAlert('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                // Save to localStorage (in real app, this would be an API call)
+                symptoms.push(symptomData);
+                localStorage.setItem('symptoms', JSON.stringify(symptoms));
+
+                showAlert('Symptom reported successfully!', 'success');
+                resetForm();
+                updateSymptomsDisplay();
+                updateStats();
+            }
+
+            function updateSymptomsDisplay() {
+                const symptomsList = document.getElementById('symptomsList');
+                
+                if (symptoms.length === 0) {
+                    symptomsList.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">No symptoms reported yet</div>';
+                    return;
+                }
+
+                const sortedSymptoms = symptoms.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                symptomsList.innerHTML = sortedSymptoms.slice(0, 10).map(symptom => {
+                    const date = new Date(symptom.timestamp);
+                    const severityClass = getSeverityClass(symptom.severity);
+                    const severityText = getSeverityText(symptom.severity);
+                    
+                    return `
+                        <div class="symptom-item">
+                            <div class="symptom-info">
+                                <h4>${symptom.symptom_type.replace('_', ' ').toUpperCase()}</h4>
+                                <div class="symptom-meta">
+                                    Patient: ${symptom.patient_id} • ${date.toLocaleDateString()} ${date.toLocaleTimeString()}
+                                    ${symptom.location ? ` • Location: ${symptom.location}` : ''}
+                                </div>
+                                ${symptom.description ? `<div style="margin-top: 5px; font-size: 0.9rem; color: #555;">${symptom.description}</div>` : ''}
+                            </div>
+                            <div class="severity-badge ${severityClass}">
+                                ${severityText}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            function updateStats() {
+                const totalSymptoms = symptoms.length;
+                const today = new Date().toDateString();
+                const todaySymptoms = symptoms.filter(s => new Date(s.timestamp).toDateString() === today).length;
+                
+                let avgSeverity = 0;
+                if (symptoms.length > 0) {
+                    const totalSeverity = symptoms.reduce((sum, s) => sum + s.severity, 0);
+                    avgSeverity = (totalSeverity / symptoms.length).toFixed(1);
+                }
+
+                document.getElementById('totalSymptoms').textContent = totalSymptoms;
+                document.getElementById('todaySymptoms').textContent = todaySymptoms;
+                document.getElementById('avgSeverity').textContent = avgSeverity;
+            }
+
+            function getSeverityClass(severity) {
+                if (severity <= 3) return 'severity-mild';
+                if (severity <= 6) return 'severity-moderate';
+                return 'severity-severe';
+            }
+
+            function getSeverityText(severity) {
+                if (severity <= 3) return 'Mild';
+                if (severity <= 6) return 'Moderate';
+                return 'Severe';
+            }
+
+            function showAlert(message, type) {
+                const alert = document.getElementById('symptomAlert');
+                alert.textContent = message;
+                alert.className = `alert ${type}`;
+                alert.style.display = 'block';
+                
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 5000);
+            }
+
+            function resetForm() {
+                document.getElementById('symptomForm').reset();
+                document.querySelectorAll('.severity-btn').forEach(btn => btn.classList.remove('active'));
+                selectedSeverity = null;
+            }
+
+            // Initialize everything
+            setupEventListeners();
+            updateSymptomsDisplay();
+            updateStats();
+
+            // Show info message about demo mode
+            setTimeout(() => {
+                showAlert('Demo mode: Data is stored locally in your browser', 'info');
+            }, 1000);
+        }
 
        function contactProvider() {
            showNotification('Connecting to care team...', 'info');
@@ -1154,69 +1876,217 @@
            }, 2000);
        }
 
-       function toggleChat() {
-           const widget = document.getElementById('chatWidget');
-           const toggle = document.querySelector('.chat-toggle');
+    //    function toggleChat() {
+    //        const widget = document.getElementById('chatWidget');
+    //        const toggle = document.querySelector('.chat-toggle');
            
-           if (widget.style.display === 'none' || !widget.style.display) {
-               widget.style.display = 'flex';
-               toggle.style.display = 'none';
-           } else {
-               widget.style.display = 'none';
-               toggle.style.display = 'block';
-           }
-       }
+    //        if (widget.style.display === 'none' || !widget.style.display) {
+    //            widget.style.display = 'flex';
+    //            toggle.style.display = 'none';
+    //        } else {
+    //            widget.style.display = 'none';
+    //            toggle.style.display = 'block';
+    //        }
+    //    }
 
-       function handleChatEnter(event) {
-           if (event.key === 'Enter') {
-               sendMessage();
-           }
-       }
+       // AI Chat Widget JavaScript Functions
+        let chatHistory = [];
 
-       function sendMessage() {
-           const input = document.getElementById('chatInput');
-           const message = input.value.trim();
-           
-           if (!message) return;
-           
-           const messagesContainer = document.getElementById('chatMessages');
-           
-           // Add user message
-           const userMessage = document.createElement('div');
-           userMessage.style.cssText = 'background: var(--light-blue); padding: 0.5rem; border-radius: 8px; margin-bottom: 0.5rem; text-align: right;';
-           userMessage.textContent = message;
-           messagesContainer.appendChild(userMessage);
-           
-           // Simulate AI response
-           setTimeout(() => {
-               const aiResponse = document.createElement('div');
-               aiResponse.style.cssText = 'background: var(--light-green); padding: 0.5rem; border-radius: 8px; margin-bottom: 0.5rem;';
-               aiResponse.innerHTML = `<strong>🤖 AI:</strong> ${getAIResponse(message)}`;
-               messagesContainer.appendChild(aiResponse);
-               messagesContainer.scrollTop = messagesContainer.scrollHeight;
-           }, 1000);
-           
-           input.value = '';
-           messagesContainer.scrollTop = messagesContainer.scrollHeight;
-       }
+        function toggleChat() {
+            const widget = document.getElementById('chatWidget');
+            widget.style.display = widget.style.display === 'none' ? 'block' : 'none';
+        }
 
-       function getAIResponse(message) {
-           const responses = {
-               'pain': 'I understand you\'re experiencing pain. On a scale of 1-10, how would you rate it? I can help you contact your care team or provide pain management suggestions.',
-               'nausea': 'Nausea is a common side effect. Try eating small, bland meals and stay hydrated. Your prescribed anti-nausea medication should help. Contact your nurse if it persists.',
-               'tired': 'Fatigue is normal during treatment. Light exercise, adequate rest, and proper nutrition can help. Would you like me to suggest some gentle exercises?',
-               'appointment': 'I can help you schedule an appointment. Would you like me to open the scheduling form?',
-               'default': 'I\'m here to help with your cancer care questions. You can ask about symptoms, appointments, medications, or treatment progress.'
-           };
-           
-           const lowerMessage = message.toLowerCase();
-           for (const [key, response] of Object.entries(responses)) {
-               if (lowerMessage.includes(key)) {
-                   return response;
-               }
-           }
-           return responses.default;
-       }
+        function handleChatEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+        
+            if (!message) return;
+        
+            // Add user message to chat
+            addMessageToChat(message, 'user');
+            input.value = '';
+        
+            // Show typing indicator
+            showTypingIndicator();
+        
+            try {
+                // Debug the request data
+                const patientId = await getCurrentPatientId();
+                console.log('Patient ID:', patientId);
+                console.log('Message:', message);
+                console.log('Chat History:', chatHistory);
+                
+                const requestData = {
+                    message: message,
+                    patient_id: patientId,
+                    chat_history: chatHistory
+                };
+                
+                console.log('Request payload:', JSON.stringify(requestData, null, 2));
+                
+                // Send message to Flask backend
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(requestData)
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                // Get response text first to see error details
+                const responseText = await response.text();
+                console.log('Response body:', responseText);
+            
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${responseText}`);
+                }
+            
+                const data = JSON.parse(responseText);
+            
+                // Remove typing indicator
+                removeTypingIndicator();
+            
+                // Add AI response to chat
+                addMessageToChat(data.response, 'ai');
+            
+                // Update chat history
+                chatHistory.push({
+                    user_message: message,
+                    ai_response: data.response,
+                    timestamp: new Date().toISOString()
+                });
+            
+            } catch (error) {
+                console.error('Error sending message:', error);
+                removeTypingIndicator();
+                addMessageToChat('Sorry, I encountered an error. Please try again.', 'ai', 'error');
+            }
+        }
+
+        function addMessageToChat(message, sender, type = 'normal') {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            
+            messageDiv.className = `chat-message ${sender}-message${type === 'error' ? ' error-message' : ''}`;
+            
+            const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="message-text">${formatMessage(message)}</div>
+                    <div class="message-time">${timestamp}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function formatMessage(message) {
+            // Basic formatting for AI responses
+            return message
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
+                .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic text
+                .replace(/\n/g, '<br>'); // Line breaks
+        }
+
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'chat-message ai-message typing';
+            typingDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        async function getCurrentPatientId() {
+            const role = localStorage.getItem('role');
+            const userId = localStorage.getItem('user_id');
+        
+            console.log('Role:', role, 'User ID:', userId);
+        
+            if (role === 'patient') {
+                try {
+                    const response = await fetch(`/api/patient/by-user/${userId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                        }
+                    });
+                
+                    if (response.ok) {
+                        const patientData = await response.json();
+                        return patientData.id;
+                    } else if (response.status === 404) {
+                        // Patient profile doesn't exist - handle this properly
+                        alert('Patient profile not found. Please complete your profile setup.');
+                        // Redirect to profile setup or disable chat
+                        window.location.href = 'templates/auth.html'; // or wherever your setup page is
+                        return null;
+                    } else {
+                        throw new Error(`Failed to fetch patient data: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error('Error getting patient ID:', error);
+                    alert('Unable to load patient data. Please try again.');
+                    return null;
+                }
+            } else if (role === 'nurse' || role === 'oncologist') {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('patient_id');
+            }
+        
+            return null;
+        }
+        async function loadChatHistory() {
+            try {
+                const patientId = await getCurrentPatientId();
+                if (!patientId) { 
+                    alert('Patient profile not found.')
+                    return;
+                }
+                
+                const response = await fetch(`/api/chat/history/${patientId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    chatHistory = data.history || [];
+                    
+                    // Display recent messages
+                    data.recent_messages?.forEach(msg => {
+                        addMessageToChat(msg.user_message, 'user');
+                        addMessageToChat(msg.ai_response, 'ai');
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading chat history:', error);
+            }
+        }
 
        function showNotification(message, type = 'success') {
            const notification = document.getElementById('notification');
@@ -1599,6 +2469,7 @@
            initWebSocket();
            showOverview();
            updateCurrentTime();
+           loadChatHistory();
 
            // Set up periodic reminder checks (every 30 minutes)
             setInterval(updateAppointmentReminders, 30 * 60 * 1000);

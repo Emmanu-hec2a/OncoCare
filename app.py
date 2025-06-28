@@ -1,11 +1,13 @@
-from flask import Flask, request, jsonify, session, render_template_string, render_template, url_for
+from flask import Flask, request, jsonify, session, render_template_string, render_template, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity, decode_token
 from datetime import datetime, timedelta
+from flask_socketio import SocketIO, emit, join_room, leave_room
 import time
 import numpy as np
+from openai import OpenAI
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingRegressor
 from sklearn.preprocessing import StandardScaler, LabelEncoder
@@ -32,6 +34,7 @@ from typing import Optional, Dict, Any, List
 import re
 from enum import Enum
 from functools import wraps
+from dotenv import load_dotenv
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 import pandas as pd
@@ -53,18 +56,24 @@ logger = logging.getLogger(__name__)
 # Initialize Flask app
 app = Flask(__name__)
 
+load_dotenv()
+client = OpenAI(
+    base_url="https://api.netmind.ai/inference-api/openai/v1",
+    api_key=os.getenv('OPENAI_API_KEY')
+)
+
 # Configuration
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(32))
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///OncoCare.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', secrets.token_hex(32))
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access']
 
 # Security configurations
-app.config['SESSION_COOKIE_SECURE'] = True
-app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = False
+app.config['SESSION_COOKIE_HTTPONLY'] = False
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=2)
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
@@ -74,6 +83,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 jwt_manager = JWTManager(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Configure CORS properly
 CORS(app, 
@@ -228,8 +238,10 @@ class User(db.Model):
     stripe_price_id = db.Column(db.String(100), nullable=True)  # Can be null initially
     
     # Relationships
-    patients = db.relationship('Patient', backref='users', lazy=True)
-    medical_staff = db.relationship('MedicalStaff', backref='users', lazy=True)
+    patient = db.relationship('Patient', back_populates='user', uselist=False, lazy=True)
+    medical_staff = db.relationship('MedicalStaff', back_populates='user', lazy=True)
+    profile = db.relationship('OncologistProfile', back_populates='user', uselist=False)
+    # chat_history = db.relationship('ChatHistory', back_populates='patients', lazy=True, cascade='all, delete-orphan', foreign_keys='ChatHistory.patient_id')
     
     def __init__(self, first_name, last_name, email, password, role):
         self.first_name = InputValidator.sanitize_input(first_name)
@@ -331,6 +343,41 @@ class User(db.Model):
             'features': self.features,
         }
 
+class ChatHistory(db.Model):
+    __tablename__ = 'chat_history'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'), nullable=False)
+    user_message = db.Column(db.Text, nullable=False)
+    ai_response = db.Column(db.Text, nullable=False)
+    
+    # Metadata
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    session_id = db.Column(db.String(100))  # To group conversations
+    message_type = db.Column(db.String(20), default='chat')  # chat, question, concern, etc.
+    
+    # AI metadata
+    ai_model = db.Column(db.String(50), default='gpt-3.5-turbo')
+    response_time = db.Column(db.Float)  # Response time in seconds
+    tokens_used = db.Column(db.Integer)
+    
+    def __repr__(self):
+        return f'<ChatHistory {self.id}: {self.user_message[:50]}...>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'patient_id': self.patient_id,
+            'user_message': self.user_message,
+            'ai_response': self.ai_response,
+            'timestamp': self.timestamp.isoformat() if self.timestamp else None,
+            'session_id': self.session_id,
+            'message_type': self.message_type
+        }
+    
+    #Relationship
+    patient = db.relationship("Patient", back_populates="chat_history")
+
 class Patient(db.Model):
     __tablename__ = 'patients'
     
@@ -347,11 +394,25 @@ class Patient(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
-    treatments = db.relationship('Treatment', backref='patient', lazy=True)
-    appointments = db.relationship('Appointment', backref='patient', lazy=True)
-    medications = db.relationship('PatientMedication', backref='patient', lazy=True)
-    vitals = db.relationship('VitalSigns', backref='patient', lazy=True)
-    medical_records = db.relationship('MedicalRecord', backref='patient', lazy=True)
+    treatments = db.relationship('Treatment', back_populates='patient', lazy=True)
+    appointments = db.relationship('Appointment', back_populates='patient', lazy=True)
+    patient_medications = db.relationship('PatientMedication', back_populates='patient', lazy=True)
+    vitals = db.relationship('VitalSigns', back_populates='patient', lazy=True)
+    medical_records = db.relationship('MedicalRecord', back_populates='patient', lazy=True)
+    lab_results = db.relationship('LabResult', back_populates='patient', lazy=True)
+    chat_history = db.relationship('ChatHistory', back_populates='patient', lazy=True, cascade='all, delete-orphan')
+    user = db.relationship('User', back_populates='patient', lazy=True)
+
+    @property
+    def medications(self):
+        """Get all medications for this patient with their dosage information"""
+        return [pm.medication for pm in self.patient_medications if pm.medication]
+    
+    @property
+    def active_medications(self):
+        """Get only active medications"""
+        return [pm.medication for pm in self.patient_medications 
+                if pm.medication and pm.status == 'active']
 
 class MedicalStaff(db.Model):
     __tablename__ = 'medical_staff'
@@ -364,8 +425,9 @@ class MedicalStaff(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
-    appointments = db.relationship('Appointment', backref='medical_staff', lazy=True)
-    treatments = db.relationship('Treatment', backref='medical_staff', lazy=True)
+    appointments = db.relationship('Appointment', back_populates='medical_staff', lazy=True)
+    treatments = db.relationship('Treatment', back_populates='medical_staff', lazy=True)
+    user = db.relationship('User', back_populates='medical_staff')
 
 class Treatment(db.Model):
     __tablename__ = 'treatments'
@@ -381,7 +443,14 @@ class Treatment(db.Model):
     total_cycles = db.Column(db.Integer)
     status = db.Column(db.String(20), default='active')
     notes = db.Column(db.Text)
+    side_effects = db.Column(db.Text)
+    adherence_rate = db.Column(db.Float)  # percentage
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    #Relationships
+    patient = db.relationship('Patient', back_populates='treatments')
+    medical_staff = db.relationship('MedicalStaff', back_populates='treatments')
 
 class Appointment(db.Model):
     __tablename__ = 'appointments'
@@ -395,6 +464,10 @@ class Appointment(db.Model):
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Relationships
+    patient = db.relationship('Patient', back_populates='appointments')
+    medical_staff = db.relationship('MedicalStaff', back_populates='appointments')
+
 class Medication(db.Model):
     __tablename__ = 'medications'
     
@@ -403,6 +476,9 @@ class Medication(db.Model):
     generic_name = db.Column(db.String(100))
     drug_class = db.Column(db.String(50))
     description = db.Column(db.Text)
+
+    # Relationships
+    patient_medications = db.relationship('PatientMedication', back_populates='medication')
 
 class PatientMedication(db.Model):
     __tablename__ = 'patient_medications'
@@ -418,7 +494,8 @@ class PatientMedication(db.Model):
     adherence_rate = db.Column(db.Float, default=0.0)
     
     # Relationship
-    medication = db.relationship('Medication', backref='patient_medications')
+    medication = db.relationship('Medication', back_populates='patient_medications')
+    patient = db.relationship('Patient', back_populates='patient_medications')
 
 class VitalSigns(db.Model):
     __tablename__ = 'vital_signs'
@@ -433,6 +510,12 @@ class VitalSigns(db.Model):
     weight = db.Column(db.Float)
     height = db.Column(db.Float)
     oxygen_saturation = db.Column(db.Integer)
+    pain_level = db.Column(db.Integer)  # 1-10 scale
+    recorded_at = db.Column(db.DateTime, default=datetime.utcnow)
+    recorded_by = db.Column(db.String(50))  # 'patient' or 'staff'
+
+    # Relationships
+    patient = db.relationship('Patient', back_populates='vitals')
 
 class MedicalRecord(db.Model):
     __tablename__ = 'medical_records'
@@ -443,6 +526,10 @@ class MedicalRecord(db.Model):
     record_type = db.Column(db.String(50), nullable=False)
     content = db.Column(db.Text, nullable=False)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # Relationships
+    patient = db.relationship('Patient', back_populates='medical_records')
+    creator = db.relationship('User', backref='created_medical_records')
 
 # class Organization(db.Model):
 #     __tablename__ = 'organizations'
@@ -456,8 +543,8 @@ class MedicalRecord(db.Model):
 #     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
 #     # Relationships
-#     users = db.relationship('User', backref='organization', lazy=True)
-#     subscription = db.relationship('Subscription', backref='organization', uselist=False)
+#     users = db.relationship('User', back_populates='organization', lazy=True)
+#     subscription = db.relationship('Subscription', back_populates='organization', uselist=False)
 
 class Plan(db.Model):
     __tablename__ = 'plans'
@@ -474,6 +561,9 @@ class Plan(db.Model):
     stripe_price_id = db.Column(db.String(100))
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    subscriptions = db.relationship('Subscription', back_populates='plan')
 
     def to_dict(self):
         return {
@@ -509,7 +599,7 @@ class Subscription(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
-    plan = db.relationship('Plan', backref='subscriptions')
+    plan = db.relationship('Plan', back_populates='subscriptions')
 
     def to_dict(self):
         return {
@@ -522,6 +612,157 @@ class Subscription(db.Model):
             'trial_end': self.trial_end.isoformat() if self.trial_end else None,
             'created_at': self.created_at.isoformat()
         }
+
+class OncologistProfile(db.Model):
+    __tablename__ = 'oncologist_profiles'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    
+    # Personal Information
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    date_of_birth = db.Column(db.Date)
+    gender = db.Column(db.String(20))
+    
+    # Professional Information
+    license_number = db.Column(db.String(50), nullable=False, unique=True)
+    years_of_experience = db.Column(db.Integer, nullable=False)
+    current_hospital = db.Column(db.String(200), nullable=False)
+    position = db.Column(db.String(100), nullable=False)
+    medical_school = db.Column(db.String(200), nullable=False)
+    graduation_year = db.Column(db.Integer, nullable=False)
+    board_certification = db.Column(db.String(50))
+    
+    # Specializations (stored as JSON)
+    specializations = db.Column(db.Text, nullable=False)  # JSON array
+    additional_certifications = db.Column(db.Text)
+    research_interests = db.Column(db.Text)
+    
+    # AI Preferences
+    ai_experience = db.Column(db.String(50))
+    notification_preferences = db.Column(db.String(50), default='all')
+    ai_preferences = db.Column(db.Text)
+    bio = db.Column(db.Text)
+    
+    # Metadata
+    profile_completed = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    user = db.relationship('User', back_populates='profile', uselist=False, lazy=True)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'phone': self.phone,
+            'date_of_birth': self.date_of_birth.isoformat() if self.date_of_birth else None,
+            'gender': self.gender,
+            'license_number': self.license_number,
+            'years_of_experience': self.years_of_experience,
+            'current_hospital': self.current_hospital,
+            'position': self.position,
+            'medical_school': self.medical_school,
+            'graduation_year': self.graduation_year,
+            'board_certification': self.board_certification,
+            'specializations': json.loads(self.specializations) if self.specializations else [],
+            'additional_certifications': self.additional_certifications,
+            'research_interests': self.research_interests,
+            'ai_experience': self.ai_experience,
+            'notification_preferences': self.notification_preferences,
+            'ai_preferences': self.ai_preferences,
+            'bio': self.bio,
+            'profile_completed': self.profile_completed,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
+
+class LabResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'), nullable=False)
+    test_type = db.Column(db.String(100))
+    test_name = db.Column(db.String(100))
+    result_value = db.Column(db.String(100))
+    reference_range = db.Column(db.String(100))
+    unit = db.Column(db.String(50))
+    status = db.Column(db.String(20))  # normal, abnormal, critical
+    test_date = db.Column(db.DateTime)
+    reported_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    #Relationships
+    patient = db.relationship('Patient', back_populates='lab_results')
+
+class Alert(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'), nullable=False)
+    oncologist_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    alert_type = db.Column(db.String(50))  # critical_vitals, missed_medication, lab_abnormal
+    priority = db.Column(db.String(20))  # low, medium, high, critical
+    title = db.Column(db.String(200))
+    message = db.Column(db.Text)
+    is_read = db.Column(db.Boolean, default=False)
+    is_resolved = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    resolved_at = db.Column(db.DateTime)
+
+def oncologist_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        user = User.query.get(session['user_id'])
+        if not user or user.role != 'oncologist':
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def validate_phone(phone):
+    """Validate international phone numbers"""
+    if not phone:
+        return False
+    
+    # Clean the phone number
+    cleaned = re.sub(r'[\s\-\(\)\.]', '', phone.strip())
+    
+    # International format: + followed by 8-18 digits total
+    if cleaned.startswith('+'):
+        digits_only = cleaned[1:]  # Remove the +
+        if digits_only.isdigit() and 8 <= len(digits_only) <= 18:
+            return True
+    
+    return False
+
+def validate_license_number(license_number):
+    # Basic validation - adjust based on your requirements
+    return len(license_number.strip()) >= 3
+
+def validate_required_fields(data, required_fields):
+    errors = {}
+    for field in required_fields:
+        if field not in data or not str(data[field]).strip():
+            errors[field] = f"{field.replace('_', ' ').title()} is required"
+    return errors
+
+def validate_specializations(specializations):
+    valid_specializations = [
+        'breast', 'lung', 'colorectal', 'prostate', 'hematologic',
+        'pediatric', 'gynecologic', 'neurologic'
+    ]
+    if not specializations or len(specializations) == 0:
+        return "At least one specialization must be selected"
+    
+    for spec in specializations:
+        if spec not in valid_specializations:
+            return f"Invalid specialization: {spec}"
+    
+    return None
 
 # AI/ML Risk Assessment Model
 class RiskAssessmentModel:
@@ -577,6 +818,182 @@ try:
 except Exception as e:
     logger.error(f"Failed to initialize risk model: {e}")
     risk_model = None
+
+#AI Chat route
+@app.route('/api/chat', methods=['POST'])
+def chat_with_ai():
+    try:
+        data = request.get_json()
+        user_message = data.get('message')
+        patient_id = data.get('patient_id')
+        chat_history = data.get('chat_history', [])
+        
+        if not user_message or not patient_id:
+            return jsonify({'error': 'Message and patient_id are required'}), 400
+        
+        # Get patient data for context
+        patient = get_patient_data(patient_id)
+        if not patient:
+            return jsonify({'error': 'Patient not found'}), 404
+        
+        # Create context for AI
+        system_context = create_patient_context(patient)
+        
+        # Prepare messages for AI
+        messages = [
+            {"role": "system", "content": system_context},
+        ]
+        
+        # Add chat history
+        for chat in chat_history[-10:]:  # Keep last 10 exchanges for context
+            messages.append({"role": "user", "content": chat['user_message']})
+            messages.append({"role": "assistant", "content": chat['ai_response']})
+        
+        # Add current message
+        messages.append({"role": "user", "content": user_message})
+        
+        # Get AI response
+        ai_response = get_ai_response(messages)
+        
+        # Save to database
+        save_chat_message(patient_id, user_message, ai_response)
+        
+        return jsonify({
+            'response': ai_response,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        print(f"Chat error: {str(e)}")
+        return jsonify({'error': 'An error occurred processing your message'}), 500
+    
+@app.route('/api/patient/by-user/<int:user_id>', methods=['GET'])
+def get_patient_by_user_id(user_id):
+    try:
+        patient = Patient.query.filter_by(user_id=user_id).first()
+        if not patient:
+            return jsonify({'error': 'Patient profile not found'}), 404
+        
+        return jsonify({
+            'id': patient.id,
+            'user_id': patient.user_id,
+            'age': patient.age,
+            'gender': patient.gender,
+            'diagnosis': patient.diagnosis
+        })
+    except Exception as e:
+        print(f"Error getting patient by user_id: {e}")
+        return jsonify({'error': 'Error retrieving patient data'}), 500
+
+@app.route('/api/chat/history/<patient_id>')
+def get_chat_history(patient_id):
+    try:
+        # Get recent chat history from database
+        history = ChatHistory.query.filter_by(
+            patient_id=patient_id
+        ).order_by(ChatHistory.timestamp.desc()).limit(20).all()
+        
+        recent_messages = []
+        for chat in reversed(history):  # Reverse to show oldest first
+            recent_messages.append({
+                'user_message': chat.user_message,
+                'ai_response': chat.ai_response,
+                'timestamp': chat.timestamp.isoformat()
+            })
+        
+        return jsonify({
+            'history': recent_messages,
+            'recent_messages': recent_messages[-10:]  # Last 10 for display
+        })
+        
+    except Exception as e:
+        print(f"History error: {str(e)}")
+        return jsonify({'error': 'Error loading chat history'}), 500
+
+def get_patient_data(patient_id):
+    """Fetch patient data from database"""
+    try:
+        patient = db.session.get(Patient, patient_id)
+        medications = patient.medications
+        if patient:
+            full_name = f"{patient.user.first_name} {patient.user.last_name}" if patient.user else "Unknown"
+            return {
+                'id': patient.id,
+                'name': full_name,
+                'age': patient.age,
+                'diagnosis': patient.diagnosis,
+                'stage': patient.stage,
+                'treatments': patient.treatments,
+                'medications': medications,
+                'allergies': None,
+                'recent_labs': None,
+                'next_appointment': patient.appointments[-1].date if patient.appointments else None
+            }
+        return None
+    except Exception as e:
+        print(f"Error fetching patient data: {str(e)}")
+        return None
+
+def create_patient_context(patient):
+    """Create context for AI based on patient data"""
+    context = f"""
+    You are a medical AI assistant helping a cancer patient with their care. Here's the patient's information:
+    
+    Patient: {patient['name']}
+    Age: {patient['age']}
+    Diagnosis: {patient['diagnosis']}
+    Stage: {patient['stage']}
+    Current Treatments: {patient.get('treatments', 'None listed')}
+    Current Medications: {patient.get('medications', 'None listed')}
+    Allergies: {patient.get('allergies', 'None listed')}
+    
+    Guidelines:
+    - Provide supportive, empathetic responses
+    - Give general health information but always recommend consulting their care team for medical decisions
+    - Help explain medical terms and procedures
+    - Offer emotional support and encouragement
+    - Never provide specific medical advice or change treatment recommendations
+    - If asked about symptoms that seem urgent, advise contacting their healthcare provider immediately
+    - Keep responses concise but helpful
+    """
+    
+    return context
+
+def get_ai_response(messages):
+    """Get response from AI service"""
+    try:
+        # Example using OpenAI
+        response = client.chat.completions.create(
+            model="Qwen/Qwen2.5-7B-Instruct",  # or "gpt-4" if you have access
+            messages=messages,
+            store=True,
+            max_tokens=300,
+            temperature=0.7,
+            top_p=0.9
+        )
+        
+        return response.choices[0].message.content.strip()
+        
+    except Exception as e:
+        print(f"AI service error: {str(e)}")
+        return "I'm sorry, I'm having trouble responding right now. Please try again in a moment."
+    
+def save_chat_message(patient_id, user_message, ai_response):
+    """Save chat message to database"""
+    try:
+        chat_record = ChatHistory(
+            patient_id=patient_id,
+            user_message=user_message,
+            ai_response=ai_response,
+            timestamp=datetime.now()
+        )
+        
+        db.session.add(chat_record)
+        db.session.commit()
+        
+    except Exception as e:
+        print(f"Error saving chat: {str(e)}")
+        db.session.rollback()
 
 # AI/ML Models for Cancer Prediction
 class CancerPredictionModels:
@@ -1019,7 +1436,7 @@ def analyze_biomarkers():
             'molecular_subtype': subtype,
             'prognosis': prognosis,
             'therapy_recommendations': recommendations,
-            'clinical_trials': self._get_relevant_trials(subtype),
+            'clinical_trials': _get_relevant_trials(subtype),
             'timestamp': datetime.now().isoformat()
         }
         
@@ -1927,6 +2344,17 @@ def login():
         user.last_login = datetime.utcnow()
         user.locked_until = None
         db.session.commit()
+
+        session['user_id'] = user.id
+        session['role'] = user.role
+        session.permanent = True
+
+        # ADD THESE DEBUG LINES:
+        print(f"=== SESSION DEBUG ===")
+        print(f"Setting session user_id: {user.id}")
+        print(f"Session after setting: {dict(session)}")
+        print(f"Session user_id: {session.get('user_id')}")
+
         
         access_token = create_access_token(identity=user.id)
         
@@ -1935,12 +2363,73 @@ def login():
         return jsonify({
             'message': 'Login successful',
             'access_token': access_token,
-            'user': user.to_dict()
+            'user': user.to_dict(),
+            'user_id': user.id,
+            'role': user.role,  # Make sure your User model has this field
+            'redirect_url': '/patient-dashboard' if user.role == 'patient' else '/dashboard'
         }), 200
         
     except Exception as e:
         logger.error(f"Login error: {e}")
         return jsonify({'message': 'Login failed'}), 500
+
+@app.route('/api/patient/profile', methods=['POST'])
+def create_patient_profile():
+    """Create patient profile after registration"""
+    try:
+        data = request.get_json()
+        user_id = session.get('user_id')
+        
+        # Validate required fields
+        required_fields = ['age', 'gender', 'diagnosis', 'stage', 'date_diagnosed']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'message': f'{field.replace("_", " ").title()} is required'}), 400
+        
+        # Check if user exists and is a patient
+        user = db.session.get(User, user_id)
+        print(f"Found user: {user}")  # DEBUG LINE
+        
+        if not user_id:  # ADD THIS CHECK FIRST
+            return jsonify({'message': 'User not logged in'}), 401
+            
+        if not user or user.role != 'patient':
+            return jsonify({'message': 'Invalid user or not a patient'}), 400
+        
+        # Check if patient profile already exists
+        existing_patient = Patient.query.filter_by(user_id=user_id).first()
+        if existing_patient:
+            return jsonify({'message': 'Patient profile already exists'}), 409
+        
+        # Create patient record
+        patient = Patient(
+            user_id=user_id,
+            age=data['age'],
+            gender=data['gender'],
+            diagnosis=data['diagnosis'],
+            stage=data['stage'],
+            date_diagnosed=datetime.strptime(data['date_diagnosed'], '%Y-%m-%d').date(),
+            emergency_contact=data.get('emergency_contact'),
+            insurance_info=data.get('insurance_info')
+        )
+        
+        db.session.add(patient)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Patient profile created successfully',
+            'patient_id': patient.id
+        }), 201
+        
+    except Exception as e:
+        logger.error(f"Patient profile creation error: {e}")
+        db.session.rollback()
+        return jsonify({'message': 'Failed to create patient profile'}), 500
+
+@app.route('/setup-profile')
+def profile_setup():
+    """Serve the profile setup page"""
+    return render_template('profile_setup.html')
 
 @app.route('/api/logout', methods=['POST'])
 @jwt_required()
@@ -1956,29 +2445,230 @@ def logout():
 
 # Patient Management Routes
 @app.route('/api/patients', methods=['GET'])
+@oncologist_required
 @role_required(['nurse', 'oncologist', 'admin'])
 def get_patients():
     """Get list of patients"""
     try:
-        patients = db.session.query(Patient, User).join(User, Patient.user_id == User.id).all()
+        oncologist_id = session['user_id']
+        patients = db.session.query(Patient, User).join(User, Patient.user_id == User.id).filter(Patient.oncologist_id == oncologist_id).all()
         
         patient_list = []
         for patient, user in patients:
+            # Get latest vital signs
+            latest_vitals = VitalSigns.query.filter_by(
+                patient_id=patient.id
+            ).order_by(VitalSigns.recorded_at.desc()).first()
+            
+            # Get next appointment
+            next_appointment = Appointment.query.filter_by(
+                patient_id=patient.id
+            ).filter(
+                Appointment.appointment_date > datetime.utcnow()
+            ).order_by(Appointment.appointment_date.asc()).first()
+            
             patient_data = {
                 'id': patient.id,
                 'name': user.full_name,
                 'age': patient.age,
                 'diagnosis': patient.diagnosis,
                 'stage': patient.stage,
-                'risk_score': patient.risk_score,
-                'date_diagnosed': patient.date_diagnosed.isoformat() if patient.date_diagnosed else None
+                'status': patient.status,
+                'last_visit': patient.last_visit.isoformat() if patient.last_visit else None,
+                'next_appointment': next_appointment.appointment_date.isoformat() if next_appointment else None,
+                'latest_vitals': {
+                    'recorded_at': latest_vitals.recorded_at.isoformat() if latest_vitals else None,
+                    'heart_rate': latest_vitals.heart_rate if latest_vitals else None,
+                    'blood_pressure': f"{latest_vitals.blood_pressure_systolic}/{latest_vitals.blood_pressure_diastolic}" if latest_vitals and latest_vitals.blood_pressure_systolic else None,
+                    'pain_level': latest_vitals.pain_level if latest_vitals else None
+                }
             }
             patient_list.append(patient_data)
-        
+    
         return jsonify(patient_list), 200
     except Exception as e:
         logger.error(f"Error fetching patients: {e}")
         return jsonify({'error': 'Failed to fetch patients'}), 500
+
+@app.route('/api/appointments')
+@oncologist_required
+@role_required(['nurse', 'oncologist', 'patient'])
+def get_appointments():
+    oncologist_id = session['user_id']
+    date_filter = request.args.get('date', datetime.now().date().isoformat())
+    
+    appointments = db.session.query(Appointment, Patient, User).join(
+        Patient, Appointment.patient_id == Patient.id
+    ).join(
+        User, Patient.user_id == User.id
+    ).filter(
+        Appointment.oncologist_id == oncologist_id,
+        db.func.date(Appointment.appointment_date) == date_filter
+    ).order_by(Appointment.appointment_date.asc()).all()
+    
+    appointment_list = []
+    for appointment, patient, user in appointments:
+        appointment_data = {
+            'id': appointment.id,
+            'time': appointment.appointment_date.strftime('%H:%M'),
+            'patient_name': user.full_name,
+            'patient_id': patient.id,
+            'type': appointment.appointment_type,
+            'status': appointment.status,
+            'notes': appointment.notes
+        }
+        appointment_list.append(appointment_data)
+    
+    return jsonify(appointment_list)
+
+@app.route('/api/treatments')
+@oncologist_required
+@role_required(['nurse', 'oncologist', 'patient'])
+def get_treatments():
+    oncologist_id = session['user_id']
+    
+    treatments = db.session.query(Treatment, Patient, User).join(
+        Patient, Treatment.patient_id == Patient.id
+    ).join(
+        User, Patient.user_id == User.id
+    ).filter(
+        Patient.oncologist_id == oncologist_id,
+        Treatment.status == 'active'
+    ).all()
+    
+    treatment_list = []
+    for treatment, patient, user in treatments:
+        progress = 0
+        if treatment.total_cycles and treatment.current_cycle:
+            progress = (treatment.current_cycle / treatment.total_cycles) * 100
+        
+        treatment_data = {
+            'id': treatment.id,
+            'patient_name': user.full_name,
+            'patient_id': patient.id,
+            'treatment_type': treatment.treatment_type,
+            'medication': treatment.medication,
+            'current_cycle': treatment.current_cycle,
+            'total_cycles': treatment.total_cycles,
+            'progress': round(progress, 1),
+            'adherence_rate': treatment.adherence_rate,
+            'last_updated': treatment.last_updated.isoformat()
+        }
+        treatment_list.append(treatment_data)
+    
+    return jsonify(treatment_list)
+
+@app.route('/api/alerts')
+@oncologist_required
+@role_required(['nurse', 'oncologist'])
+def get_alerts():
+    oncologist_id = session['user_id']
+    
+    alerts = db.session.query(Alert, Patient, User).join(
+        Patient, Alert.patient_id == Patient.id
+    ).join(
+        User, Patient.user_id == User.id
+    ).filter(
+        Alert.oncologist_id == oncologist_id,
+        Alert.is_resolved == False
+    ).order_by(Alert.created_at.desc()).limit(50).all()
+    
+    alert_list = []
+    for alert, patient, user in alerts:
+        alert_data = {
+            'id': alert.id,
+            'patient_name': user.full_name,
+            'patient_id': patient.id,
+            'alert_type': alert.alert_type,
+            'priority': alert.priority,
+            'title': alert.title,
+            'message': alert.message,
+            'is_read': alert.is_read,
+            'created_at': alert.created_at.isoformat()
+        }
+        alert_list.append(alert_data)
+    
+    return jsonify(alert_list)
+
+@app.route('/api/auth/status', methods=['GET'])
+def auth_status():
+    print(f"Session contents: {dict(session)}")
+    print(f"Session keys: {list(session.keys())}")
+    print(f"User ID in session: {'user_id' in session}")
+    
+    if 'user_id' not in session:
+        print("No user_id in session")
+        return jsonify({'error': 'Not authenticated', 'session_empty': True}), 401
+    
+    try:
+        user = db.session.get(User, session['user_id'])
+        if not user:
+            print(f"User not found for ID: {session['user_id']}")
+            return jsonify({'error': 'User not found'}), 401
+        
+        return jsonify({
+            'authenticated': True,
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'name': user.name,
+                'role': user.role
+            },
+            'session_id': session.get('_id', 'unknown')
+        }), 200
+        
+    except Exception as e:
+        print(f"Error in auth_status: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai-insights')
+@oncologist_required
+@role_required(['nurse', 'oncologist', 'patient'])
+def get_ai_insights():
+    oncologist_id = session['user_id']
+    
+    # Calculate treatment adherence rate
+    treatments = Treatment.query.join(Patient).filter(
+        Patient.oncologist_id == oncologist_id,
+        Treatment.status == 'active',
+        Treatment.adherence_rate.isnot(None)
+    ).all()
+    
+    avg_adherence = sum(t.adherence_rate for t in treatments) / len(treatments) if treatments else 0
+    
+    # Count risk predictions (patients with critical status or recent alerts)
+    risk_predictions = Patient.query.filter(
+        Patient.oncologist_id == oncologist_id,
+        Patient.status.in_(['critical', 'deteriorating'])
+    ).count()
+    
+    # Calculate average response time (time between alert creation and resolution)
+    resolved_alerts = Alert.query.filter(
+        Alert.oncologist_id == oncologist_id,
+        Alert.is_resolved == True,
+        Alert.resolved_at.isnot(None)
+    ).all()
+    
+    avg_response_time = 0
+    if resolved_alerts:
+        response_times = [(alert.resolved_at - alert.created_at).total_seconds() / 60 
+                         for alert in resolved_alerts]
+        avg_response_time = sum(response_times) / len(response_times)
+    
+    insights = {
+        'treatment_adherence': round(avg_adherence, 1),
+        'risk_predictions': risk_predictions,
+        'avg_response_time': round(avg_response_time, 1),
+        'system_uptime': 98.5,  # This would come from system monitoring
+        'patients_monitored': Patient.query.filter_by(oncologist_id=oncologist_id).count(),
+        'active_treatments': Treatment.query.join(Patient).filter(
+            Patient.oncologist_id == oncologist_id,
+            Treatment.status == 'active'
+        ).count()
+    }
+    
+    return jsonify(insights)
+
 
 @app.route('/api/patients/<int:patient_id>', methods=['GET'])
 @role_required(['nurse', 'oncologist', 'admin', 'patient'])
@@ -2038,6 +2728,247 @@ def get_patient_details(patient_id):
     except Exception as e:
         logger.error(f"Error fetching patient details: {e}")
         return jsonify({'error': 'Failed to fetch patient details'}), 500
+    
+@app.route('/oncologist/profile-setup')
+def profile_setup_page():
+    """Serve the profile setup page"""
+    # Check if user is logged in (adjust based on your auth system)
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # Check if profile already exists
+    user_id = session['user_id']
+    existing_profile = OncologistProfile.query.filter_by(user_id=user_id).first()
+    
+    if existing_profile and existing_profile.profile_completed:
+        return redirect('/oncologist-dashboard')
+    
+    # Serve the HTML page (you can use render_template if using templates)
+    return render_template('oncologist_profile.html')
+
+@app.route('/api/oncologist/profile', methods=['POST'])
+def create_oncologist_profile():
+    """Create or update oncologist profile"""
+    try:
+        # Check if user is logged in
+        if 'user_id' not in session:
+            return jsonify({'error': 'Unauthorized', 'message': 'Please log in first'}), 401
+        
+        user_id = session['user_id']
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'Bad Request', 'message': 'No data provided'}), 400
+        
+        # Validate required fields
+        required_fields = [
+            'firstName', 'lastName', 'email', 'phone', 'licenseNumber',
+            'yearsOfExperience', 'currentHospital', 'position', 
+            'medicalSchool', 'graduationYear'
+        ]
+        
+        validation_errors = validate_required_fields(data, required_fields)
+        
+        # Additional validations
+        if 'email' in data and not validate_email(data['email']):
+            validation_errors['email'] = 'Invalid email format'
+        
+        if 'phone' in data and not validate_phone(data['phone']):
+            validation_errors['phone'] = 'Invalid phone number format'
+        
+        if 'licenseNumber' in data and not validate_license_number(data['licenseNumber']):
+            validation_errors['licenseNumber'] = 'License number must be at least 3 characters'
+        
+        if 'yearsOfExperience' in data:
+            try:
+                years = int(data['yearsOfExperience'])
+                if years < 0 or years > 50:
+                    validation_errors['yearsOfExperience'] = 'Years of experience must be between 0 and 50'
+            except (ValueError, TypeError):
+                validation_errors['yearsOfExperience'] = 'Years of experience must be a valid number'
+        
+        if 'graduationYear' in data:
+            try:
+                year = int(data['graduationYear'])
+                current_year = datetime.now().year
+                if year < 1950 or year > current_year:
+                    validation_errors['graduationYear'] = f'Graduation year must be between 1950 and {current_year}'
+            except (ValueError, TypeError):
+                validation_errors['graduationYear'] = 'Graduation year must be a valid number'
+        
+        # Validate specializations
+        specializations = data.get('specializations', [])
+        spec_error = validate_specializations(specializations)
+        if spec_error:
+            validation_errors['specializations'] = spec_error
+        
+        if validation_errors:
+            return jsonify({
+                'error': 'Validation Error',
+                'message': 'Please correct the following errors',
+                'errors': validation_errors
+            }), 400
+        
+        # Check if profile already exists
+        existing_profile = OncologistProfile.query.filter_by(user_id=user_id).first()
+        
+        if existing_profile:
+            # Update existing profile
+            profile = existing_profile
+        else:
+            # Create new profile
+            profile = OncologistProfile(user_id=user_id)
+        
+        # Map form data to profile fields
+        profile.first_name = data['firstName'].strip()
+        profile.last_name = data['lastName'].strip()
+        profile.email = data['email'].strip().lower()
+        profile.phone = data['phone'].strip()
+        profile.license_number = data['licenseNumber'].strip()
+        profile.years_of_experience = int(data['yearsOfExperience'])
+        profile.current_hospital = data['currentHospital'].strip()
+        profile.position = data['position']
+        profile.medical_school = data['medicalSchool'].strip()
+        profile.graduation_year = int(data['graduationYear'])
+        
+        # Optional fields
+        if data.get('dateOfBirth'):
+            try:
+                profile.date_of_birth = datetime.strptime(data['dateOfBirth'], '%Y-%m-%d').date()
+            except ValueError:
+                pass
+        
+        profile.gender = data.get('gender', '').strip()
+        profile.board_certification = data.get('boardCertification', '').strip()
+        profile.additional_certifications = data.get('additionalCertifications', '').strip()
+        profile.research_interests = data.get('researchInterests', '').strip()
+        profile.ai_experience = data.get('aiExperience', '').strip()
+        profile.notification_preferences = data.get('notificationPreferences', 'all')
+        profile.ai_preferences = data.get('aiPreferences', '').strip()
+        profile.bio = data.get('bio', '').strip()
+        
+        # Store specializations as JSON
+        profile.specializations = json.dumps(specializations)
+        profile.profile_completed = True
+        profile.updated_at = datetime.utcnow()
+        
+        # Save to database
+        if not existing_profile:
+            db.session.add(profile)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Profile saved successfully',
+            'profile': profile.to_dict()
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Error creating oncologist profile: {str(e)}")
+        return jsonify({
+            'error': 'Internal Server Error',
+            'message': 'An error occurred while saving your profile. Please try again.'
+        }), 500
+
+@app.route('/api/oncologist/profile', methods=['GET'])
+def get_oncologist_profile():
+    """Get oncologist profile data"""
+    try:
+        if 'user_id' not in session:
+            return jsonify({'error': 'Unauthorized', 'message': 'Please log in first'}), 401
+        
+        user_id = session['user_id']
+        profile = OncologistProfile.query.filter_by(user_id=user_id).first()
+        
+        if not profile:
+            return jsonify({'error': 'Not Found', 'message': 'Profile not found'}), 404
+        
+        return jsonify({
+            'success': True,
+            'profile': profile.to_dict()
+        }), 200
+        
+    except Exception as e:
+        app.logger.error(f"Error fetching oncologist profile: {str(e)}")
+        return jsonify({
+            'error': 'Internal Server Error',
+            'message': 'An error occurred while fetching your profile.'
+        }), 500
+
+@app.route('/api/oncologist/profile', methods=['PUT'])
+def update_oncologist_profile():
+    """Update existing oncologist profile"""
+    try:
+        if 'user_id' not in session:
+            return jsonify({'error': 'Unauthorized', 'message': 'Please log in first'}), 401
+        
+        user_id = session['user_id']
+        profile = OncologistProfile.query.filter_by(user_id=user_id).first()
+        
+        if not profile:
+            return jsonify({'error': 'Not Found', 'message': 'Profile not found'}), 404
+        
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'Bad Request', 'message': 'No data provided'}), 400
+        
+        # Update only provided fields
+        updatable_fields = {
+            'firstName': 'first_name',
+            'lastName': 'last_name',
+            'email': 'email',
+            'phone': 'phone',
+            'gender': 'gender',
+            'currentHospital': 'current_hospital',
+            'position': 'position',
+            'boardCertification': 'board_certification',
+            'additionalCertifications': 'additional_certifications',
+            'researchInterests': 'research_interests',
+            'aiExperience': 'ai_experience',
+            'notificationPreferences': 'notification_preferences',
+            'aiPreferences': 'ai_preferences',
+            'bio': 'bio'
+        }
+        
+        for form_field, db_field in updatable_fields.items():
+            if form_field in data:
+                setattr(profile, db_field, data[form_field])
+        
+        # Handle date of birth
+        if 'dateOfBirth' in data and data['dateOfBirth']:
+            try:
+                profile.date_of_birth = datetime.strptime(data['dateOfBirth'], '%Y-%m-%d').date()
+            except ValueError:
+                pass
+        
+        # Handle specializations
+        if 'specializations' in data:
+            spec_error = validate_specializations(data['specializations'])
+            if spec_error:
+                return jsonify({
+                    'error': 'Validation Error',
+                    'message': spec_error
+                }), 400
+            profile.specializations = json.dumps(data['specializations'])
+        
+        profile.updated_at = datetime.utcnow()
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Profile updated successfully',
+            'profile': profile.to_dict()
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Error updating oncologist profile: {str(e)}")
+        return jsonify({
+            'error': 'Internal Server Error',
+            'message': 'An error occurred while updating your profile.'
+        }), 500
 
 # AI Insights Routes
 @app.route('/api/ai/risk-assessment/<int:patient_id>', methods=['GET'])
@@ -2086,15 +3017,16 @@ def get_risk_assessment(patient_id):
 
 # Dashboard Statistics Routes
 @app.route('/api/dashboard/stats', methods=['GET'])
+@oncologist_required
 @role_required(['nurse', 'oncologist', 'admin', 'patient'])
 def get_dashboard_stats():
     """Get dashboard statistics"""
     try:
-        current_user_id = get_jwt_identity()
-        current_user = User.query.get(current_user_id)
+        oncologist_id = session['user_id']
+        current_user = User.query.get(oncologist_id)
         
         if current_user.role == 'patient':
-            patient = Patient.query.filter_by(user_id=current_user_id).first()
+            patient = Patient.query.filter_by(user_id=oncologist_id).first()
             if not patient:
                 return jsonify({})
             
@@ -2109,14 +3041,51 @@ def get_dashboard_stats():
         
         elif current_user.role in ['nurse', 'oncologist']:
             # Medical staff stats
-            stats = {
-                'total_patients': Patient.query.count(),
-                'active_treatments': Treatment.query.filter_by(status='active').count(),
-                'today_appointments': Appointment.query.filter(
-                    Appointment.appointment_date >= datetime.utcnow().date(),
-                    Appointment.appointment_date < datetime.utcnow().date() + timedelta(days=1)
+            # Get current stats
+            total_patients = Patient.query.filter_by(oncologist_id=oncologist_id).count()
+            
+            today = datetime.now().date()
+            today_appointments = Appointment.query.join(Patient).filter(
+                Patient.oncologist_id == oncologist_id,
+                db.func.date(Appointment.appointment_date) == today,
+                Appointment.status.in_(['scheduled', 'confirmed'])
+            ).count()
+            
+            active_treatments = Treatment.query.join(Patient).filter(
+                Patient.oncologist_id == oncologist_id,
+                Treatment.status == 'active'
+            ).count()
+            
+            critical_alerts = Alert.query.filter(
+                Alert.oncologist_id == oncologist_id,
+                Alert.priority == 'critical',
+                Alert.is_resolved == False
+            ).count()
+            
+            # Get recent updates count for the last hour
+            recent_time = datetime.utcnow() - timedelta(hours=1)
+            recent_updates = {
+                'vitals': VitalSigns.query.join(Patient).filter(
+                    Patient.oncologist_id == oncologist_id,
+                    VitalSigns.recorded_at > recent_time
+                ).count(),
+                'labs': LabResult.query.join(Patient).filter(
+                    Patient.oncologist_id == oncologist_id,
+                    LabResult.reported_date > recent_time
+                ).count(),
+                'treatments': Treatment.query.join(Patient).filter(
+                    Patient.oncologist_id == oncologist_id,
+                    Treatment.last_updated > recent_time
                 ).count()
             }
+            
+            return jsonify({
+                'patients': total_patients,
+                'appointments': today_appointments,
+                'treatments': active_treatments,
+                'alerts': critical_alerts,
+                'recent_updates': recent_updates
+            })
         
         else:  # admin
             stats = {
@@ -2134,7 +3103,37 @@ def get_dashboard_stats():
 # Dashboard page routes - all serve the same index.html
 @app.route('/patient-dashboard')
 def patient_dashboard():
-    return render_template('patient.html')
+    print(f"=== DASHBOARD DEBUG ===")
+    print(f"Session contents: {dict(session)}")
+    print(f"Session user_id: {session.get('user_id')}")
+
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    try:
+        # Get the patient record using the user_id from session
+        patients = Patient.query.filter_by(user_id=session['user_id']).first()
+        
+        if patients is None:
+            flash('Patient record not found. Please login again.', 'error')
+            return redirect(url_for('login'))
+        
+        # Get the user name from the related User model
+        user_name = patients.user.first_name if patients.user else 'Patient'
+
+        user_id = session['user_id']
+        print(f"Looking for patient with user_id: {user_id}")  # Debug line
+
+        patient = Patient.query.filter_by(user_id=user_id).first()
+        print(f"Found patient: {patient}")  # Debug line
+
+        if not patient:
+            return redirect('/setup-profile')
+        return render_template('patient.html', user_name=user_name, patients=patients)
+    except Exception as e:
+        print(f"Error in patient_dashboard: {e}")
+        flash('An error occurred. Please try again.', 'error')
+        return redirect(url_for('login'))
 
 @app.route('/nurse-dashboard') 
 def nurse_dashboard():
@@ -2142,7 +3141,17 @@ def nurse_dashboard():
 
 @app.route('/oncologist-dashboard')
 def doctor_dashboard():
-    return render_template('oncologist.html')
+    """Serve the oncologist dashboard page"""
+    if 'user_id' not in session:
+        return redirect('/login')
+    
+    user_id = session['user_id']
+    profile = OncologistProfile.query.filter_by(user_id=user_id).first()
+    # oncologist = OncologistProfile.query.filter_by(id=session['user_id']).first()
+    
+    if not profile or not profile.profile_completed:
+        return redirect('/oncologist/profile-setup')
+    return render_template('oncologist.html', oncologist_name=profile.last_name, profile=profile)
 
 @app.route('/admin-dashboard')
 def admin_dashboard():
@@ -2189,6 +3198,8 @@ def verify_token():
 # Initialize database and create sample data
 @app.before_first_request
 def create_tables():
+
+    db.drop_all()
     db.create_all()
 
     print("Database tables created successfully!")
@@ -2765,6 +3776,81 @@ def verify_donation():
         logger.error(f"Donation verification error: {str(e)}")
         return jsonify({'error': 'Verification failed'}), 500
 
+# Function to emit real-time updates (called from patient dashboard)
+def emit_patient_update(patient_id, update_type, data):
+    patient = Patient.query.get(patient_id)
+    if patient:
+        socketio.emit('patient_update', {
+            'patient_id': patient_id,
+            'update_type': update_type,
+            'data': data,
+            'timestamp': datetime.utcnow().isoformat()
+        }, room=f'oncologist_{patient.oncologist_id}')
+
+def emit_new_alert(alert_id):
+    alert = Alert.query.get(alert_id)
+    if alert:
+        patient = Patient.query.get(alert.patient_id)
+        user = User.query.get(patient.user_id)
+        
+        socketio.emit('new_alert', {
+            'alert_id': alert.id,
+            'patient_name': user.full_name,
+            'title': alert.title,
+            'message': alert.message,
+            'priority': alert.priority,
+            'timestamp': alert.created_at.isoformat()
+        }, room=f'oncologist_{alert.oncologist_id}')
+
+# API endpoints for patient dashboard to trigger updates
+@app.route('/api/trigger-patient-update', methods=['POST'])
+def trigger_patient_update():
+    data = request.json
+    emit_patient_update(
+        data['patient_id'],
+        data['update_type'],
+        data['data']
+    )
+    return jsonify({'status': 'success'})
+
+@app.route('/api/trigger-alert', methods=['POST'])
+def trigger_alert():
+    data = request.json
+    
+    # Create new alert
+    alert = Alert(
+        patient_id=data['patient_id'],
+        oncologist_id=data['oncologist_id'],
+        alert_type=data['alert_type'],
+        priority=data['priority'],
+        title=data['title'],
+        message=data['message']
+    )
+    
+    db.session.add(alert)
+    db.session.commit()
+    
+    # Emit to oncologist
+    emit_new_alert(alert.id)
+    
+    return jsonify({'status': 'success', 'alert_id': alert.id})
+
+# WebSocket Events for Real-time Updates
+@socketio.on('connect')
+def handle_connect():
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        if user and user.role == 'oncologist':
+            join_room(f'oncologist_{user.id}')
+            emit('status', {'msg': f'Connected as {user.full_name}'})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        if user and user.role == 'oncologist':
+            leave_room(f'oncologist_{user.id}')
+
 # Error handlers
 @app.errorhandler(429)
 def ratelimit_handler(e):
@@ -2774,6 +3860,11 @@ def ratelimit_handler(e):
 def internal_error(error):
     logger.error(f"Internal server error: {str(error)}")
     return jsonify({'error': 'Internal server error'}), 500
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({'error': 'Not Found', 'message': 'Resource not found'}), 404
+
 
 @app.route('/donate')
 def donate_home():
@@ -2786,4 +3877,4 @@ def home():
     return render_template("index.html")
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5050)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
