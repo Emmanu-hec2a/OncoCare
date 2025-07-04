@@ -2998,12 +2998,13 @@ def nurse_profile_setup():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
-    user = User.query.get(session['user_id'])
+    user_id = session['user_id']
+    user = User.query.get(user_id)
     if not user or user.role != 'nurse':
-        return redirect(url_for('dashboard'))
+        return render_template('nurse_profile_setup.html')
     
     # Check if profile already exists
-    existing_profile = NurseProfile.query.filter_by(user_id=user.id).first()
+    existing_profile = NurseProfile.query.filter_by(user_id=user_id).first()
     if existing_profile and existing_profile.profile_completed:
         return redirect(url_for('nurse_dashboard'))
     
@@ -3083,12 +3084,13 @@ def nurse_profile_setup():
     return render_template('nurse_profile_setup.html', profile=profile_data)
 
 # Nurse Dashboard Route
-@app.route('/nurse/dashboard')
+@app.route('/nurse-dashboard')
 def nurse_dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
-    user = User.query.get(session['user_id'])
+    user_id = session['user_id']
+    user = User.query.get(user_id)
     if not user or user.role != 'nurse':
         return redirect(url_for('dashboard'))
     

@@ -309,3 +309,56 @@
 2025-07-01 15:30:38,417 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
 2025-07-04 13:58:23,055 INFO __main__ Risk assessment model trained successfully
 2025-07-04 13:58:23,863 INFO __main__ All ML models initialized successfully
+2025-07-04 14:08:35,164 INFO __main__ Risk assessment model trained successfully
+2025-07-04 14:08:36,113 INFO __main__ All ML models initialized successfully
+2025-07-04 14:08:36,196 INFO werkzeug  * Restarting with stat
+2025-07-04 14:08:50,941 INFO __main__ Risk assessment model trained successfully
+2025-07-04 14:08:51,732 INFO __main__ All ML models initialized successfully
+2025-07-04 14:08:51,799 WARNING werkzeug  * Debugger is active!
+2025-07-04 14:08:51,811 INFO werkzeug  * Debugger PIN: 390-410-905
+2025-07-04 14:12:16,863 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
+2025-07-04 14:12:27,851 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
+2025-07-04 14:14:23,620 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-07-04 14:14:24,659 INFO werkzeug  * Restarting with stat
+2025-07-04 14:14:39,425 INFO __main__ Risk assessment model trained successfully
+2025-07-04 14:14:40,337 INFO __main__ All ML models initialized successfully
+2025-07-04 14:14:40,413 WARNING werkzeug  * Debugger is active!
+2025-07-04 14:14:40,429 INFO werkzeug  * Debugger PIN: 390-410-905
+2025-07-04 14:15:55,821 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
+2025-07-04 14:16:02,524 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
+2025-07-04 14:19:51,657 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-07-04 14:19:52,554 INFO werkzeug  * Restarting with stat
+2025-07-04 14:20:05,998 INFO __main__ Risk assessment model trained successfully
+2025-07-04 14:20:06,796 INFO __main__ All ML models initialized successfully
+2025-07-04 14:20:06,872 WARNING werkzeug  * Debugger is active!
+2025-07-04 14:20:06,884 INFO werkzeug  * Debugger PIN: 390-410-905
+2025-07-04 14:21:30,262 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
+2025-07-04 14:21:39,708 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
+2025-07-04 14:28:27,582 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-07-04 14:28:28,696 INFO werkzeug  * Restarting with stat
+2025-07-04 14:28:43,139 INFO __main__ Risk assessment model trained successfully
+2025-07-04 14:28:43,944 INFO __main__ All ML models initialized successfully
+2025-07-04 14:28:44,019 WARNING werkzeug  * Debugger is active!
+2025-07-04 14:28:44,031 INFO werkzeug  * Debugger PIN: 390-410-905
+2025-07-04 14:31:13,367 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-07-04 14:31:14,419 INFO werkzeug  * Restarting with stat
+2025-07-04 14:31:28,743 INFO __main__ Risk assessment model trained successfully
+2025-07-04 14:31:29,573 INFO __main__ All ML models initialized successfully
+2025-07-04 14:31:29,649 WARNING werkzeug  * Debugger is active!
+2025-07-04 14:31:29,663 INFO werkzeug  * Debugger PIN: 390-410-905
+2025-07-04 14:33:07,062 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-07-04 14:33:08,090 INFO werkzeug  * Restarting with stat
+2025-07-04 14:33:22,092 INFO __main__ Risk assessment model trained successfully
+2025-07-04 14:33:22,925 INFO __main__ All ML models initialized successfully
+2025-07-04 14:33:22,998 WARNING werkzeug  * Debugger is active!
+2025-07-04 14:33:23,011 INFO werkzeug  * Debugger PIN: 390-410-905
+2025-07-04 14:34:31,529 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
+2025-07-04 14:34:40,434 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
+2025-07-04 14:39:48,084 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-07-04 14:39:48,961 INFO werkzeug  * Restarting with stat
+2025-07-04 14:40:04,548 INFO __main__ Risk assessment model trained successfully
+2025-07-04 14:40:05,434 INFO __main__ All ML models initialized successfully
+2025-07-04 14:40:05,512 WARNING werkzeug  * Debugger is active!
+2025-07-04 14:40:05,525 INFO werkzeug  * Debugger PIN: 390-410-905
+2025-07-04 14:42:00,007 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
+2025-07-04 14:42:07,634 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
