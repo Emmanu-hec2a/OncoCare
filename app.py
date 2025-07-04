@@ -612,6 +612,28 @@ class Subscription(db.Model):
             'trial_end': self.trial_end.isoformat() if self.trial_end else None,
             'created_at': self.created_at.isoformat()
         }
+    
+# Nurse Profile Model
+class NurseProfile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    license_number = db.Column(db.String(50), unique=True, nullable=False)
+    specialization = db.Column(db.String(100), nullable=False)
+    years_experience = db.Column(db.Integer, nullable=False)
+    hospital_name = db.Column(db.String(200), nullable=False)
+    department = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    emergency_contact = db.Column(db.String(20), nullable=False)
+    shift_preference = db.Column(db.String(50), nullable=False)
+    certifications = db.Column(db.Text)
+    profile_completed = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<NurseProfile {self.first_name} {self.last_name}>'
 
 class OncologistProfile(db.Model):
     __tablename__ = 'oncologist_profiles'
@@ -2970,6 +2992,194 @@ def update_oncologist_profile():
             'message': 'An error occurred while updating your profile.'
         }), 500
 
+# Nurse Profile Setup Route
+@app.route('/nurse/profile/setup', methods=['GET', 'POST'])
+def nurse_profile_setup():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if not user or user.role != 'nurse':
+        return redirect(url_for('dashboard'))
+    
+    # Check if profile already exists
+    existing_profile = NurseProfile.query.filter_by(user_id=user.id).first()
+    if existing_profile and existing_profile.profile_completed:
+        return redirect(url_for('nurse_dashboard'))
+    
+    if request.method == 'POST':
+        try:
+            # Get form data
+            first_name = request.form.get('first_name')
+            last_name = request.form.get('last_name')
+            license_number = request.form.get('license_number')
+            specialization = request.form.get('specialization')
+            years_experience = request.form.get('years_experience')
+            hospital_name = request.form.get('hospital_name')
+            department = request.form.get('department')
+            phone = request.form.get('phone')
+            emergency_contact = request.form.get('emergency_contact')
+            shift_preference = request.form.get('shift_preference')
+            certifications = request.form.get('certifications')
+            
+            # Validate required fields
+            if not all([first_name, last_name, license_number, specialization, 
+                       years_experience, hospital_name, department, phone, 
+                       emergency_contact, shift_preference]):
+                flash('All fields are required', 'error')
+                return render_template('nurse_profile_setup.html')
+            
+            # Check if license number already exists
+            existing_license = NurseProfile.query.filter_by(license_number=license_number).first()
+            if existing_license and existing_license.user_id != user.id:
+                flash('License number already exists', 'error')
+                return render_template('nurse_profile_setup.html')
+            
+            if existing_profile:
+                # Update existing profile
+                existing_profile.first_name = first_name
+                existing_profile.last_name = last_name
+                existing_profile.license_number = license_number
+                existing_profile.specialization = specialization
+                existing_profile.years_experience = int(years_experience)
+                existing_profile.hospital_name = hospital_name
+                existing_profile.department = department
+                existing_profile.phone = phone
+                existing_profile.emergency_contact = emergency_contact
+                existing_profile.shift_preference = shift_preference
+                existing_profile.certifications = certifications
+                existing_profile.profile_completed = True
+                existing_profile.updated_at = datetime.utcnow()
+            else:
+                # Create new profile
+                nurse_profile = NurseProfile(
+                    user_id=user.id,
+                    first_name=first_name,
+                    last_name=last_name,
+                    license_number=license_number,
+                    specialization=specialization,
+                    years_experience=int(years_experience),
+                    hospital_name=hospital_name,
+                    department=department,
+                    phone=phone,
+                    emergency_contact=emergency_contact,
+                    shift_preference=shift_preference,
+                    certifications=certifications,
+                    profile_completed=True
+                )
+                db.session.add(nurse_profile)
+            
+            db.session.commit()
+            flash('Profile setup completed successfully!', 'success')
+            return redirect(url_for('nurse_dashboard'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error setting up profile: {str(e)}', 'error')
+            return render_template('nurse_profile_setup.html')
+    
+    # GET request - show the form
+    profile_data = existing_profile if existing_profile else None
+    return render_template('nurse_profile_setup.html', profile=profile_data)
+
+# Nurse Dashboard Route
+@app.route('/nurse/dashboard')
+def nurse_dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if not user or user.role != 'nurse':
+        return redirect(url_for('dashboard'))
+    
+    # Check if profile is completed
+    nurse_profile = NurseProfile.query.filter_by(user_id=user.id).first()
+    if not nurse_profile or not nurse_profile.profile_completed:
+        return redirect(url_for('nurse_profile_setup'))
+    
+    # Get dashboard data
+    try:
+        # Get assigned patients count (you'll need to implement patient assignment logic)
+        assigned_patients = 0  # Placeholder - implement based on your patient assignment system
+        
+        # Get today's appointments/tasks
+        today = datetime.utcnow().date()
+        todays_tasks = 0  # Placeholder - implement based on your task/appointment system
+        
+        # Get recent activities
+        recent_activities = []  # Placeholder - implement based on your activity logging system
+        
+        # Get pending notifications
+        notifications = []  # Placeholder - implement based on your notification system
+        
+        dashboard_data = {
+            'nurse_profile': nurse_profile,
+            'assigned_patients': assigned_patients,
+            'todays_tasks': todays_tasks,
+            'recent_activities': recent_activities,
+            'notifications': notifications
+        }
+        
+        return render_template('nurse_dashboard.html', data=dashboard_data)
+        
+    except Exception as e:
+        flash(f'Error loading dashboard: {str(e)}', 'error')
+        return render_template('nurse_dashboard.html', data={
+            'nurse_profile': nurse_profile,
+            'assigned_patients': 0,
+            'todays_tasks': 0,
+            'recent_activities': [],
+            'notifications': []
+        })
+
+# Nurse Profile View/Edit Route
+@app.route('/nurse/profile')
+def nurse_profile():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    if not user or user.role != 'nurse':
+        return redirect(url_for('dashboard'))
+    
+    nurse_profile = NurseProfile.query.filter_by(user_id=user.id).first()
+    if not nurse_profile:
+        return redirect(url_for('nurse_profile_setup'))
+    
+    return render_template('nurse_profile.html', profile=nurse_profile)
+
+# API endpoint for nurse profile data (for frontend interactions)
+@app.route('/api/nurse/profile')
+def api_nurse_profile():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+    
+    user = User.query.get(session['user_id'])
+    if not user or user.role != 'nurse':
+        return jsonify({'error': 'Not authorized'}), 403
+    
+    nurse_profile = NurseProfile.query.filter_by(user_id=user.id).first()
+    if not nurse_profile:
+        return jsonify({'error': 'Profile not found'}), 404
+    
+    return jsonify({
+        'id': nurse_profile.id,
+        'first_name': nurse_profile.first_name,
+        'last_name': nurse_profile.last_name,
+        'license_number': nurse_profile.license_number,
+        'specialization': nurse_profile.specialization,
+        'years_experience': nurse_profile.years_experience,
+        'hospital_name': nurse_profile.hospital_name,
+        'department': nurse_profile.department,
+        'phone': nurse_profile.phone,
+        'emergency_contact': nurse_profile.emergency_contact,
+        'shift_preference': nurse_profile.shift_preference,
+        'certifications': nurse_profile.certifications,
+        'profile_completed': nurse_profile.profile_completed,
+        'created_at': nurse_profile.created_at.isoformat(),
+        'updated_at': nurse_profile.updated_at.isoformat()
+    })
+
 # AI Insights Routes
 @app.route('/api/ai/risk-assessment/<int:patient_id>', methods=['GET'])
 @role_required(['nurse', 'oncologist', 'admin'])
@@ -3135,9 +3345,16 @@ def patient_dashboard():
         flash('An error occurred. Please try again.', 'error')
         return redirect(url_for('login'))
 
-@app.route('/nurse-dashboard') 
-def nurse_dashboard():
-    return render_template('index.html')
+# @app.route('/nurse-dashboard') 
+# def nurse_dashboard():
+#     """Serve Nurse Dashboard Page"""
+#     user = User.query.get(session['user_id'])
+#     if user.role == 'nurse':
+#         nurse_profile = NurseProfile.query.filter_by(user_id=user.id).first()
+
+#     if not nurse_profile or not nurse_profile.profile_completed:
+#         return redirect(url_for('nurse_profile_setup'))
+#     return render_template('nurse_dashboard.html')
 
 @app.route('/oncologist-dashboard')
 def doctor_dashboard():
@@ -3204,83 +3421,6 @@ def create_tables():
 
     print("Database tables created successfully!")
     print("Ready for user registration!")
-    
-    # Create sample users if they don't exist
-    # if not User.query.first():
-    #     # Create sample users
-    #     users_data = [
-    #         {
-    #             'first_name': 'Sarah',
-    #             'last_name': 'Johnson',
-    #             'email': 'patient@OncoCare.com',
-    #             'password': 'demo123',
-    #             'role': 'patient'
-    #         },
-    #         {
-    #             'first_name': 'Jennifer',
-    #             'last_name': 'Martinez',
-    #             'email': 'nurse@OncoCare.com',
-    #             'password': 'demo123',
-    #             'role': 'nurse'
-    #         },
-    #         {
-    #             'first_name': 'Dr. Michael',
-    #             'last_name': 'Smith',
-    #             'email': 'doctor@OncoCare.com',
-    #             'password': 'demo123',
-    #             'role': 'oncologist'
-    #         },
-    #         {
-    #             'first_name': 'System',
-    #             'last_name': 'Administrator',
-    #             'email': 'admin@OncoCare.com',
-    #             'password': 'demo123',
-    #             'role': 'admin'
-    #         }
-    #     ]
-        
-    #     for user_data in users_data:
-    #         user = User(
-    #             first_name=user_data['first_name'],
-    #             last_name=user_data['last_name'],
-    #             email=user_data['email'],
-    #             password=user_data['password'],  # Use 'password', not 'password_hash'
-    #             role=user_data['role']
-    #         )
-    #         db.session.add(user)
-        
-    #     db.session.commit()
-        
-        # Create sample patient profile
-        # patient_user = User.query.filter_by(email='patient@OncoCare.com').first()
-        # patient = Patient(
-        #     user_id=patient_user.id,
-        #     age=45,
-        #     gender='Female',
-        #     diagnosis='Breast Cancer',
-        #     stage='Stage II',
-        #     date_diagnosed=datetime(2024, 1, 15).date(),
-        #     risk_score=0.65
-        # )
-        # db.session.add(patient)
-        
-        # # Create sample medical staff profile
-        # doctor_user = User.query.filter_by(email='doctor@OncoCare.com').first()
-        # medical_staff = MedicalStaff(
-        #     user_id=doctor_user.id,
-        #     license_number='MD123456',
-        #     specialization='Oncology',
-        #     department='Cancer Care'
-        # )
-        # db.session.add(medical_staff)
-        
-        # db.session.commit()
-
-# Rate limiting
-# limiter = Limiter(
-#     key_func=get_remote_address,
-#     default_limits=["200 per day", "50 per hour"]
-# )
 
 # limiter.init_app(app)
 

@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Cancer Care - Nurse Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-title {
+            opacity: 0;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: #666;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-link i {
+            width: 20px;
+            margin-right: 12px;
+            text-align: center;
+        }
+
+        .nav-link span {
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar.collapsed + .main-content {
+            margin-left: 80px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-section h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .welcome-section p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .real-time-indicator {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(45deg, #00c851, #00ff00);
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 14px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .real-time-indicator i {
+            margin-right: 8px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .trend-up {
+            background: rgba(0, 200, 81, 0.1);
+            color: #00c851;
+        }
+
+        .trend-down {
+            background: rgba(255, 69, 58, 0.1);
+            color: #ff453a;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .patient-list {
+            list-style: none;
+        }
+
+        .patient-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            background: rgba(102, 126, 234, 0.05);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .patient-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
+        }
+
+        .patient-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .patient-info {
+            flex: 1;
+        }
+
+        .patient-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .patient-condition {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .patient-status {
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-critical {
+            background: rgba(255, 69, 58, 0.1);
+            color: #ff453a;
+        }
+
+        .status-stable {
+            background: rgba(0, 200, 81, 0.1);
+            color: #00c851;
+        }
+
+        .status-monitoring {
+            background: rgba(255, 149, 0, 0.1);
+            color: #ff9500;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            margin-right: 15px;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .ai-insights {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .ai-insights h3 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .ai-insights i {
+            margin-right: 10px;
+        }
+
+        .insight-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .insight-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .toggle-sidebar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-sidebar:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff453a;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <h2 class="sidebar-title">AI Cancer Care</h2>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>My Patients</span>
+                            <span class="notification-badge">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Schedule</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-pills"></i>
+                            <span>Medications</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-robot"></i>
+                            <span>AI Insights</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-bell"></i>
+                            <span>Alerts</span>
+                            <span class="notification-badge">5</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="welcome-section">
+                    <h1>Welcome back, <span id="nurseName">Sarah Johnson</span></h1>
+                    <p>Oncology Department • <span id="currentDate"></span></p>
+                </div>
+                <div class="real-time-indicator">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Real-time Active</span>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                            <i class="fas fa-user-injured"></i>
+                        </div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> 2
+                        </div>
+                    </div>
+                    <div class="stat-number" id="assignedPatients">12</div>
+                    <div class="stat-label">Assigned Patients</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: linear-gradient(45deg, #00c851, #00ff00);">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-trend trend-down">
+                            <i class="fas fa-arrow-down"></i> 3
+                        </div>
+                    </div>
+                    <div class="stat-number" id="todaysTasks">8</div>
+                    <div class="stat-label">Today's Tasks</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: linear-gradient(45deg, #ff9500, #ffad33);">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> 1
+                        </div>
+                    </div>
+                    <div class="stat-number" id="criticalAlerts">3</div>
+                    <div class="stat-label">Critical Alerts</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: linear-gradient(45deg, #007aff, #0056b3);">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> 5
+                        </div>
+                    </div>
+                    <div class="stat-number" id="completedTasks">15</div>
+                    <div class="stat-label">Completed Tasks</div>
+                </div>
+            </div>
+
+            <div class="ai-insights">
+                <h3>
+                    <i class="fas fa-brain"></i>
+                    AI-Powered Insights
+                </h3>
+                <div class="insight-item">
+                    <strong>Treatment Recommendation:</strong> Patient Maria Santos shows improved response to current chemotherapy regimen. Consider dose optimization.
+                </div>
+                <div class="insight-item">
+                    <strong>Risk Alert:</strong> Patient John Davis has elevated infection risk markers. Recommend enhanced monitoring protocols.
+                </div>
+                <div class="insight-item">
+                    <strong>Medication Interaction:</strong> Potential drug interaction detected for Patient Emily Chen. Review current medications.
+                </div>
+            </div>
+
+            <div class="main-grid">
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Priority Patients</h3>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            View All
+                        </button>
+                    </div>
+                    <ul class="patient-list" id="patientList">
+                        <li class="patient-item">
+                            <div class="patient-avatar">MS</div>
+                            <div class="patient-info">
+                                <div class="patient-name">Maria Santos</div>
+                                <div class="patient-condition">Breast Cancer - Stage II</div>
+                            </div>
+                            <div class="patient-status status-critical">Critical</div>
+                        </li>
+                        <li class="patient-item">
+                            <div class="patient-avatar">JD</div>
+                            <div class="patient-info">
+                                <div class="patient-name">John Davis</div>
+                                <div class="patient-condition">Lung Cancer - Stage III</div>
+                            </div>
+                            <div class="patient-status status-monitoring">Monitoring</div>
+                        </li>
+                        <li class="patient-item">
+                            <div class="patient-avatar">EC</div>
+                            <div class="patient-info">
+                                <div class="patient-name">Emily Chen</div>
+                                <div class="patient-condition">Colon Cancer - Stage I</div>
+                            </div>
+                            <div class="patient-status status-stable">Stable</div>
+                        </li>
+                        <li class="patient-item">
+                            <div class="patient-avatar">RJ</div>
+                            <div class="patient-info">
+                                <div class="patient-name">Robert Johnson</div>
+                                <div class="patient-condition">Prostate Cancer - Stage II</div>
+                            </div>
+                            <div class="patient-status status-stable">Stable</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Recent Activity</h3>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-history"></i>
+                            View All
+                        </button>
+                    </div>
+                    <div class="activity-list" id="activityList">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-syringe"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Administered chemotherapy</div>
+                                <div class="activity-time">Maria Santos - 2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Vital signs updated</div>
+                                <div class="activity-time">John Davis - 3 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Medication dispensed</div>
+                                <div class="activity-time">Emily Chen - 4 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-notes-medical"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Care plan updated</div>
+                                <div class="activity-time">Robert Johnson - 5 hours ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+            startRealTimeUpdates();
+            updateCurrentDate();
+        });
+
+        function initializeDashboard() {
+            // Simulate loading nurse profile data
+            setTimeout(() => {
+                loadNurseProfile();
+            }, 1000);
+        }
+
+        function loadNurseProfile() {
+            // Simulate API call to /api/nurse/profile
+            const nurseData = {
+                first_name: "Sarah",
+                last_name: "Johnson",
+                specialization: "Oncology",
+                department: "Oncology Department",
+                hospital_name: "City General Hospital"
+            };
+            
+            document.getElementById('nurseName').textContent = `${nurseData.first_name} ${nurseData.last_name}`;
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        function startRealTimeUpdates() {
+            // Simulate real-time updates every 30 seconds
+            setInterval(() => {
+                updatePatientStats();
+                updateActivityFeed();
+                updateAIInsights();
+            }, 30000);
+
+            // Simulate real-time patient vitals updates
+            setInterval(() => {
+                updatePatientVitals();
+            }, 5000);
+        }
+
+        function updatePatientStats() {
+            // Simulate random stat updates
+            const assignedPatients = document.getElementById('assignedPatients');
+            const todaysTasks = document.getElementById('todaysTasks');
+            const criticalAlerts = document.getElementById('criticalAlerts');
+            const completedTasks = document.getElementById('completedTasks');
+
+            // Add subtle animations for updates
+            const stats = [assignedPatients, todaysTasks, criticalAlerts, completedTasks];
+            stats.forEach(stat => {
+                stat.style.transform = 'scale(1.1)';
+                stat.style.color = '#667eea';
+                setTimeout(() => {
+                    stat.style.transform = 'scale(1)';
+                    stat.style.color = '#333';
+                }, 300);
+            });
+
+            // Simulate data changes
+            if (Math.random() > 0.7) {
+                const currentAlerts = parseInt(criticalAlerts.textContent);
+                criticalAlerts.textContent = currentAlerts + (Math.random() > 0.5 ? 1 : -1);
+            }
+        }
+
+        function updateActivityFeed() {
+            const activities = [
+                { icon: 'fas fa-heartbeat', title: 'Vital signs monitored', patient: 'Maria Santos' },
+                { icon: 'fas fa-syringe', title: 'IV medication administered', patient: 'John Davis' },
+                { icon: 'fas fa-clipboard-check', title: 'Care plan reviewed', patient: 'Emily Chen' },
+                { icon: 'fas fa-phone', title: 'Family consultation completed', patient: 'Robert Johnson' }
+            ];
+
+            if (Math.random() > 0.6) {
+                const activityList = document.getElementById('activityList');
+                const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+                
+                const newActivity = document.createElement('div');
+                newActivity.className = 'activity-item';
+                newActivity.style.opacity = '0';
+                newActivity.style.transform = 'translateY(-20px)';
+                
+                newActivity.innerHTML = `
+                    <div class="activity-icon">
+                        <i class="${randomActivity.icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">${randomActivity.title}</div>
+                        <div class="activity-time">${randomActivity.patient} - Just now</div>
+                    </div>
+                `;
+                
+                activityList.insertBefore(newActivity, activityList.firstChild);
+                
+                // Animate in
+                setTimeout(() => {
+                    newActivity.style.opacity = '1';
+                    newActivity.style.transform = 'translateY(0)';
+                }, 100);
+                
+                // Remove old activities to maintain list length
+                if (activityList.children.length > 4) {
+                    activityList.removeChild(activityList.lastChild);
+                }
+            }
+        }
+
+        function updateAIInsights() {
+            // Simulate AI insights updates
+            const insights = [
+                "New treatment protocol showing 15% better response rates for Stage II patients",
+                "Predictive model suggests early intervention needed for high-risk patients",
+                "Optimal medication timing identified for improved patient outcomes",
+                "Pattern recognition detected potential side effect correlation"
+            ];
+
+            if (Math.random() > 0.8) {
+                const insightItems = document.querySelectorAll('.insight-item');
+                const randomInsight = insights[Math.floor(Math.random() * insights.length)];
+                
+                if (insightItems.length > 0) {
+                    const lastInsight = insightItems[insightItems.length - 1];
+                    lastInsight.innerHTML = `<strong>AI Update:</strong> ${randomInsight}`;
+                    lastInsight.style.background = 'rgba(255, 255, 255, 0.2)';
+                    lastInsight.style.animation = 'pulse 1s ease-in-out';
+                }
+            }
+        }
+
+        function updatePatientVitals() {
+            // Simulate patient status changes
+            const patientItems = document.querySelectorAll('.patient-item');
+            patientItems.forEach(item => {
+                const status = item.querySelector('.patient-status');
+                if (Math.random() > 0.95) {
+                    // Simulate status change
+                    status.style.animation = 'pulse 2s ease-in-out';
+                    setTimeout(() => {
+                        status.style.animation = '';
+                    }, 2000);
+                }
+            });
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // Mobile sidebar toggle
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('active');
+            }
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Simulate real-time notifications
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                border-radius: 12px;
+                padding: 15px 20px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                border-left: 4px solid ${type === 'critical' ? '#ff453a' : type === 'warning' ? '#ff9500' : '#667eea'};
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-${type === 'critical' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation-circle' : 'info-circle'}" 
+                       style="color: ${type === 'critical' ? '#ff453a' : type === 'warning' ? '#ff9500' : '#667eea'};"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 5000);
+        }
+
+        // Simulate random notifications
+        setInterval(() => {
+            const notifications = [
+                { message: "New vital signs recorded for Maria Santos", type: "info" },
+                { message: "Critical alert: Patient John Davis requires immediate attention", type: "critical" },
+                { message: "Medication reminder: Emily Chen - 2:00 PM", type: "warning" },
+                { message: "Lab results available for Robert Johnson", type: "info" }
+            ];
+            
+            if (Math.random() > 0.7) {
+                const notification = notifications[Math.floor(Math.random() * notifications.length)];
+                showNotification(notification.message, notification.type);
+            }
+        }, 45000);
+
+        // Enhanced patient monitoring
+        function monitorPatientVitals() {
+            const patients = [
+                { name: "Maria Santos", condition: "Critical", vitals: { hr: 95, bp: "140/90", temp: 101.2 } },
+                { name: "John Davis", condition: "Monitoring", vitals: { hr: 88, bp: "130/85", temp: 99.8 } },
+                { name: "Emily Chen", condition: "Stable", vitals: { hr: 72, bp: "120/80", temp: 98.6 } },
+                { name: "Robert Johnson", condition: "Stable", vitals: { hr: 78, bp: "125/82", temp: 98.4 } }
+            ];
+
+            // Simulate vital sign changes
+            setInterval(() => {
+                patients.forEach(patient => {
+                    // Simulate heart rate variation
+                    patient.vitals.hr += Math.floor(Math.random() * 6) - 3;
+                    
+                    // Simulate temperature variation
+                    patient.vitals.temp += (Math.random() - 0.5) * 0.5;
+                    
+                    // Check for critical changes
+                    if (patient.vitals.hr > 100 || patient.vitals.hr < 60 || patient.vitals.temp > 101) {
+                        showNotification(`Critical vital signs detected for ${patient.name}`, 'critical');
+                    }
+                });
+            }, 10000);
+        }
+
+        // Start patient monitoring
+        monitorPatientVitals();
+
+        // Enhanced AI predictions
+        function generateAIPredictions() {
+            const predictions = [
+                "Machine learning model predicts 92% treatment success rate for current protocol",
+                "Early warning system detected potential complications in 2 patients",
+                "Optimal care scheduling identified for maximum efficiency",
+                "Medication adherence patterns suggest intervention needed",
+                "Risk stratification model updated with latest patient data"
+            ];
+
+            setInterval(() => {
+                if (Math.random() > 0.6) {
+                    const prediction = predictions[Math.floor(Math.random() * predictions.length)];
+                    showNotification(`AI Insight: ${prediction}`, 'info');
+                }
+            }, 60000);
+        }
+
+        // Start AI predictions
+        generateAIPredictions();
+
+        // Enhanced dashboard interactions
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.patient-item')) {
+                const patientItem = e.target.closest('.patient-item');
+                const patientName = patientItem.querySelector('.patient-name').textContent;
+                
+                // Simulate patient detail view
+                patientItem.style.background = 'rgba(102, 126, 234, 0.2)';
+                patientItem.style.transform = 'scale(1.02)';
+                
+                setTimeout(() => {
+                    patientItem.style.background = 'rgba(102, 126, 234, 0.05)';
+                    patientItem.style.transform = 'scale(1)';
+                }, 200);
+                
+                showNotification(`Accessing records for ${patientName}`, 'info');
+            }
+            
+            if (e.target.closest('.stat-card')) {
+                const statCard = e.target.closest('.stat-card');
+                statCard.style.transform = 'translateY(-8px) scale(1.02)';
+                
+                setTimeout(() => {
+                    statCard.style.transform = 'translateY(-5px)';
+                }, 200);
+            }
+        });
+
+        // Real-time data synchronization
+        function syncWithServer() {
+            // Simulate API calls for real-time data
+            const endpoints = [
+                '/api/nurse/patients',
+                '/api/nurse/tasks',
+                '/api/nurse/alerts',
+                '/api/nurse/vitals'
+            ];
+            
+            setInterval(() => {
+                endpoints.forEach(endpoint => {
+                    // Simulate API call
+                    console.log(`Syncing data from ${endpoint}`);
+                    
+                    // Update UI based on response
+                    if (Math.random() > 0.8) {
+                        updatePatientStats();
+                    }
+                });
+            }, 15000);
+        }
+
+        // Start real-time sync
+        syncWithServer();
+
+        // Enhanced keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'p':
+                        e.preventDefault();
+                        showNotification('Quick patient search activated', 'info');
+                        break;
+                    case 'n':
+                        e.preventDefault();
+                        showNotification('New note created', 'info');
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        showNotification('Dashboard refreshed', 'info');
+                        location.reload();
+                        break;
+                }
+            }
+        });
+
+        // Performance monitoring
+        function monitorPerformance() {
+            const startTime = performance.now();
+            
+            setInterval(() => {
+                const currentTime = performance.now();
+                const uptime = Math.floor((currentTime - startTime) / 1000);
+                
+                console.log(`Dashboard uptime: ${uptime} seconds`);
+                
+                // Monitor memory usage
+                if (performance.memory) {
+                    const memoryUsage = performance.memory.usedJSHeapSize / 1024 / 1024;
+                    console.log(`Memory usage: ${memoryUsage.toFixed(2)} MB`);
+                }
+            }, 60000);
+        }
+
+        // Start performance monitoring
+        monitorPerformance();
+    </script>
+</body>
+</html>

@@ -276,3 +276,36 @@
 2025-06-28 17:59:35,471 INFO __main__ Risk assessment model trained successfully
 2025-06-28 17:59:36,600 INFO __main__ All ML models initialized successfully
 2025-06-28 17:59:36,706 INFO werkzeug  * Restarting with stat
+2025-07-01 13:11:44,519 INFO __main__ Risk assessment model trained successfully
+2025-07-01 13:11:45,566 INFO __main__ All ML models initialized successfully
+2025-07-01 13:11:45,672 INFO werkzeug  * Restarting with stat
+2025-07-01 13:12:02,590 INFO __main__ Risk assessment model trained successfully
+2025-07-01 13:12:03,692 INFO __main__ All ML models initialized successfully
+2025-07-01 13:12:03,800 WARNING werkzeug  * Debugger is active!
+2025-07-01 13:12:03,816 INFO werkzeug  * Debugger PIN: 390-410-905
+2025-07-01 13:21:48,027 INFO __main__ Risk assessment model trained successfully
+2025-07-01 13:21:48,853 INFO __main__ All ML models initialized successfully
+2025-07-01 13:21:48,940 INFO werkzeug  * Restarting with stat
+2025-07-01 13:22:09,005 INFO __main__ Risk assessment model trained successfully
+2025-07-01 13:22:10,309 INFO __main__ All ML models initialized successfully
+2025-07-01 13:22:10,380 WARNING werkzeug  * Debugger is active!
+2025-07-01 13:22:10,395 INFO werkzeug  * Debugger PIN: 734-708-570
+2025-07-01 14:33:35,358 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
+2025-07-01 14:33:42,337 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
+2025-07-01 14:34:46,215 INFO httpx HTTP Request: POST https://api.netmind.ai/inference-api/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-01 15:16:27,761 INFO __main__ Risk assessment model trained successfully
+2025-07-01 15:16:28,712 INFO __main__ All ML models initialized successfully
+2025-07-01 15:16:28,826 INFO werkzeug  * Restarting with stat
+2025-07-01 15:16:43,619 INFO __main__ Risk assessment model trained successfully
+2025-07-01 15:16:44,715 INFO __main__ All ML models initialized successfully
+2025-07-01 15:16:44,817 WARNING werkzeug  * Debugger is active!
+2025-07-01 15:16:44,830 INFO werkzeug  * Debugger PIN: 390-410-905
+2025-07-01 15:17:48,076 INFO __main__ New user registered: kamau@gmail.com
+2025-07-01 15:18:02,333 INFO __main__ Successful login for user: kamau@gmail.com
+2025-07-01 15:21:46,763 INFO httpx HTTP Request: POST https://api.netmind.ai/inference-api/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-01 15:22:44,510 INFO httpx HTTP Request: POST https://api.netmind.ai/inference-api/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-01 15:24:15,051 INFO httpx HTTP Request: POST https://api.netmind.ai/inference-api/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-07-01 15:30:24,539 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
+2025-07-01 15:30:38,417 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
+2025-07-04 13:58:23,055 INFO __main__ Risk assessment model trained successfully
+2025-07-04 13:58:23,863 INFO __main__ All ML models initialized successfully
