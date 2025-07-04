@@ -928,6 +928,59 @@
             setInterval(updateCurrentTime, 1000);
         }
 
+        const MyCareTeamComponent = () => {
+        const [careTeam, setCareTeam] = useState(null);
+        const [loading, setLoading] = useState(true);
+        const { user } = useAuth();
+
+        useEffect(() => {
+            fetchMyCareTeam();
+        }, []);
+
+        const fetchMyCareTeam = async () => {
+            try {
+            const response = await api.get(`/care-team/patient/${user.patient_id}/care-team`);
+            setCareTeam(response.data);
+            } catch (error) {
+            console.error('Error fetching care team:', error);
+            } finally {
+            setLoading(false);
+            }
+        };
+
+        if (!careTeam) {
+            return <div>No care team assigned yet.</div>;
+        }
+
+        return (
+            <div>
+            <h2>My Care Team</h2>
+            
+            <div className="oncologists-section">
+                <h3>Oncologists</h3>
+                {careTeam.oncologists.map(onc => (
+                <div key={onc.provider_id} className="provider-card">
+                    <h4>{onc.provider_name} {onc.role === 'primary' && '(Primary)'}</h4>
+                    <p>Email: {onc.provider_email}</p>
+                    <p>Role: {onc.role}</p>
+                </div>
+                ))}
+            </div>
+
+            <div className="nurses-section">
+                <h3>Nurses</h3>
+                {careTeam.nurses.map(nurse => (
+                <div key={nurse.provider_id} className="provider-card">
+                    <h4>{nurse.provider_name}</h4>
+                    <p>Email: {nurse.provider_email}</p>
+                    <p>Role: {nurse.role}</p>
+                </div>
+                ))}
+            </div>
+            </div>
+        );
+        };
+
         function updateVitalSigns() {
             if (!isConnected) return;
             

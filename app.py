@@ -15,7 +15,7 @@ import joblib
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_migrate import Migrate
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, Text, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 import sqlite3
@@ -226,6 +226,7 @@ class User(db.Model):
     last_login = db.Column(db.DateTime)
     login_attempts = db.Column(db.Integer, default=0)
     locked_until = db.Column(db.DateTime)
+    hospital_id = db.Column(db.Integer, db.ForeignKey('hospitals.id'))
     
     # Plan-related fields - made nullable or with defaults for registration
     plan_type = db.Column(db.String(20), default='basic')  # Default plan for new users
@@ -241,6 +242,9 @@ class User(db.Model):
     patient = db.relationship('Patient', back_populates='user', uselist=False, lazy=True)
     medical_staff = db.relationship('MedicalStaff', back_populates='user', lazy=True)
     profile = db.relationship('OncologistProfile', back_populates='user', uselist=False)
+    hospital = db.relationship("Hospital", back_populates="user")
+    oncologist_assignments = db.relationship("CareTeamAssignment", foreign_keys="CareTeamAssignment.oncologist_id")
+    nurse_assignments = db.relationship("CareTeamAssignment", foreign_keys="CareTeamAssignment.nurse_id")
     # chat_history = db.relationship('ChatHistory', back_populates='patients', lazy=True, cascade='all, delete-orphan', foreign_keys='ChatHistory.patient_id')
     
     def __init__(self, first_name, last_name, email, password, role):
@@ -269,6 +273,30 @@ class User(db.Model):
             self.max_patients = None  # Unlimited for admin
             self.max_providers_per_patient = None
             self.features = ['full_access']
+    
+    def get_assigned_patients(self):
+        """Get all patients assigned to this provider"""
+        care_team_members = CareTeamMember.query.filter_by(
+            provider_id=self.id,
+            is_active=True
+        ).all()
+        
+        patient_ids = [member.care_team.patient_id for member in care_team_members]
+        return Patient.query.filter(Patient.id.in_(patient_ids)).all()
+    
+    def get_care_team_role(self, patient_id):
+        """Get this provider's role for a specific patient"""
+        care_team = CareTeam.query.filter_by(patient_id=patient_id).first()
+        if not care_team:
+            return None
+        
+        member = CareTeamMember.query.filter_by(
+            care_team_id=care_team.id,
+            provider_id=self.id,
+            is_active=True
+        ).first()
+        
+        return member.role if member else None
     
     def set_password(self, password):
         """Set password with proper hashing"""
@@ -343,6 +371,210 @@ class User(db.Model):
             'features': self.features,
         }
 
+class CareTeamService:
+    
+    @staticmethod
+    def create_care_team(patient_id, assigned_by_id):
+        """Create a new care team for a patient"""
+        patient = Patient.query.get(patient_id)
+        if not patient:
+            raise ValueError("Patient not found")
+        
+        # Check if patient already has a care team
+        existing_team = CareTeam.query.filter_by(patient_id=patient_id, is_active=True).first()
+        if existing_team:
+            raise ValueError("Patient already has an active care team")
+        
+        care_team = CareTeam(
+            patient_id=patient_id,
+            name=f"{patient.first_name} {patient.last_name}'s Care Team",
+            description=f"Care team for patient {patient.first_name} {patient.last_name}"
+        )
+        
+        db.session.add(care_team)
+        db.session.commit()
+        return care_team
+    
+    @staticmethod
+    def assign_provider_to_patient(patient_id, provider_id, provider_type, role='member', assigned_by_id=None):
+        """Assign a provider (oncologist/nurse) to a patient's care team"""
+        
+        # Validate inputs
+        if provider_type not in ['oncologist', 'nurse']:
+            raise ValueError("Provider type must be 'oncologist' or 'nurse'")
+        
+        if role not in ['primary', 'secondary', 'consulting', 'member']:
+            raise ValueError("Invalid role specified")
+        
+        # Get or create care team
+        care_team = CareTeam.query.filter_by(patient_id=patient_id, is_active=True).first()
+        if not care_team:
+            care_team = CareTeamService.create_care_team(patient_id, assigned_by_id)
+        
+        # Check if provider is already assigned
+        existing_member = CareTeamMember.query.filter_by(
+            care_team_id=care_team.id,
+            provider_id=provider_id,
+            is_active=True
+        ).first()
+        
+        if existing_member:
+            raise ValueError("Provider is already assigned to this patient")
+        
+        # If assigning primary oncologist, check if one already exists
+        if provider_type == 'oncologist' and role == 'primary':
+            existing_primary = CareTeamMember.query.filter_by(
+                care_team_id=care_team.id,
+                provider_type='oncologist',
+                role='primary',
+                is_active=True
+            ).first()
+            
+            if existing_primary:
+                raise ValueError("Patient already has a primary oncologist")
+        
+        # Create new care team member
+        care_team_member = CareTeamMember(
+            care_team_id=care_team.id,
+            provider_id=provider_id,
+            provider_type=provider_type,
+            role=role,
+            assigned_by=assigned_by_id
+        )
+        
+        db.session.add(care_team_member)
+        db.session.commit()
+        
+        return care_team_member
+    
+    @staticmethod
+    def remove_provider_from_patient(patient_id, provider_id, removed_by_id=None):
+        """Remove a provider from a patient's care team"""
+        care_team = CareTeam.query.filter_by(patient_id=patient_id, is_active=True).first()
+        if not care_team:
+            raise ValueError("Patient has no active care team")
+        
+        care_team_member = CareTeamMember.query.filter_by(
+            care_team_id=care_team.id,
+            provider_id=provider_id,
+            is_active=True
+        ).first()
+        
+        if not care_team_member:
+            raise ValueError("Provider is not assigned to this patient")
+        
+        # Deactivate the member instead of deleting (for audit trail)
+        care_team_member.is_active = False
+        care_team_member.removed_date = datetime.utcnow()
+        
+        db.session.commit()
+        return care_team_member
+    
+    @staticmethod
+    def change_provider_role(patient_id, provider_id, new_role):
+        """Change a provider's role in a patient's care team"""
+        care_team = CareTeam.query.filter_by(patient_id=patient_id, is_active=True).first()
+        if not care_team:
+            raise ValueError("Patient has no active care team")
+        
+        care_team_member = CareTeamMember.query.filter_by(
+            care_team_id=care_team.id,
+            provider_id=provider_id,
+            is_active=True
+        ).first()
+        
+        if not care_team_member:
+            raise ValueError("Provider is not assigned to this patient")
+        
+        # If changing to primary oncologist, check if one already exists
+        if (care_team_member.provider_type == 'oncologist' and 
+            new_role == 'primary' and 
+            care_team_member.role != 'primary'):
+            
+            existing_primary = CareTeamMember.query.filter_by(
+                care_team_id=care_team.id,
+                provider_type='oncologist',
+                role='primary',
+                is_active=True
+            ).first()
+            
+            if existing_primary:
+                raise ValueError("Patient already has a primary oncologist")
+        
+        care_team_member.role = new_role
+        db.session.commit()
+        
+        return care_team_member
+    
+    @staticmethod
+    def get_patient_care_team(patient_id):
+        """Get complete care team information for a patient"""
+        care_team = CareTeam.query.filter_by(patient_id=patient_id, is_active=True).first()
+        if not care_team:
+            return None
+        
+        members = CareTeamMember.query.filter_by(
+            care_team_id=care_team.id,
+            is_active=True
+        ).all()
+        
+        # Organize members by type and role
+        team_structure = {
+            'care_team_id': care_team.id,
+            'patient_id': patient_id,
+            'oncologists': [],
+            'nurses': [],
+            'created_date': care_team.created_date
+        }
+        
+        for member in members:
+            provider = User.query.get(member.provider_id)
+            member_info = {
+                'member_id': member.id,
+                'provider_id': member.provider_id,
+                'provider_name': f"{provider.first_name} {provider.last_name}",
+                'provider_email': provider.email,
+                'role': member.role,
+                'assigned_date': member.assigned_date
+            }
+            
+            if member.provider_type == 'oncologist':
+                team_structure['oncologists'].append(member_info)
+            elif member.provider_type == 'nurse':
+                team_structure['nurses'].append(member_info)
+        
+        return team_structure
+    
+    @staticmethod
+    def can_provider_access_patient(provider_id, patient_id):
+        """Check if a provider has access to a patient's data"""
+        care_team = CareTeam.query.filter_by(patient_id=patient_id, is_active=True).first()
+        if not care_team:
+            return False
+        
+        member = CareTeamMember.query.filter_by(
+            care_team_id=care_team.id,
+            provider_id=provider_id,
+            is_active=True
+        ).first()
+        
+        return member is not None
+    
+class Hospital(db.Model):
+    __tablename__ = 'hospitals'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    address = db.Column(db.String(200))
+    contact_email = db.Column(db.String(100))
+    contact_phone = db.Column(db.String(20))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    user = db.relationship("User", back_populates="hospital")
+    patient = db.relationship("Patient", back_populates="hospital")
+
+
 class ChatHistory(db.Model):
     __tablename__ = 'chat_history'
     
@@ -391,10 +623,12 @@ class Patient(db.Model):
     risk_score = db.Column(db.Float, default=0.0)
     emergency_contact = db.Column(db.String(15))
     insurance_info = db.Column(db.Text)
+    hospital_id = db.Column(db.Integer, db.ForeignKey('hospitals.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
     treatments = db.relationship('Treatment', back_populates='patient', lazy=True)
+    care_team = relationship("CareTeam", back_populates="patient", uselist=False)
     appointments = db.relationship('Appointment', back_populates='patient', lazy=True)
     patient_medications = db.relationship('PatientMedication', back_populates='patient', lazy=True)
     vitals = db.relationship('VitalSigns', back_populates='patient', lazy=True)
@@ -402,6 +636,8 @@ class Patient(db.Model):
     lab_results = db.relationship('LabResult', back_populates='patient', lazy=True)
     chat_history = db.relationship('ChatHistory', back_populates='patient', lazy=True, cascade='all, delete-orphan')
     user = db.relationship('User', back_populates='patient', lazy=True)
+    hospital = db.relationship("Hospital", back_populates="patient")
+    care_team = db.relationship("CareTeamAssignment", back_populates="patient", uselist=False)
 
     @property
     def medications(self):
@@ -413,6 +649,28 @@ class Patient(db.Model):
         """Get only active medications"""
         return [pm.medication for pm in self.patient_medications 
                 if pm.medication and pm.status == 'active']
+
+    def get_care_team_members(self):
+        """Get all active care team members for this patient"""
+        if not self.care_team:
+            return []
+        return [member for member in self.care_team.members if member.is_active]
+    
+    def get_primary_oncologist(self):
+        """Get the primary oncologist for this patient"""
+        if not self.care_team:
+            return None
+        for member in self.care_team.members:
+            if member.provider_type == 'oncologist' and member.role == 'primary' and member.is_active:
+                return member
+        return None
+    
+    def get_nurses(self):
+        """Get all nurses assigned to this patient"""
+        if not self.care_team:
+            return []
+        return [member for member in self.care_team.members 
+                if member.provider_type == 'nurse' and member.is_active]
 
 class MedicalStaff(db.Model):
     __tablename__ = 'medical_staff'
@@ -733,6 +991,73 @@ class Alert(db.Model):
     is_resolved = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     resolved_at = db.Column(db.DateTime)
+
+class CareTeam(db.Model):
+    __tablename__ = 'care_teams'
+    
+    id = Column(Integer, primary_key=True)
+    patient_id = Column(Integer, ForeignKey('patients.id'), nullable=False)
+    name = Column(String(100), nullable=False)  # e.g., "John Doe's Care Team"
+    # description = Column(Text)
+    is_active = Column(Boolean, default=True)
+    created_date = Column(DateTime, default=datetime.utcnow)
+    updated_date = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    patient = relationship("Patient", back_populates="care_team")
+    members = relationship("CareTeamMember", back_populates="care_team", cascade="all, delete-orphan")
+    
+    def __repr__(self):
+        return f'<CareTeam {self.name}>'
+    
+class CareTeamAssignment(db.Model):
+    __tablename__ = 'care_team_assignments'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'), nullable=False)
+    oncologist_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    nurse_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    assigned_date = db.Column(db.DateTime, default=datetime.utcnow)
+    assigned_by = db.Column(db.Integer, db.ForeignKey('users.id'))  # Admin who made the assignment
+    notes = db.Column(db.Text)
+    
+    # Relationships
+    patient = db.relationship("Patient", back_populates="care_team")
+    oncologist = db.relationship("User", foreign_keys=[oncologist_id])
+    nurse = db.relationship("User", foreign_keys=[nurse_id])
+    admin = db.relationship("User", foreign_keys=[assigned_by])
+
+class CareTeamMember(db.Model):
+    __tablename__ = 'care_team_members'
+    
+    id = Column(Integer, primary_key=True)
+    care_team_id = Column(Integer, ForeignKey('care_teams.id'), nullable=False)
+    provider_id = Column(Integer, nullable=False)  # References user.id of oncologist/nurse
+    provider_type = Column(String(20), nullable=False)  # 'oncologist' or 'nurse'
+    role = Column(String(50), default='member')  # 'primary', 'secondary', 'consulting', 'member'
+    is_active = Column(Boolean, default=True)
+    assigned_date = Column(DateTime, default=datetime.utcnow)
+    removed_date = Column(DateTime, nullable=True)
+    assigned_by = Column(Integer, ForeignKey('users.id'))  # Who assigned this member
+    
+    # Relationships
+    care_team = relationship("CareTeam", back_populates="members")
+    assigner = relationship("User", foreign_keys=[assigned_by])
+    
+    def __repr__(self):
+        return f'<CareTeamMember {self.provider_type}:{self.provider_id}>'
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({'error': 'Authentication required'}), 401
+        
+        user = User.query.filter_by(id=session['user_id']).first()
+        if not user or user.role != 'admin':
+            return jsonify({'error': 'Admin access required'}), 403
+        return f(*args, **kwargs)
+    return decorated_function
 
 def oncologist_required(f):
     @wraps(f)
@@ -3347,16 +3672,199 @@ def patient_dashboard():
         flash('An error occurred. Please try again.', 'error')
         return redirect(url_for('login'))
 
-# @app.route('/nurse-dashboard') 
-# def nurse_dashboard():
-#     """Serve Nurse Dashboard Page"""
-#     user = User.query.get(session['user_id'])
-#     if user.role == 'nurse':
-#         nurse_profile = NurseProfile.query.filter_by(user_id=user.id).first()
+#Routes for Care Team Management
+@app.route('/assign-provider', methods=['POST'])
+@jwt_required()
+@admin_required  # Only admins can assign providers
+def assign_provider():
+    """Assign a provider to a patient's care team"""
+    data = request.get_json()
+    
+    required_fields = ['patient_id', 'provider_id', 'provider_type']
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    try:
+        current_user_id = get_jwt_identity()
+        
+        care_team_member = CareTeamService.assign_provider_to_patient(
+            patient_id=data['patient_id'],
+            provider_id=data['provider_id'],
+            provider_type=data['provider_type'],
+            role=data.get('role', 'member'),
+            assigned_by_id=current_user_id
+        )
+        
+        return jsonify({
+            'message': 'Provider assigned successfully',
+            'care_team_member_id': care_team_member.id
+        }), 201
+        
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': 'Internal server error'}), 500
 
-#     if not nurse_profile or not nurse_profile.profile_completed:
-#         return redirect(url_for('nurse_profile_setup'))
-#     return render_template('nurse_dashboard.html')
+@app.route('/remove-provider', methods=['POST'])
+@jwt_required()
+@admin_required
+def remove_provider():
+    """Remove a provider from a patient's care team"""
+    data = request.get_json()
+    
+    if not all(field in data for field in ['patient_id', 'provider_id']):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    try:
+        current_user_id = get_jwt_identity()
+        
+        CareTeamService.remove_provider_from_patient(
+            patient_id=data['patient_id'],
+            provider_id=data['provider_id'],
+            removed_by_id=current_user_id
+        )
+        
+        return jsonify({'message': 'Provider removed successfully'}), 200
+        
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/patient/<int:patient_id>/care-team', methods=['GET'])
+@jwt_required()
+def get_patient_care_team(patient_id):
+    """Get care team for a specific patient"""
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    
+    # Check permissions
+    if current_user.role == 'patient':
+        # Patients can only see their own care team
+        patient = Patient.query.get(patient_id)
+        if not patient or patient.user_id != current_user_id:
+            return jsonify({'error': 'Unauthorized'}), 403
+    elif current_user.role in ['oncologist', 'nurse']:
+        # Providers can only see care teams they're part of
+        if not CareTeamService.can_provider_access_patient(current_user_id, patient_id):
+            return jsonify({'error': 'Unauthorized'}), 403
+    elif current_user.role != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    try:
+        care_team = CareTeamService.get_patient_care_team(patient_id)
+        
+        if not care_team:
+            return jsonify({'message': 'No care team found for this patient'}), 404
+        
+        return jsonify(care_team), 200
+        
+    except Exception as e:
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/my-patients', methods=['GET'])
+@jwt_required()
+def get_my_patients():
+    """Get all patients assigned to the current provider"""
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    
+    if current_user.role not in ['oncologist', 'nurse']:
+        return jsonify({'error': 'Only providers can access this endpoint'}), 403
+    
+    try:
+        patients = current_user.get_assigned_patients()
+        
+        patient_list = []
+        for patient in patients:
+            patient_info = {
+                'patient_id': patient.id,
+                'patient_name': f"{patient.first_name} {patient.last_name}",
+                'patient_email': patient.email,
+                'my_role': current_user.get_care_team_role(patient.id),
+                'assigned_date': None  # You can add this if needed
+            }
+            patient_list.append(patient_info)
+        
+        return jsonify({
+            'patients': patient_list,
+            'total_patients': len(patient_list)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/unassigned-patients', methods=['GET'])
+@jwt_required()
+@admin_required
+def get_unassigned_patients():
+    """Get all patients who don't have a care team"""
+    try:
+        # Get all patients without an active care team
+        patients_with_teams = db.session.query(CareTeam.patient_id).filter_by(is_active=True).subquery()
+        
+        unassigned_patients = Patient.query.filter(
+            ~Patient.id.in_(patients_with_teams)
+        ).all()
+        
+        patient_list = []
+        for patient in unassigned_patients:
+            patient_info = {
+                'patient_id': patient.id,
+                'patient_name': f"{patient.first_name} {patient.last_name}",
+                'patient_email': patient.email,
+                'registration_date': patient.created_date,
+                'diagnosis': getattr(patient, 'diagnosis', None)  # If you have this field
+            }
+            patient_list.append(patient_info)
+        
+        return jsonify({
+            'unassigned_patients': patient_list,
+            'total_unassigned': len(patient_list)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/available-providers', methods=['GET'])
+@jwt_required()
+@admin_required
+def get_available_providers():
+    """Get all available providers (oncologists and nurses)"""
+    try:
+        provider_type = request.args.get('type')  # 'oncologist' or 'nurse'
+        
+        if provider_type:
+            providers = User.query.filter_by(role=provider_type, is_active=True).all()
+        else:
+            providers = User.query.filter(
+                User.role.in_(['oncologist', 'nurse']),
+                User.is_active == True
+            ).all()
+        
+        provider_list = []
+        for provider in providers:
+            # Get current patient count
+            patient_count = len(provider.get_assigned_patients())
+            
+            provider_info = {
+                'provider_id': provider.id,
+                'provider_name': f"{provider.first_name} {provider.last_name}",
+                'provider_email': provider.email,
+                'provider_type': provider.role,
+                'current_patient_count': patient_count,
+                'specialization': getattr(provider, 'specialization', None),
+                'department': getattr(provider, 'department', None)
+            }
+            provider_list.append(provider_info)
+        
+        return jsonify({
+            'providers': provider_list,
+            'total_providers': len(provider_list)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': 'Internal server error'}), 500
 
 @app.route('/oncologist-dashboard')
 def doctor_dashboard():

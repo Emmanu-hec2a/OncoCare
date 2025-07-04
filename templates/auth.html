@@ -485,6 +485,34 @@
             }
         }
 
+        // Update your auth service to handle care team permissions
+        const canAccessPatient = (userRole, userId, patientId) => {
+        if (userRole === 'patient') {
+            return userId === patientId; // Patients can only see their own data
+        }
+        
+        if (userRole === 'admin') {
+            return true; // Admins can see all
+        }
+        
+        if (userRole === 'oncologist' || userRole === 'nurse') {
+            // Check if provider is assigned to this patient
+            return checkProviderAssignment(userId, patientId);
+        }
+        
+        return false;
+        };
+
+        // Add API call to check assignment
+        const checkProviderAssignment = async (providerId, patientId) => {
+        try {
+            const response = await api.get(`/care-team/patient/${patientId}/care-team`);
+            return response.status === 200; // If they can access, they're assigned
+        } catch (error) {
+            return false;
+        }
+        };
+
         // Register form handler
         async function handleRegister(e) {
             e.preventDefault();

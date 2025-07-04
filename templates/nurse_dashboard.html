@@ -158,6 +158,10 @@
             animation: pulse 2s infinite;
         }
 
+        .real-time-indicator.offline {
+            background: linear-gradient(45deg, #ff453a, #ff6b58);
+        }
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -297,6 +301,7 @@
             background: rgba(102, 126, 234, 0.05);
             border: 1px solid rgba(102, 126, 234, 0.1);
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .patient-item:hover {
@@ -330,6 +335,12 @@
         .patient-condition {
             font-size: 12px;
             color: #666;
+        }
+
+        .patient-vitals {
+            font-size: 11px;
+            color: #888;
+            margin-top: 3px;
         }
 
         .patient-status {
@@ -487,6 +498,25 @@
             font-weight: bold;
         }
 
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .error-message {
+            color: #ff453a;
+            font-size: 14px;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255, 69, 58, 0.1);
+            border-radius: 8px;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -536,7 +566,7 @@
                         <a href="#" class="nav-link">
                             <i class="fas fa-users"></i>
                             <span>My Patients</span>
-                            <span class="notification-badge">3</span>
+                            <span class="notification-badge" id="patientNotifications">0</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -561,7 +591,7 @@
                         <a href="#" class="nav-link">
                             <i class="fas fa-bell"></i>
                             <span>Alerts</span>
-                            <span class="notification-badge">5</span>
+                            <span class="notification-badge" id="alertNotifications">0</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -583,12 +613,12 @@
         <main class="main-content">
             <div class="top-bar">
                 <div class="welcome-section">
-                    <h1>Welcome back, <span id="nurseName">{{nurse_name}}</span></h1>
-                    <p>Oncology Department • <span id="currentDate"></span></p>
+                    <h1>Welcome back, <span id="nurseName">Loading...</span></h1>
+                    <p><span id="department">Loading...</span> • <span id="currentDate"></span></p>
                 </div>
-                <div class="real-time-indicator">
+                <div class="real-time-indicator" id="connectionStatus">
                     <i class="fas fa-sync-alt"></i>
-                    <span>Real-time Active</span>
+                    <span>Connecting...</span>
                 </div>
             </div>
 
@@ -598,11 +628,11 @@
                         <div class="stat-icon" style="background: linear-gradient(45deg, #667eea, #764ba2);">
                             <i class="fas fa-user-injured"></i>
                         </div>
-                        <div class="stat-trend trend-up">
-                            <i class="fas fa-arrow-up"></i> 2
+                        <div class="stat-trend" id="patientTrend">
+                            <div class="loading-spinner"></div>
                         </div>
                     </div>
-                    <div class="stat-number" id="assignedPatients">12</div>
+                    <div class="stat-number" id="assignedPatients">0</div>
                     <div class="stat-label">Assigned Patients</div>
                 </div>
 
@@ -611,11 +641,11 @@
                         <div class="stat-icon" style="background: linear-gradient(45deg, #00c851, #00ff00);">
                             <i class="fas fa-tasks"></i>
                         </div>
-                        <div class="stat-trend trend-down">
-                            <i class="fas fa-arrow-down"></i> 3
+                        <div class="stat-trend" id="taskTrend">
+                            <div class="loading-spinner"></div>
                         </div>
                     </div>
-                    <div class="stat-number" id="todaysTasks">8</div>
+                    <div class="stat-number" id="todaysTasks">0</div>
                     <div class="stat-label">Today's Tasks</div>
                 </div>
 
@@ -624,11 +654,11 @@
                         <div class="stat-icon" style="background: linear-gradient(45deg, #ff9500, #ffad33);">
                             <i class="fas fa-exclamation-triangle"></i>
                         </div>
-                        <div class="stat-trend trend-up">
-                            <i class="fas fa-arrow-up"></i> 1
+                        <div class="stat-trend" id="alertTrend">
+                            <div class="loading-spinner"></div>
                         </div>
                     </div>
-                    <div class="stat-number" id="criticalAlerts">3</div>
+                    <div class="stat-number" id="criticalAlerts">0</div>
                     <div class="stat-label">Critical Alerts</div>
                 </div>
 
@@ -637,11 +667,11 @@
                         <div class="stat-icon" style="background: linear-gradient(45deg, #007aff, #0056b3);">
                             <i class="fas fa-clipboard-check"></i>
                         </div>
-                        <div class="stat-trend trend-up">
-                            <i class="fas fa-arrow-up"></i> 5
+                        <div class="stat-trend" id="completedTrend">
+                            <div class="loading-spinner"></div>
                         </div>
                     </div>
-                    <div class="stat-number" id="completedTasks">15</div>
+                    <div class="stat-number" id="completedTasks">0</div>
                     <div class="stat-label">Completed Tasks</div>
                 </div>
             </div>
@@ -651,14 +681,11 @@
                     <i class="fas fa-brain"></i>
                     AI-Powered Insights
                 </h3>
-                <div class="insight-item">
-                    <strong>Treatment Recommendation:</strong> Patient Maria Santos shows improved response to current chemotherapy regimen. Consider dose optimization.
-                </div>
-                <div class="insight-item">
-                    <strong>Risk Alert:</strong> Patient John Davis has elevated infection risk markers. Recommend enhanced monitoring protocols.
-                </div>
-                <div class="insight-item">
-                    <strong>Medication Interaction:</strong> Potential drug interaction detected for Patient Emily Chen. Review current medications.
+                <div id="aiInsightsList">
+                    <div class="insight-item">
+                        <div class="loading-spinner"></div>
+                        <span>Loading AI insights...</span>
+                    </div>
                 </div>
             </div>
 
@@ -666,43 +693,20 @@
                 <div class="section-card">
                     <div class="section-header">
                         <h3 class="section-title">Priority Patients</h3>
-                        <button class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            View All
+                        <button class="btn btn-primary" onclick="refreshPatients()">
+                            <i class="fas fa-sync-alt"></i>
+                            Refresh
                         </button>
                     </div>
                     <ul class="patient-list" id="patientList">
                         <li class="patient-item">
-                            <div class="patient-avatar">MS</div>
-                            <div class="patient-info">
-                                <div class="patient-name">Maria Santos</div>
-                                <div class="patient-condition">Breast Cancer - Stage II</div>
+                            <div class="patient-avatar">
+                                <div class="loading-spinner"></div>
                             </div>
-                            <div class="patient-status status-critical">Critical</div>
-                        </li>
-                        <li class="patient-item">
-                            <div class="patient-avatar">JD</div>
                             <div class="patient-info">
-                                <div class="patient-name">John Davis</div>
-                                <div class="patient-condition">Lung Cancer - Stage III</div>
+                                <div class="patient-name">Loading patients...</div>
+                                <div class="patient-condition">Please wait...</div>
                             </div>
-                            <div class="patient-status status-monitoring">Monitoring</div>
-                        </li>
-                        <li class="patient-item">
-                            <div class="patient-avatar">EC</div>
-                            <div class="patient-info">
-                                <div class="patient-name">Emily Chen</div>
-                                <div class="patient-condition">Colon Cancer - Stage I</div>
-                            </div>
-                            <div class="patient-status status-stable">Stable</div>
-                        </li>
-                        <li class="patient-item">
-                            <div class="patient-avatar">RJ</div>
-                            <div class="patient-info">
-                                <div class="patient-name">Robert Johnson</div>
-                                <div class="patient-condition">Prostate Cancer - Stage II</div>
-                            </div>
-                            <div class="patient-status status-stable">Stable</div>
                         </li>
                     </ul>
                 </div>
@@ -710,46 +714,19 @@
                 <div class="section-card">
                     <div class="section-header">
                         <h3 class="section-title">Recent Activity</h3>
-                        <button class="btn btn-primary">
+                        <button class="btn btn-primary" onclick="refreshActivity()">
                             <i class="fas fa-history"></i>
-                            View All
+                            Refresh
                         </button>
                     </div>
                     <div class="activity-list" id="activityList">
                         <div class="activity-item">
                             <div class="activity-icon">
-                                <i class="fas fa-syringe"></i>
+                                <div class="loading-spinner"></div>
                             </div>
                             <div class="activity-content">
-                                <div class="activity-title">Administered chemotherapy</div>
-                                <div class="activity-time">Maria Santos - 2 hours ago</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Vital signs updated</div>
-                                <div class="activity-time">John Davis - 3 hours ago</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-pills"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Medication dispensed</div>
-                                <div class="activity-time">Emily Chen - 4 hours ago</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon">
-                                <i class="fas fa-notes-medical"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Care plan updated</div>
-                                <div class="activity-time">Robert Johnson - 5 hours ago</div>
+                                <div class="activity-title">Loading activity...</div>
+                                <div class="activity-time">Please wait...</div>
                             </div>
                         </div>
                     </div>
@@ -759,158 +736,438 @@
     </div>
 
     <script>
+        // Configuration
+        const API_CONFIG = {
+            baseUrl: '/api', // Adjust this to your backend URL
+            endpoints: {
+                nurse: '/nurse/profile',
+                patients: '/patient/profile',
+                vitals: '/nurse/vitals',
+                tasks: '/nurse/tasks',
+                alerts: '/nurse/alerts',
+                aiInsights: '/ai_insights',
+                riskAssessment: '/risk_assessment',
+                medicalRecords: '/medical_records',
+                medications: '/medications',
+                activity: '/nurse/activity'
+            },
+            refreshInterval: 5000, // 5 seconds
+            heartbeatInterval: 30000 // 30 seconds
+        };
+
+        // State management
+        let dashboardState = {
+            isConnected: false,
+            lastUpdate: null,
+            nurseId: null,
+            patients: [],
+            vitals: {},
+            tasks: [],
+            alerts: [],
+            aiInsights: [],
+            activity: []
+        };
+
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
             initializeDashboard();
+            setupEventListeners();
             startRealTimeUpdates();
             updateCurrentDate();
         });
 
-        function initializeDashboard() {
-            // Simulate loading nurse profile data
-            setTimeout(() => {
-                loadNurseProfile();
-            }, 1000);
-        }
-
-        function loadNurseProfile() {
-            // Simulate API call to /api/nurse/profile
-            const nurseData = {
-                first_name: "Sarah",
-                last_name: "Johnson",
-                specialization: "Oncology",
-                department: "Oncology Department",
-                hospital_name: "City General Hospital"
-            };
-            
-            document.getElementById('nurseName').textContent = `${nurseData.first_name} ${nurseData.last_name}`;
-        }
-
-        function updateCurrentDate() {
-            const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            };
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
-        }
-
-        function startRealTimeUpdates() {
-            // Simulate real-time updates every 30 seconds
-            setInterval(() => {
-                updatePatientStats();
-                updateActivityFeed();
-                updateAIInsights();
-            }, 30000);
-
-            // Simulate real-time patient vitals updates
-            setInterval(() => {
-                updatePatientVitals();
-            }, 5000);
-        }
-
-        function updatePatientStats() {
-            // Simulate random stat updates
-            const assignedPatients = document.getElementById('assignedPatients');
-            const todaysTasks = document.getElementById('todaysTasks');
-            const criticalAlerts = document.getElementById('criticalAlerts');
-            const completedTasks = document.getElementById('completedTasks');
-
-            // Add subtle animations for updates
-            const stats = [assignedPatients, todaysTasks, criticalAlerts, completedTasks];
-            stats.forEach(stat => {
-                stat.style.transform = 'scale(1.1)';
-                stat.style.color = '#667eea';
-                setTimeout(() => {
-                    stat.style.transform = 'scale(1)';
-                    stat.style.color = '#333';
-                }, 300);
-            });
-
-            // Simulate data changes
-            if (Math.random() > 0.7) {
-                const currentAlerts = parseInt(criticalAlerts.textContent);
-                criticalAlerts.textContent = currentAlerts + (Math.random() > 0.5 ? 1 : -1);
+        async function initializeDashboard() {
+            try {
+                showConnectionStatus('connecting');
+                await loadNurseProfile();
+                await loadDashboardData();
+                showConnectionStatus('connected');
+            } catch (error) {
+                console.error('Failed to initialize dashboard:', error);
+                showConnectionStatus('offline');
+                showError('Failed to connect to server. Retrying...');
+                // Retry after 5 seconds
+                setTimeout(initializeDashboard, 5000);
             }
         }
 
-        function updateActivityFeed() {
-            const activities = [
-                { icon: 'fas fa-heartbeat', title: 'Vital signs monitored', patient: 'Maria Santos' },
-                { icon: 'fas fa-syringe', title: 'IV medication administered', patient: 'John Davis' },
-                { icon: 'fas fa-clipboard-check', title: 'Care plan reviewed', patient: 'Emily Chen' },
-                { icon: 'fas fa-phone', title: 'Family consultation completed', patient: 'Robert Johnson' }
-            ];
+        // Replace any hardcoded patient lists with assigned patients
+        const MyPatientsComponent = () => {
+        const [assignedPatients, setAssignedPatients] = useState([]);
+        const [loading, setLoading] = useState(true);
 
-            if (Math.random() > 0.6) {
-                const activityList = document.getElementById('activityList');
-                const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+        useEffect(() => {
+            fetchMyPatients();
+        }, []);
+
+        const fetchMyPatients = async () => {
+            try {
+            const response = await api.get('/care-team/my-patients');
+            setAssignedPatients(response.data.patients);
+            } catch (error) {
+            console.error('Error fetching assigned patients:', error);
+            } finally {
+            setLoading(false);
+            }
+        };
+
+        return (
+            <div>
+            <h2>My Assigned Patients ({assignedPatients.length})</h2>
+            {assignedPatients.map(patient => (
+                <PatientCard 
+                key={patient.patient_id}
+                patient={patient}
+                myRole={patient.my_role}
+                />
+            ))}
+            </div>
+        );
+        };
+
+        async function loadNurseProfile() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.nurse}`);
+                if (!response.ok) throw new Error('Failed to load nurse profile');
                 
-                const newActivity = document.createElement('div');
-                newActivity.className = 'activity-item';
-                newActivity.style.opacity = '0';
-                newActivity.style.transform = 'translateY(-20px)';
+                const nurseData = await response.json();
+                dashboardState.nurseId = nurseData.id;
                 
-                newActivity.innerHTML = `
+                document.getElementById('nurseName').textContent = 
+                    `${nurseData.first_name} ${nurseData.last_name}`;
+                document.getElementById('department').textContent = 
+                    nurseData.department || 'Oncology Department';
+                
+            } catch (error) {
+                console.error('Error loading nurse profile:', error);
+                document.getElementById('nurseName').textContent = 'Error loading profile';
+                throw error;
+            }
+        }
+
+        async function loadDashboardData() {
+            try {
+                const promises = [
+                    loadPatients(),
+                    loadTasks(),
+                    loadAlerts(),
+                    loadAIInsights(),
+                    loadActivity()
+                ];
+                
+                await Promise.all(promises);
+                updateStats();
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                throw error;
+            }
+        }
+
+        async function loadPatients() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.patients}`);
+                if (!response.ok) throw new Error('Failed to load patients');
+                
+                const patients = await response.json();
+                dashboardState.patients = patients;
+                
+                // Load vital signs for each patient
+                for (const patient of patients) {
+                    await loadPatientVitals(patient.id);
+                }
+                
+                renderPatients();
+            } catch (error) {
+                console.error('Error loading patients:', error);
+                showError('Failed to load patients');
+            }
+        }
+
+        async function loadPatientVitals(patientId) {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.vitals}/${patientId}`);
+                if (!response.ok) return;
+                
+                const vitals = await response.json();
+                dashboardState.vitals[patientId] = vitals;
+            } catch (error) {
+                console.error(`Error loading vitals for patient ${patientId}:`, error);
+            }
+        }
+
+        async function loadTasks() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.tasks}`);
+                if (!response.ok) throw new Error('Failed to load tasks');
+                
+                const tasks = await response.json();
+                dashboardState.tasks = tasks;
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+                showError('Failed to load tasks');
+            }
+        }
+
+        async function loadAlerts() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.alerts}`);
+                if (!response.ok) throw new Error('Failed to load alerts');
+                
+                const alerts = await response.json();
+                dashboardState.alerts = alerts;
+                
+                // Update notification badges
+                document.getElementById('alertNotifications').textContent = alerts.length;
+                
+                // Show critical alerts as notifications
+                alerts.filter(alert => alert.severity === 'critical').forEach(alert => {
+                    showNotification(alert.message, 'critical');
+                });
+            } catch (error) {
+                console.error('Error loading alerts:', error);
+                showError('Failed to load alerts');
+            }
+        }
+
+        async function loadAIInsights() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.aiInsights}`);
+                if (!response.ok) throw new Error('Failed to load AI insights');
+                
+                const insights = await response.json();
+                dashboardState.aiInsights = insights;
+                renderAIInsights();
+            } catch (error) {
+                console.error('Error loading AI insights:', error);
+                showError('Failed to load AI insights');
+            }
+        }
+
+        async function loadActivity() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.activity}`);
+                if (!response.ok) throw new Error('Failed to load activity');
+                
+                const activity = await response.json();
+                dashboardState.activity = activity;
+                renderActivity();
+            } catch (error) {
+                console.error('Error loading activity:', error);
+                showError('Failed to load activity');
+            }
+        }
+
+        function renderPatients() {
+            const patientList = document.getElementById('patientList');
+            patientList.innerHTML = '';
+            
+            if (dashboardState.patients.length === 0) {
+                patientList.innerHTML = '<li class="patient-item">No patients assigned</li>';
+                return;
+            }
+            
+            dashboardState.patients.forEach(patient => {
+                const vitals = dashboardState.vitals[patient.id];
+                const patientItem = document.createElement('li');
+                patientItem.className = 'patient-item';
+                patientItem.setAttribute('data-patient-id', patient.id);
+                
+                const initials = getInitials(patient.first_name, patient.last_name);
+                const status = determinePatientStatus(patient, vitals);
+                
+                patientItem.innerHTML = `
+                    <div class="patient-avatar">${initials}</div>
+                    <div class="patient-info">
+                        <div class="patient-name">${patient.first_name} ${patient.last_name}</div>
+                        <div class="patient-condition">${patient.condition || 'General Care'}</div>
+                        <div class="patient-vitals">${formatVitals(vitals)}</div>
+                    </div>
+                    <div class="patient-status ${status.class}">${status.text}</div>
+                `;
+                
+                patientItem.addEventListener('click', () => showPatientDetails(patient.id));
+                patientList.appendChild(patientItem);
+            });
+        }
+
+        function renderAIInsights() {
+            const insightsList = document.getElementById('aiInsightsList');
+            insightsList.innerHTML = '';
+            
+            if (dashboardState.aiInsights.length === 0) {
+                insightsList.innerHTML = '<div class="insight-item">No AI insights available</div>';
+                return;
+            }
+            
+            dashboardState.aiInsights.forEach(insight => {
+                const insightItem = document.createElement('div');
+                insightItem.className = 'insight-item';
+                insightItem.innerHTML = `
+                    <strong>${insight.title}</strong><br>
+                    ${insight.description}
+                `;
+                insightsList.appendChild(insightItem);
+            });
+        }
+
+        function renderActivity() {
+            const activityList = document.getElementById('activityList');
+            activityList.innerHTML = '';
+            
+            if (dashboardState.activity.length === 0) {
+                activityList.innerHTML = '<div class="activity-item">No recent activity</div>';
+                return;
+            }
+            
+            dashboardState.activity.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                
+                const icon = getActivityIcon(activity.type);
+                
+                activityItem.innerHTML = `
                     <div class="activity-icon">
-                        <i class="${randomActivity.icon}"></i>
+                        <i class="fas ${icon}"></i>
                     </div>
                     <div class="activity-content">
-                        <div class="activity-title">${randomActivity.title}</div>
-                        <div class="activity-time">${randomActivity.patient} - Just now</div>
+                        <div class="activity-title">${activity.title}</div>
+                        <div class="activity-time">${formatTime(activity.timestamp)}</div>
                     </div>
                 `;
                 
-                activityList.insertBefore(newActivity, activityList.firstChild);
-                
-                // Animate in
-                setTimeout(() => {
-                    newActivity.style.opacity = '1';
-                    newActivity.style.transform = 'translateY(0)';
-                }, 100);
-                
-                // Remove old activities to maintain list length
-                if (activityList.children.length > 4) {
-                    activityList.removeChild(activityList.lastChild);
-                }
+                activityList.appendChild(activityItem);
+            });
+        }
+
+        function updateStats() {
+            const assignedPatients = dashboardState.patients.length;
+            const todaysTasks = dashboardState.tasks.filter(task => isToday(task.due_date)).length;
+            const criticalAlerts = dashboardState.alerts.filter(alert => alert.severity === 'critical').length;
+            const completedTasks = dashboardState.tasks.filter(task => task.status === 'completed').length;
+            
+            document.getElementById('assignedPatients').textContent = assignedPatients;
+            document.getElementById('todaysTasks').textContent = todaysTasks;
+            document.getElementById('criticalAlerts').textContent = criticalAlerts;
+            document.getElementById('completedTasks').textContent = completedTasks;
+            
+            // Update trends
+            updateTrendIndicators();
+        }
+
+        function updateTrendIndicators() {
+            // Simulate trend data - in real implementation, this would come from API
+            const trends = {
+                patients: { change: 2, direction: 'up' },
+                tasks: { change: 5, direction: 'up' },
+                alerts: { change: 1, direction: 'down' },
+                completed: { change: 8, direction: 'up' }
+            };
+            
+            updateTrendElement('patientTrend', trends.patients);
+            updateTrendElement('taskTrend', trends.tasks);
+            updateTrendElement('alertTrend', trends.alerts);
+            updateTrendElement('completedTrend', trends.completed);
+        }
+
+        function updateTrendElement(elementId, trend) {
+            const element = document.getElementById(elementId);
+            const trendClass = trend.direction === 'up' ? 'trend-up' : 'trend-down';
+            const trendIcon = trend.direction === 'up' ? 'fa-arrow-up' : 'fa-arrow-down';
+            
+            element.className = `stat-trend ${trendClass}`;
+            element.innerHTML = `
+                <i class="fas ${trendIcon}"></i>
+                ${trend.change}
+            `;
+        }
+
+        function showConnectionStatus(status) {
+            const statusElement = document.getElementById('connectionStatus');
+            const statusText = statusElement.querySelector('span');
+            
+            switch (status) {
+                case 'connecting':
+                    statusElement.className = 'real-time-indicator';
+                    statusText.textContent = 'Connecting...';
+                    break;
+                case 'connected':
+                    statusElement.className = 'real-time-indicator';
+                    statusText.textContent = 'Live';
+                    dashboardState.isConnected = true;
+                    break;
+                case 'offline':
+                    statusElement.className = 'real-time-indicator offline';
+                    statusText.textContent = 'Offline';
+                    dashboardState.isConnected = false;
+                    break;
             }
         }
 
-        function updateAIInsights() {
-            // Simulate AI insights updates
-            const insights = [
-                "New treatment protocol showing 15% better response rates for Stage II patients",
-                "Predictive model suggests early intervention needed for high-risk patients",
-                "Optimal medication timing identified for improved patient outcomes",
-                "Pattern recognition detected potential side effect correlation"
-            ];
-
-            if (Math.random() > 0.8) {
-                const insightItems = document.querySelectorAll('.insight-item');
-                const randomInsight = insights[Math.floor(Math.random() * insights.length)];
-                
-                if (insightItems.length > 0) {
-                    const lastInsight = insightItems[insightItems.length - 1];
-                    lastInsight.innerHTML = `<strong>AI Update:</strong> ${randomInsight}`;
-                    lastInsight.style.background = 'rgba(255, 255, 255, 0.2)';
-                    lastInsight.style.animation = 'pulse 1s ease-in-out';
-                }
-            }
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(errorDiv, mainContent.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
         }
 
-        function updatePatientVitals() {
-            // Simulate patient status changes
-            const patientItems = document.querySelectorAll('.patient-item');
-            patientItems.forEach(item => {
-                const status = item.querySelector('.patient-status');
-                if (Math.random() > 0.95) {
-                    // Simulate status change
-                    status.style.animation = 'pulse 2s ease-in-out';
-                    setTimeout(() => {
-                        status.style.animation = '';
-                    }, 2000);
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            // Add to body
+            document.body.appendChild(notification);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        function setupEventListeners() {
+            // Sidebar toggle
+            const toggleBtn = document.querySelector('.toggle-sidebar');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', toggleSidebar);
+            }
+            
+            // Navigation links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setActiveNavItem(link);
+                });
+            });
+            
+            // Refresh buttons
+            document.querySelectorAll('.btn').forEach(btn => {
+                if (btn.textContent.includes('Refresh')) {
+                    btn.addEventListener('click', () => {
+                        if (btn.textContent.includes('Patients')) {
+                            refreshPatients();
+                        } else if (btn.textContent.includes('Activity')) {
+                            refreshActivity();
+                        }
+                    });
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'r') {
+                    e.preventDefault();
+                    refreshDashboard();
                 }
             });
         }
@@ -920,221 +1177,157 @@
             sidebar.classList.toggle('collapsed');
         }
 
-        // Mobile sidebar toggle
-        function toggleMobileSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('active');
-            }
+        function setActiveNavItem(activeLink) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            activeLink.classList.add('active');
         }
 
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('active');
-            }
-        });
-
-        // Simulate real-time notifications
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: white;
-                border-radius: 12px;
-                padding: 15px 20px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-                z-index: 1000;
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-                border-left: 4px solid ${type === 'critical' ? '#ff453a' : type === 'warning' ? '#ff9500' : '#667eea'};
-            `;
-            notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-${type === 'critical' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation-circle' : 'info-circle'}" 
-                       style="color: ${type === 'critical' ? '#ff453a' : type === 'warning' ? '#ff9500' : '#667eea'};"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 5000);
-        }
-
-        // Simulate random notifications
-        setInterval(() => {
-            const notifications = [
-                { message: "New vital signs recorded for Maria Santos", type: "info" },
-                { message: "Critical alert: Patient John Davis requires immediate attention", type: "critical" },
-                { message: "Medication reminder: Emily Chen - 2:00 PM", type: "warning" },
-                { message: "Lab results available for Robert Johnson", type: "info" }
-            ];
-            
-            if (Math.random() > 0.7) {
-                const notification = notifications[Math.floor(Math.random() * notifications.length)];
-                showNotification(notification.message, notification.type);
-            }
-        }, 45000);
-
-        // Enhanced patient monitoring
-        function monitorPatientVitals() {
-            const patients = [
-                { name: "Maria Santos", condition: "Critical", vitals: { hr: 95, bp: "140/90", temp: 101.2 } },
-                { name: "John Davis", condition: "Monitoring", vitals: { hr: 88, bp: "130/85", temp: 99.8 } },
-                { name: "Emily Chen", condition: "Stable", vitals: { hr: 72, bp: "120/80", temp: 98.6 } },
-                { name: "Robert Johnson", condition: "Stable", vitals: { hr: 78, bp: "125/82", temp: 98.4 } }
-            ];
-
-            // Simulate vital sign changes
-            setInterval(() => {
-                patients.forEach(patient => {
-                    // Simulate heart rate variation
-                    patient.vitals.hr += Math.floor(Math.random() * 6) - 3;
-                    
-                    // Simulate temperature variation
-                    patient.vitals.temp += (Math.random() - 0.5) * 0.5;
-                    
-                    // Check for critical changes
-                    if (patient.vitals.hr > 100 || patient.vitals.hr < 60 || patient.vitals.temp > 101) {
-                        showNotification(`Critical vital signs detected for ${patient.name}`, 'critical');
+        function startRealTimeUpdates() {
+            // Refresh data every 5 seconds
+            setInterval(async () => {
+                if (dashboardState.isConnected) {
+                    try {
+                        await loadDashboardData();
+                        dashboardState.lastUpdate = new Date();
+                    } catch (error) {
+                        console.error('Error updating dashboard:', error);
+                        showConnectionStatus('offline');
                     }
-                });
-            }, 10000);
-        }
-
-        // Start patient monitoring
-        monitorPatientVitals();
-
-        // Enhanced AI predictions
-        function generateAIPredictions() {
-            const predictions = [
-                "Machine learning model predicts 92% treatment success rate for current protocol",
-                "Early warning system detected potential complications in 2 patients",
-                "Optimal care scheduling identified for maximum efficiency",
-                "Medication adherence patterns suggest intervention needed",
-                "Risk stratification model updated with latest patient data"
-            ];
-
-            setInterval(() => {
-                if (Math.random() > 0.6) {
-                    const prediction = predictions[Math.floor(Math.random() * predictions.length)];
-                    showNotification(`AI Insight: ${prediction}`, 'info');
                 }
-            }, 60000);
+            }, API_CONFIG.refreshInterval);
+            
+            // Heartbeat every 30 seconds
+            setInterval(() => {
+                if (dashboardState.isConnected) {
+                    heartbeat();
+                }
+            }, API_CONFIG.heartbeatInterval);
         }
 
-        // Start AI predictions
-        generateAIPredictions();
+        async function heartbeat() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}/heartbeat`);
+                if (!response.ok) throw new Error('Heartbeat failed');
+            } catch (error) {
+                console.error('Heartbeat failed:', error);
+                showConnectionStatus('offline');
+            }
+        }
 
-        // Enhanced dashboard interactions
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.patient-item')) {
-                const patientItem = e.target.closest('.patient-item');
-                const patientName = patientItem.querySelector('.patient-name').textContent;
-                
-                // Simulate patient detail view
-                patientItem.style.background = 'rgba(102, 126, 234, 0.2)';
-                patientItem.style.transform = 'scale(1.02)';
-                
-                setTimeout(() => {
-                    patientItem.style.background = 'rgba(102, 126, 234, 0.05)';
-                    patientItem.style.transform = 'scale(1)';
-                }, 200);
-                
-                showNotification(`Accessing records for ${patientName}`, 'info');
+        function refreshPatients() {
+            loadPatients();
+        }
+
+        function refreshActivity() {
+            loadActivity();
+        }
+
+        function refreshDashboard() {
+            loadDashboardData();
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const dateString = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('currentDate').textContent = dateString;
+        }
+
+        function showPatientDetails(patientId) {
+            const patient = dashboardState.patients.find(p => p.id === patientId);
+            if (!patient) return;
+            
+            // In a real implementation, this would open a modal or navigate to patient details
+            console.log('Showing details for patient:', patient);
+            alert(`Patient Details:\n${patient.first_name} ${patient.last_name}\n${patient.condition || 'General Care'}`);
+        }
+
+        // Utility functions
+        function getInitials(firstName, lastName) {
+            return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+        }
+
+        function determinePatientStatus(patient, vitals) {
+            if (!vitals) {
+                return { class: 'status-monitoring', text: 'Monitoring' };
             }
             
-            if (e.target.closest('.stat-card')) {
-                const statCard = e.target.closest('.stat-card');
-                statCard.style.transform = 'translateY(-8px) scale(1.02)';
-                
-                setTimeout(() => {
-                    statCard.style.transform = 'translateY(-5px)';
-                }, 200);
-            }
-        });
-
-        // Real-time data synchronization
-        function syncWithServer() {
-            // Simulate API calls for real-time data
-            const endpoints = [
-                '/api/nurse/patients',
-                '/api/nurse/tasks',
-                '/api/nurse/alerts',
-                '/api/nurse/vitals'
-            ];
+            // Simple logic for demonstration
+            const hr = vitals.heart_rate;
+            const bp_sys = vitals.blood_pressure_systolic;
             
-            setInterval(() => {
-                endpoints.forEach(endpoint => {
-                    // Simulate API call
-                    console.log(`Syncing data from ${endpoint}`);
-                    
-                    // Update UI based on response
-                    if (Math.random() > 0.8) {
-                        updatePatientStats();
-                    }
-                });
-            }, 15000);
+            if (hr > 100 || bp_sys > 140) {
+                return { class: 'status-critical', text: 'Critical' };
+            } else if (hr > 80 || bp_sys > 120) {
+                return { class: 'status-monitoring', text: 'Monitoring' };
+            } else {
+                return { class: 'status-stable', text: 'Stable' };
+            }
         }
 
-        // Start real-time sync
-        syncWithServer();
-
-        // Enhanced keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey || e.metaKey) {
-                switch(e.key) {
-                    case 'p':
-                        e.preventDefault();
-                        showNotification('Quick patient search activated', 'info');
-                        break;
-                    case 'n':
-                        e.preventDefault();
-                        showNotification('New note created', 'info');
-                        break;
-                    case 'r':
-                        e.preventDefault();
-                        showNotification('Dashboard refreshed', 'info');
-                        location.reload();
-                        break;
-                }
-            }
-        });
-
-        // Performance monitoring
-        function monitorPerformance() {
-            const startTime = performance.now();
+        function formatVitals(vitals) {
+            if (!vitals) return 'No vitals available';
             
-            setInterval(() => {
-                const currentTime = performance.now();
-                const uptime = Math.floor((currentTime - startTime) / 1000);
-                
-                console.log(`Dashboard uptime: ${uptime} seconds`);
-                
-                // Monitor memory usage
-                if (performance.memory) {
-                    const memoryUsage = performance.memory.usedJSHeapSize / 1024 / 1024;
-                    console.log(`Memory usage: ${memoryUsage.toFixed(2)} MB`);
-                }
-            }, 60000);
+            const parts = [];
+            if (vitals.heart_rate) parts.push(`HR: ${vitals.heart_rate}`);
+            if (vitals.blood_pressure_systolic && vitals.blood_pressure_diastolic) {
+                parts.push(`BP: ${vitals.blood_pressure_systolic}/${vitals.blood_pressure_diastolic}`);
+            }
+            if (vitals.temperature) parts.push(`Temp: ${vitals.temperature}°F`);
+            
+            return parts.join(' | ') || 'No vitals available';
         }
 
-        // Start performance monitoring
-        monitorPerformance();
+        function getActivityIcon(type) {
+            const icons = {
+                'vital_signs': 'fa-heartbeat',
+                'medication': 'fa-pills',
+                'assessment': 'fa-clipboard-check',
+                'alert': 'fa-exclamation-triangle',
+                'note': 'fa-sticky-note',
+                'default': 'fa-circle'
+            };
+            
+            return icons[type] || icons.default;
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+            if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+            return 'Just now';
+        }
+
+        function isToday(dateString) {
+            const today = new Date();
+            const date = new Date(dateString);
+            return date.toDateString() === today.toDateString();
+        }
+
+        // Export functions for testing
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = {
+                initializeDashboard,
+                loadNurseProfile,
+                loadPatients,
+                formatVitals,
+                getInitials,
+                determinePatientStatus
+            };
+        }
     </script>
 </body>
 </html>

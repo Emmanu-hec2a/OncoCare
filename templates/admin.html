@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - AI Cancer Care</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-header h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card h2 {
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #718096;
+            margin-left: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+
+        .patient-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .patient-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.5);
+            transition: background-color 0.3s ease;
+        }
+
+        .patient-item:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .patient-info h4 {
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .patient-info p {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .assignment-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-assigned {
+            background: #c6f6d5;
+            color: #2f855a;
+        }
+
+        .status-unassigned {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #718096;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #2d3748;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #2f855a;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #c53030;
+            border: 1px solid #feb2b2;
+        }
+
+        .team-member {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member strong {
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">🏥 AI Cancer Care Admin</div>
+            <div class="user-info">
+                <span>Welcome, <strong id="adminName">Hospital Admin</strong></span>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <p>Manage care teams and patient assignments for optimal cancer care delivery</p>
+        </div>
+
+        <div class="alert alert-success" id="successAlert"></div>
+        <div class="alert alert-error" id="errorAlert"></div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalPatients">0</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalOncologists">0</div>
+                <div class="stat-label">Oncologists</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalNurses">0</div>
+                <div class="stat-label">Nurses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="unassignedPatients">0</div>
+                <div class="stat-label">Unassigned Patients</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>🎯 Patient Assignment</h2>
+                <div class="form-group">
+                    <label for="patientSelect">Select Patient:</label>
+                    <select id="patientSelect" class="form-control">
+                        <option value="">Choose a patient...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="oncologistSelect">Assign Oncologist:</label>
+                    <select id="oncologistSelect" class="form-control">
+                        <option value="">Choose an oncologist...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="nurseSelect">Assign Nurse:</label>
+                    <select id="nurseSelect" class="form-control">
+                        <option value="">Choose a nurse...</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="assignCareTeam()">Assign Care Team</button>
+                <button class="btn btn-secondary" onclick="resetAssignmentForm()">Reset</button>
+            </div>
+
+            <div class="card">
+                <h2>👥 Current Assignments</h2>
+                <div class="patient-list" id="patientList">
+                    <!-- Patient assignments will be loaded here -->
+                </div>
+                <button class="btn" onclick="refreshAssignments()">Refresh List</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignment Details Modal -->
+    <div id="assignmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Patient Assignment Details</h2>
+            <div id="assignmentDetails"></div>
+            <button class="btn" onclick="editAssignment()">Edit Assignment</button>
+            <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let patients = [];
+        let oncologists = [];
+        let nurses = [];
+        let assignments = [];
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            loadPatients();
+            loadOncologists();
+            loadNurses();
+            loadAssignments();
+        });
+
+        // Load dashboard statistics
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/admin/dashboard-stats');
+                const data = await response.json();
+                
+                document.getElementById('totalPatients').textContent = data.total_patients || 0;
+                document.getElementById('totalOncologists').textContent = data.total_oncologists || 0;
+                document.getElementById('totalNurses').textContent = data.total_nurses || 0;
+                document.getElementById('unassignedPatients').textContent = data.unassigned_patients || 0;
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        // Load patients
+        async function loadPatients() {
+            try {
+                const response = await fetch('/api/admin/patients');
+                const data = await response.json();
+                patients = data;
+                
+                const patientSelect = document.getElementById('patientSelect');
+                patientSelect.innerHTML = '<option value="">Choose a patient...</option>';
+                
+                patients.forEach(patient => {
+                    const option = document.createElement('option');
+                    option.value = patient.id;
+                    option.textContent = `${patient.name} - ${patient.diagnosis}`;
+                    patientSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading patients:', error);
+            }
+        }
+
+        // Load oncologists
+        async function loadOncologists() {
+            try {
+                const response = await fetch('/api/admin/oncologists');
+                const data = await response.json();
+                oncologists = data;
+                
+                const oncologistSelect = document.getElementById('oncologistSelect');
+                oncologistSelect.innerHTML = '<option value="">Choose an oncologist...</option>';
+                
+                oncologists.forEach(oncologist => {
+                    const option = document.createElement('option');
+                    option.value = oncologist.id;
+                    option.textContent = `Dr. ${oncologist.name} - ${oncologist.specialization}`;
+                    oncologistSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading oncologists:', error);
+            }
+        }
+
+        // Load nurses
+        async function loadNurses() {
+            try {
+                const response = await fetch('/api/admin/nurses');
+                const data = await response.json();
+                nurses = data;
+                
+                const nurseSelect = document.getElementById('nurseSelect');
+                nurseSelect.innerHTML = '<option value="">Choose a nurse...</option>';
+                
+                nurses.forEach(nurse => {
+                    const option = document.createElement('option');
+                    option.value = nurse.id;
+                    option.textContent = `${nurse.name} - ${nurse.department}`;
+                    nurseSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading nurses:', error);
+            }
+        }
+
+        // Load current assignments
+        async function loadAssignments() {
+            try {
+                const response = await fetch('/api/admin/assignments');
+                const data = await response.json();
+                assignments = data;
+                displayAssignments();
+            } catch (error) {
+                console.error('Error loading assignments:', error);
+            }
+        }
+
+        // Display assignments
+        function displayAssignments() {
+            const patientList = document.getElementById('patientList');
+            patientList.innerHTML = '';
+            
+            assignments.forEach(assignment => {
+                const patientItem = document.createElement('div');
+                patientItem.className = 'patient-item';
+                patientItem.innerHTML = `
+                    <div class="patient-info">
+                        <h4>${assignment.patient_name}</h4>
+                        <p>Diagnosis: ${assignment.diagnosis}</p>
+                        <p>Oncologist: ${assignment.oncologist_name || 'Not assigned'}</p>
+                        <p>Nurse: ${assignment.nurse_name || 'Not assigned'}</p>
+                    </div>
+                    <div>
+                        <span class="assignment-status ${assignment.oncologist_id && assignment.nurse_id ? 'status-assigned' : 'status-unassigned'}">
+                            ${assignment.oncologist_id && assignment.nurse_id ? 'Fully Assigned' : 'Incomplete'}
+                        </span>
+                        <button class="btn" onclick="viewAssignment(${assignment.patient_id})" style="margin-left: 0.5rem; padding: 0.5rem 1rem;">View</button>
+                    </div>
+                `;
+                patientList.appendChild(patientItem);
+            });
+        }
+
+        // Assign care team
+        async function assignCareTeam() {
+            const patientId = document.getElementById('patientSelect').value;
+            const oncologistId = document.getElementById('oncologistSelect').value;
+            const nurseId = document.getElementById('nurseSelect').value;
+            
+            if (!patientId) {
+                showAlert('Please select a patient', 'error');
+                return;
+            }
+            
+            if (!oncologistId && !nurseId) {
+                showAlert('Please select at least one care team member', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/assign-care-team', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        patient_id: patientId,
+                        oncologist_id: oncologistId || null,
+                        nurse_id: nurseId || null
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('Care team assigned successfully!', 'success');
+                    resetAssignmentForm();
+                    loadAssignments();
+                    loadDashboardData();
+                } else {
+                    showAlert(data.message || 'Error assigning care team', 'error');
+                }
+            } catch (error) {
+                console.error('Error assigning care team:', error);
+                showAlert('Error assigning care team', 'error');
+            }
+        }
+
+        // Reset assignment form
+        function resetAssignmentForm() {
+            document.getElementById('patientSelect').value = '';
+            document.getElementById('oncologistSelect').value = '';
+            document.getElementById('nurseSelect').value = '';
+        }
+
+        // View assignment details
+        function viewAssignment(patientId) {
+            const assignment = assignments.find(a => a.patient_id === patientId);
+            if (!assignment) return;
+            
+            const detailsDiv = document.getElementById('assignmentDetails');
+            detailsDiv.innerHTML = `
+                <div class="form-group">
+                    <h3>${assignment.patient_name}</h3>
+                    <p><strong>Diagnosis:</strong> ${assignment.diagnosis}</p>
+                    <p><strong>Date of Birth:</strong> ${assignment.date_of_birth || 'Not specified'}</p>
+                    <p><strong>Contact:</strong> ${assignment.contact || 'Not specified'}</p>
+                </div>
+                <div class="form-group">
+                    <h4>Care Team:</h4>
+                    ${assignment.oncologist_name ? `<div class="team-member"><strong>Oncologist:</strong> Dr. ${assignment.oncologist_name}</div>` : ''}
+                    ${assignment.nurse_name ? `<div class="team-member"><strong>Nurse:</strong> ${assignment.nurse_name}</div>` : ''}
+                    ${!assignment.oncologist_name && !assignment.nurse_name ? '<p>No care team assigned</p>' : ''}
+                </div>
+            `;
+            
+            document.getElementById('assignmentModal').style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('assignmentModal').style.display = 'none';
+        }
+
+        // Edit assignment (placeholder)
+        function editAssignment() {
+            showAlert('Edit functionality will be implemented soon', 'success');
+            closeModal();
+        }
+
+        // Refresh assignments
+        async function refreshAssignments() {
+            await loadAssignments();
+            await loadDashboardData();
+            showAlert('Assignments refreshed', 'success');
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById(type === 'success' ? 'successAlert' : 'errorAlert');
+            alertDiv.textContent = message;
+            alertDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/logout';
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('assignmentModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

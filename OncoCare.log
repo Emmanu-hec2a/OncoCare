@@ -362,3 +362,33 @@
 2025-07-04 14:40:05,525 INFO werkzeug  * Debugger PIN: 390-410-905
 2025-07-04 14:42:00,007 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
 2025-07-04 14:42:07,634 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
+2025-07-04 21:56:57,712 INFO __main__ Risk assessment model trained successfully
+2025-07-04 21:56:58,542 INFO __main__ All ML models initialized successfully
+2025-07-04 21:56:58,645 INFO werkzeug  * Restarting with stat
+2025-07-04 21:57:12,473 INFO __main__ Risk assessment model trained successfully
+2025-07-04 21:57:13,324 INFO __main__ All ML models initialized successfully
+2025-07-04 21:57:13,402 WARNING werkzeug  * Debugger is active!
+2025-07-04 21:57:13,416 INFO werkzeug  * Debugger PIN: 390-410-905
+2025-07-04 21:58:23,240 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
+2025-07-04 21:58:36,902 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
+2025-07-04 23:39:10,301 INFO __main__ Risk assessment model trained successfully
+2025-07-04 23:39:11,104 INFO __main__ All ML models initialized successfully
+2025-07-04 23:39:11,209 INFO werkzeug  * Restarting with stat
+2025-07-04 23:39:25,948 INFO __main__ Risk assessment model trained successfully
+2025-07-04 23:39:26,734 INFO __main__ All ML models initialized successfully
+2025-07-04 23:39:26,813 WARNING werkzeug  * Debugger is active!
+2025-07-04 23:39:26,826 INFO werkzeug  * Debugger PIN: 734-708-570
+2025-07-04 23:40:20,985 INFO __main__ New user registered: odiwuoremmanuel10@gmail.com
+2025-07-04 23:40:30,844 INFO __main__ Successful login for user: odiwuoremmanuel10@gmail.com
+2025-07-05 00:31:45,694 INFO werkzeug  * Detected change in 'C:\\Users\\PC\\Desktop\\OncoLink\\app.py', reloading
+2025-07-05 00:31:47,512 INFO werkzeug  * Restarting with stat
+2025-07-05 01:17:32,451 INFO __main__ Risk assessment model trained successfully
+2025-07-05 01:17:33,425 INFO __main__ All ML models initialized successfully
+2025-07-05 01:17:33,515 INFO werkzeug  * Restarting with stat
+2025-07-05 01:26:52,754 INFO __main__ Risk assessment model trained successfully
+2025-07-05 01:26:54,523 INFO __main__ All ML models initialized successfully
+2025-07-05 01:26:54,760 INFO werkzeug  * Restarting with stat
+2025-07-05 01:27:25,851 INFO __main__ Risk assessment model trained successfully
+2025-07-05 01:27:29,431 INFO __main__ All ML models initialized successfully
+2025-07-05 01:27:29,694 WARNING werkzeug  * Debugger is active!
+2025-07-05 01:27:29,776 INFO werkzeug  * Debugger PIN: 734-708-570

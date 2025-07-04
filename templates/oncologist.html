@@ -795,6 +795,40 @@
             }
         }
 
+        // Replace any hardcoded patient lists with assigned patients
+        const MyPatientsComponent = () => {
+        const [assignedPatients, setAssignedPatients] = useState([]);
+        const [loading, setLoading] = useState(true);
+
+        useEffect(() => {
+            fetchMyPatients();
+        }, []);
+
+        const fetchMyPatients = async () => {
+            try {
+            const response = await api.get('/care-team/my-patients');
+            setAssignedPatients(response.data.patients);
+            } catch (error) {
+            console.error('Error fetching assigned patients:', error);
+            } finally {
+            setLoading(false);
+            }
+        };
+
+        return (
+            <div>
+            <h2>My Assigned Patients ({assignedPatients.length})</h2>
+            {assignedPatients.map(patient => (
+                <PatientCard 
+                key={patient.patient_id}
+                patient={patient}
+                myRole={patient.my_role}
+                />
+            ))}
+            </div>
+        );
+        };
+
         async function loadDashboardStats() {
             try {
                 const stats = await apiCall('/api/dashboard/stats');
